@@ -1,0 +1,29 @@
+flowchart LR
+    subgraph Input["输入"]
+        A1[语言指令]
+        A2[初始帧图像]
+    end
+    
+    subgraph Processing["处理流程"]
+        B1[视频VAE编码]
+        B2[结构潜在变量]
+        B3[运动潜在变量]
+        B4[潜在运动链推断]
+        B5[终止帧预测]
+    end
+    
+    subgraph Alignment["对齐模块"]
+        C1[稀疏关键帧建模]
+        C2[动作序列建模]
+        C3[联合自回归解码]
+    end
+    
+    subgraph Output["输出"]
+        D1[动作预测]
+    end
+    
+    A1 & A2 --> B1
+    B1 --> B2 & B3
+    B3 --> B4 --> B5
+    B5 --> C1
+    C1 & C2 --> C3 --> D1

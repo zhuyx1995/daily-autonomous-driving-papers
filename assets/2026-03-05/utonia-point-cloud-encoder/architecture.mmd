@@ -1,0 +1,25 @@
+flowchart TB
+    subgraph Input["多域点云输入"]
+        A1[户外LiDAR]
+        A2[室内RGB-D]
+        A3[遥感点云]
+        A4[CAD模型]
+        A5[视频点云]
+    end
+    
+    subgraph Encoder["Utonia编码器"]
+        B1[Point Transformer Backbone]
+        B2[自监督预训练]
+        B3[统一表示空间]
+    end
+    
+    subgraph Output["下游任务"]
+        C1[自动驾驶感知]
+        C2[机器人操作]
+        C3[空间推理]
+        C4[AR/VR应用]
+    end
+    
+    A1 & A2 & A3 & A4 & A5 --> B1
+    B1 --> B2 --> B3
+    B3 --> C1 & C2 & C3 & C4

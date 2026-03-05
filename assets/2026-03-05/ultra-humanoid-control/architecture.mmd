@@ -1,0 +1,29 @@
+flowchart TB
+    subgraph Input["输入模态"]
+        A1[动作捕捉状态]
+        A2[自我中心视觉]
+        A3[稀疏任务规范]
+        A4[密集运动参考]
+    end
+    
+    subgraph Processing["处理流程"]
+        B1[物理驱动重定向]
+        B2[神经运动编码]
+        B3[通用跟踪策略]
+        B4[潜在空间压缩]
+        B5[RL微调]
+    end
+    
+    subgraph Control["控制器"]
+        C1[统一多模态控制器]
+        C2[全身协调生成]
+    end
+    
+    subgraph Output["输出"]
+        D1[Unitree G1人形机器人]
+        D2[运动-操作动作]
+    end
+    
+    A1 & A2 & A3 & A4 --> B1
+    B1 --> B2 --> B3 --> B4 --> B5
+    B5 --> C1 --> C2 --> D1 --> D2

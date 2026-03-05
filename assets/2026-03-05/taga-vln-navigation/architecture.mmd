@@ -1,0 +1,31 @@
+flowchart TB
+    subgraph Input["输入"]
+        A1[视觉观察]
+        A2[语言指令]
+    end
+    
+    subgraph Topology["拓扑构建"]
+        B1[空间拓扑感知残差注意力]
+        B2[拓扑边信息注入]
+        B3[拓扑节点信息增强]
+    end
+    
+    subgraph Alignment["对齐模块"]
+        C1[交错导航提示]
+        C2[节点级视觉-文本对齐]
+    end
+    
+    subgraph Reasoning["推理模块"]
+        D1[嵌入拓扑图]
+        D2[全局动作推理]
+        D3[路径修正]
+    end
+    
+    subgraph Output["输出"]
+        E1[导航动作]
+    end
+    
+    A1 & A2 --> B1
+    B1 --> B2 & B3
+    B2 & B3 --> C1 --> C2 --> D1
+    D1 --> D2 --> D3 --> E1

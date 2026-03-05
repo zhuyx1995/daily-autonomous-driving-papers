@@ -1,0 +1,26 @@
+flowchart TB
+    subgraph Demo["源演示"]
+        A1[少量演示轨迹]
+    end
+    
+    subgraph Policy["开环策略"]
+        B1[语义关键点检测]
+        B2[对应关系建立]
+        B3[轨迹变形]
+    end
+    
+    subgraph Loop["自主玩法循环"]
+        C1[任务选择]
+        C2[策略执行]
+        C3[VLM评估]
+        C4[策略改进]
+    end
+    
+    subgraph Data["数据生成"]
+        D1[专家级轨迹]
+        D2[闭环模仿策略]
+    end
+    
+    A1 --> B1 --> B2 --> B3
+    B3 --> C1 --> C2 --> C3 --> C4
+    C4 --> D1 --> D2
