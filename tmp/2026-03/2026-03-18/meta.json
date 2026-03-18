@@ -1,0 +1,37 @@
+[
+  {
+    "id": "2603.15771",
+    "title": "CorrectionPlanner: Self-Correction Planner with Reinforcement Learning in Autonomous Driving",
+    "slug": "correctionplanner-self-correction-planner-autonomous-driving",
+    "caption_summary": "(a) Vanilla autoregressive models, no correction mech- This figure summarizes the proposed method pipeline, module interactions, and information flow for autonomous driving.",
+    "img_saved": true
+  },
+  {
+    "id": "2603.15364",
+    "title": "CRASH: Cognitive Reasoning Agent for Safety Hazards in Autonomous Driving",
+    "slug": "crash-cognitive-reasoning-agent-safety-hazards-autonomous-driving",
+    "caption_summary": "CRASH Architecture. During preprocessing, the database is filtered for This figure summarizes the proposed method pipeline, module interactions, and information flow for autonomous driving.",
+    "img_saved": true
+  },
+  {
+    "id": "2603.15221",
+    "title": "ADV-0: Closed-Loop Min-Max Adversarial Training for Long-Tail Robustness in Autonomous Driving",
+    "slug": "adv-0-min-max-adversarial-training-long-tail-robustness-autonomous-driving",
+    "caption_summary": "Illustration of the ADV-0 framework. It alternates be- This figure summarizes the proposed method pipeline, module interactions, and information flow for autonomous driving.",
+    "img_saved": false
+  },
+  {
+    "id": "2603.15185",
+    "title": "What Matters for Scalable and Robust Learning in End-to-End Driving Planners?",
+    "slug": "what-matters-scalable-robust-learning-end-to-end-driving-planners",
+    "caption_summary": "Architectural Patterns. (a) High-resolution BEV fea- This figure summarizes the proposed method pipeline, module interactions, and information flow for autonomous driving.",
+    "img_saved": true
+  },
+  {
+    "id": "2603.14948",
+    "title": "Bridging Scene Generation and Planning: Driving with World Model via Unifying Vision and Motion Representation",
+    "slug": "bridging-scene-generation-planning-driving-world-model-unifying-vision-motion",
+    "caption_summary": "Overall architecture of WorldDrive. WorldDrive is a holistic framework unifying vision and motion representation to bridge",
+    "img_saved": true
+  }
+]
