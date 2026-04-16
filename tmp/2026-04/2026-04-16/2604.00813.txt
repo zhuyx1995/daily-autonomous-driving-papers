@@ -1,0 +1,348 @@
+DVGT-2: Vision-Geometry-Action Model for
+Autonomous Driving at Scale
+Sicheng Zuo1,∗, Zixun Xie1,2,4,∗, Wenzhao Zheng1,∗, Shaoqing Xu2, Fang Li2,
+Hanbing Li2, Long Chen2, Zhi-Xin Yang3, and Jiwen Lu1
+1Tsinghua University 2Xiaomi EV 3University of Macau 4Peking University
+Project Page:https://wzzheng.net/DVGT-2
+Large Driving Models:https://github.com/wzzheng/LDM
+Out-of-Window Frames
+Sliding Window Cache (Size W)Current Frame InputDVGT-2 
+Fig.1: DVGT-2 is a streaming visual geometry transformer specifically de-
+signed for autonomous driving. It inputs multi-view images and jointly predicts
+the 3D pointmaps, the ego poses, and future trajectory planning in an online manner.
+Abstract.End-to-end autonomous driving has evolved from the con-
+ventional paradigm based on sparse perception into vision-language-
+action(VLA)models,whichfocusonlearninglanguagedescriptionsasan
+auxiliary task to facilitate planning. In this paper, we propose an alterna-
+tive Vision-Geometry-Action (VGA) paradigm that advocates dense 3D
+geometry as the critical cue for autonomous driving. As vehicles operate
+ina3Dworld,wethinkdense3Dgeometryprovidesthemostcomprehen-
+sive information for decision-making. However, most existing geometry
+reconstruction methods (e.g., DVGT) rely on computationally expensive
+batch processing of multi-frame inputs and cannot be applied to online
+planning. To address this, we introduce a streaming Driving Visual Ge-
+ometry Transformer (DVGT-2), which processes inputs in an online
+manner and jointly outputs dense geometry and trajectory planning for
+∗Equal contributions.
+arXiv:2604.00813v2  [cs.CV]  7 Apr 2026
+2 S. Zuo, Z. Xie, W. Zheng et al.
+the current frame. We employ temporal causal attention and cache his-
+torical features to support on-the-fly inference. To further enhance effi-
+ciency, we propose a sliding-window streaming strategy and use historical
+caches within a certain interval to avoid repetitive computations. Despite
+the faster speed,DVGT-2achieves superior geometry reconstruction
+performance on various datasets. The same trainedDVGT-2can be
+directly applied to planning across diverse camera configurations with-
+out fine-tuning, including closed-loop NAVSIM and open-loop nuScenes
+benchmarks. Code is available athttps://github.com/wzzheng/DVGT.
+1 Introduction
+End-to-end autonomous driving has recently seen remarkable progress, funda-
+mentally changing how vehicles perceive and navigate complex environments [3,
+4,16,26,41]. Conventional methods typically rely on sparse perception repre-
+sentations (e.g., 3D object detection [18,39,43–45,69,77] and map segmenta-
+tion [39,40,48]) to guide scene understanding and trajectory planning. Recently,
+the emerging Vision-Language-Action (VLA) models leverage the general un-
+derstanding and reasoning capabilities of pre-trained Vision-Language Models
+(VLMs), focusing on learning natural language descriptions to interpret driving
+scenarios and facilitate robust decision-making [23,37,53,70,90].
+As vehicles inherently operate in a 3D world, we argue that understand-
+ing the dense 3D geometry of the environment provides the most direct and
+comprehensive information for safe decision-making. Although language descrip-
+tions offer valuable high-level context, they can sometimes be too coarse to
+capture complete and accurate geometric details when precise spatial control
+is required. Considering this, we explore an alternative Vision-Geometry-Action
+(VGA) paradigm for end-to-end autonomous driving. Rather than rely on sparse
+perception representations or coarse language descriptions, VGA advocates for
+dense 3D geometry as the foundational representation for driving. By explicitly
+recovering pixel-aligned 3D pointmaps, VGA extracts comprehensive and precise
+geometric cues from visual inputs, directly empowering trajectory planning.
+However, integrating high-fidelity geometry reconstruction into an end-to-
+end planning framework presents significant computational challenges. Existing
+methods [66,73,93] typically rely on computationally expensive batch process-
+ing of the entire multi-frame sequence. When processing online inputs frame-by-
+frame, they have to recalculate features for overlapping historical frames at every
+time step. Such redundant computation incurs unacceptable latency and makes
+them unsuitable for online, real-time autonomous driving. To address this, we in-
+troduceastreamingDrivingVisualGeometryTransformer(DVGT-2),designed
+to jointly output dense geometry and trajectory planning in an online manner, as
+shown in Fig. 1. Instead of reprocessing the entire historical sequence,DVGT-2
+employs temporal causal attention and caches historical intermediate features to
+support efficient on-the-fly inference. To further enhance efficiency and bound
+the computational overhead for continuous driving, we propose a sliding-window
+streaming strategy that only utilizes historical caches within a fixed interval. We
+DVGT-2 3
+achieve this by introducing relative temporal positional encoding and jointly
+predicting dense points in the local coordinate system alongside the ego-pose
+relative to the previous frame. This design allows the model to continuously
+aggregate historical geometric cues and avoid repetitive computations.
+To build a robust foundation model for the VGA paradigm, we trainDVGT-
+2on a large mixture of diverse driving datasets, including nuScenes [1], Open-
+Scene [5], Waymo [62], KITTI [10], and DDAD [11]. Extensive experiments
+demonstrate that, despite its significantly faster inference speed, our model
+achievessuperiorgeometryreconstructionperformanceonvariousdatasets.More
+importantly, the same trainedDVGT-2can be directly applied to trajectory
+planningacrossdiversedatasetswithouttheneedforfinetuning,achievingstrong
+performance on both the closed-loop NAVSIM [2,6] and open-loop nuScenes [1]
+benchmarks, validating the effectiveness of the VGA paradigm.
+2 Related Work
+End-to-end Autonomous Driving.End-to-end autonomous driving aims
+to directly map raw sensor inputs to planning trajectories or control signals,
+jointly optimizing the entire system to minimize error accumulation. Pioneer-
+ing works like UniAD [16] and VAD [26] proposed the paradigm by integrating
+perception,prediction,andplanningintoasingleframework,achievingplanning-
+oriented joint optimization across all tasks. Subsequent research shifted towards
+multi-modal trajectory generation. VADv2 [3] and Hydra-MDP [38] modeled
+probabilistic planning by sampling from a fixed trajectory codebook. Diffu-
+sionDrive [41] proposed an anchor-based truncated diffusion model to capture
+the multi-modal distribution of trajectories, which is adopted by other meth-
+ods [28,32,76]. Despite these advances, existing methods [3,86,87] fundamentally
+depend on manually defined perception tasks, such as detection [18,36,39,43],
+tracking [45,48,69,91], or occupancy [19–21,94,95] to understand driving scenes,
+which is extremely inefficient with world information. In contrast, our model ex-
+plicitly reconstructs fine-grained dense geometry. By comprehensively modeling
+the geometric details, our approach facilitates robust trajectory planning.
+VLA for Autonomous Driving.The extensive world knowledge of Vision-
+Language Models (VLMs) have driven their applications in autonomous driv-
+ing [22, 60, 79], mainly focus on scene understanding and reasoning. Subse-
+quent research utilized VLMs to predict high-level meta-actions or driving de-
+cisions [25, 27, 72], which serve as intermediate guidance [25, 42] or supervi-
+sion [12,46,55,78] for downstream planners or end-to-end models. Although
+these methods facilitate the integration of VLM knowledge, the modular de-
+sign hinders full end-to-end optimization. Recent advancements have integrated
+planning modules into the VLMs to map sensor inputs to planning trajecto-
+ries directly. Initial attempts sought to predict trajectories directly in text for-
+mat [23,51–54,70,84], while other methods explored incorporating specialized
+trajectorydecoderstopredictfeasibleactions,includingtheauto-regressiveman-
+ner [24,89,90], the diffusion module [9,37,81], or the MLP head [47,58,59]. In
+4 S. Zuo, Z. Xie, W. Zheng et al.
+E2E: Sparse PerceptionVLA: Language Description
+Input
+E2E ModelSparsePerception & Action
+Input
+ Language Description & ActionVGA: Geometry Reconstruction
+Geometry Reconstruction & Action
+Current Frame Input
+VLA Model
+VGA Model
+Streaming
+The scene contains…
+Turn right at intersection.
+Describe and drive.
+Fig.2: Comparison of different paradigms for end-to-end autonomous driv-
+ing.Conventionalend-to-endmodelsrelyonsparseperceptionrepresentationsforscene
+understanding. VLA models predict language descriptions to interpret driving scenar-
+ios. Our VGA model reconstructs dense 3D geometry to facilitate safe planning.
+contrast, we propose a Vision-Geometry-Action (VGA) framework, as shown
+in Fig. 2. By explicitly modeling fine-grained dense geometry, our approach
+connects visual inputs to driving actions through high-fidelity structural and
+dynamic scene understanding, thereby enhancing trajectory planning.
+Visual Geometry Models.Recent advances in general visual geometry
+models have shifted the paradigm from depth estimation to regressing dense
+pointmaps directly from unposed images. Pioneering works like DUSt3R [71] and
+its extensions [31,65,75] have demonstrated impressive capabilities in recovering
+3D structure from image pairs. More recently, large-scale geometry foundation
+models like VGGT [66] andπ3 [73] have achieved robust geometry reconstruction
+across multi-view inputs. However, these methods are limited to a relative scale
+and require post-alignment with sparse LiDAR points to recover the metric-
+scaled scene geometry. To address this, DVGT [93] proposed a driving visual
+geometry model to enable end-to-end reconstruction of driving scene geometry
+with metric scale. But it relies on batch processing of multi-frame inputs, which
+leads to redundant computations for historical frames. While streaming alter-
+natives like CUT3R [67] and StreamVGGT [92] attempt to reduce latency, they
+typically maintain a feature cache that grows linearly with input length, making
+them unsuitable for infinite-length driving scenarios. In contrast, we propose a
+window-based streaming architecture by maintaining a fixed-size historical cache
+and predicting local geometry only for the latest frame. Our approach thus en-
+sures constant computational costs and supports efficient, long-term inference.
+3 Proposed Approach
+3.1 Vision-Geometry-Action Model
+The fundamental objective of an autonomous driving system is to predict a safe
+and feasible future trajectory for the ego vehicle given historical and current
+DVGT-2 5
+sensor observations. Formally, at the current time stept, given a sequence of
+multi-view image inputsI t−T:t from the pastTframes and the current frame,
+the driving modelMaims to predict the future ego-trajectoryAt:
+At =M(I t−T:t ). (1)
+Conventional end-to-end models typically decompose this process into a se-
+quentialperception-prediction-planningpipeline[16,26,87].Theperceptionmod-
+uleF perc first extracts high-level perceptual representationsZfrom the visual
+inputs. The prediction moduleFpred then forecasts the future motionVof sur-
+roundingagents.Finally,theplanningmoduleF plan utilizestheserepresentations
+to generate the future ego-trajectory. This process can be expressed as:
+Z=F perc(It−T:t ),V=F pred(Z),A t =F plan(Z,V). (2)
+However, this paradigm heavily relies on sparse perceptual representations like
+bounding boxes and map elements, which discard rich environmental context.
+While some methods introduce 3D occupancy to provide a dense structural de-
+scription, they inherently suffer from quantization errors due to voxel discretiza-
+tion. Consequently, this incomplete and inaccurate modeling of scene structures
+fundamentally restricts the model’s planning performance.
+Recently, Vision-Language-Action (VLA) models have emerged as a promis-
+ing alternative, leveraging the strong semantic understanding capabilities of
+pre-trained Vision-Language-Models (VLMs) to facilitate driving [23,70,88,90].
+Given historical observations, a VLA modelMVLA typically outputs a textual
+descriptionL t of the current scene alongside the future trajectory predictionAt:
+At,L t =M VLA(It−T:t ). (3)
+Although VLA models demonstrate remarkable generalization, natural language
+is inherently ambiguous and coarse-grained. It struggles to accurately and com-
+prehensively capture the precise geometric details of driving scenes, thereby hin-
+dering high-fidelity scene understanding and robust trajectory planning.
+Inthispaper,weproposeanovelVision-Geometry-Action(VGA)frame-
+work, which identifies dense geometry as the critical bridge connecting visual in-
+puts to driving actions. Given multi-frame image inputs, our VGA modelMVGA
+jointly reconstructs the dense 3D pointmapsPt−T:t and ego-posesE t−T:t, and
+predicts the future ego-trajectoryAt:
+At,P t−T:t ,E t−T:t =M VGA(It−T:t ). (4)
+This paradigm offers two fundamental advantages. First, the continuous coordi-
+nate space of dense pointmaps eliminates quantization errors, providing a pixel-
+aligned, complete representation of both foreground objects and background en-
+vironments. Second, by explicitly modeling spatial geometry and camera poses
+across multi-frame inputs, the VGA model comprehensively captures temporally
+consistent static structures and coherent dynamic motions, thereby providing a
+more precise and reliable foundation for trajectory planning.
+6 S. Zuo, Z. Xie, W. Zheng et al.
+Out-of-Window Frames
+Sliding Window Cache (Size W)Current Frame Input
+DVGT-2
+Full Sequence Input
+StreamVGGTFull History Cache
+Current Frame InputDVGT-1𝑂𝑇! 𝑂𝑇
+𝑂𝑊
+Fig.3: Comparison of different paradigms for geometry reconstruction.
+Batch-processing models like DVGT [93] compute pair-wise relations across all
+frames, incurring an overallO(T 2)complexity. Full-history streaming models like
+StreamVGGT [92] extract temporal cues from the entire history, leading to anO(T)
+per-frame complexity. In contrast, our sliding-window streaming strategy attends to a
+fixed-size cache of lengthW, achieving a constantO(W)per-frame complexity.
+3.2 Streaming Geometry Reconstruction
+In the VGA framework, dense geometry reconstruction from multi-frame in-
+puts is essential for comprehensive scene understanding. Recently, numerous
+works [66,73,93] have made progress by adopting a batch-processing paradigm.
+Given a sequence of image inputsIt−T:t, these models jointly reconstruct global
+pointmaps and ego-poses for all frames, typically anchored to the first frame’s
+coordinate system:
+Pt−T:t ,E t−T:t =G batch(It−T:t ), (5)
+whereG batch denotes batch-processing reconstruction paradigm. However, this
+paradigmrequirescomputingpairwisespatialinteractionsacrossallinputframes,
+resulting in anO(T 2)computational complexity. More severely, when process-
+ing online inputs frame-by-frame in driving scenarios, the model redundantly
+reprocesses the overlapping historical frames at every time step. This massive
+computational redundancy leads to prohibitive inference latency, making it en-
+tirely unsuited for online, real-time autonomous driving applications [93].
+To alleviate this redundant computation, recent works like StreamVGGT [92]
+introduceafull-historystreamingreconstructionframeworkwithafeaturecaching
+mechanism. When receiving a new frame inputIt, the modelGstream only com-
+putes the interaction between the current frame and the cached historical fea-
+turesC t−T:t−1, thereby reducing the computational complexity fromO(T2)to
+O(T). After the prediction, the current frame’s features are updated into the
+cache for the next-frame prediction. This process can be formulated as:
+Pt,E t,C t−T:t =G stream([It,C t−T:t−1 ]). (6)
+Although this framework avoids repeatedly computing historical frames, it still
+relies on the first frame as the global reference coordinate system. Consequently,
+the model must retain features of the entire history. This causes memory and
+computational costs that scale linearly with the sequence length, rendering the
+approach prohibitive for continuous, infinite-horizon driving scenarios.
+DVGT-2 7
+Time
+𝑻𝟑𝑽𝟏
+𝑽𝟐
+𝑻𝟐
+DINOv3Feature
+𝑻𝟏
+pose& trajectorytokens
+𝑽𝟏
+𝑽𝟐
+𝑽𝟏
+𝑽𝟐
+Intra-ViewAttentionCross-ViewAttentionTemporal CausalAttention
+Permute
+×L
+PoseHeadTrajectoryHeadPointHead
+Permute
+Permute
+Point Map
+Trajectory
+𝑽𝟏
+𝑽𝟐
+Pose
+……
+Fig.4: Overall archetecture of DVGT-2. Our model consists of an image encoder,
+a geometry transformer with temporal causal attention, and a set of prediction heads
+to jointly output geometry reconstruction and trajectory planning.
+To overcome these bottlenecks, we propose a sliding-window streaming strat-
+egy, as shown in Fig. 3. The core idea is to maintain a historical feature cache
+Ct−W:t−1 with a fixed window size ofW, ensuring a constantO(W)per-frame
+complexity.Crucially,toeliminatethedependencyonthefullhistoricalsequence,
+we decouple the geometry reconstruction from the first-frame coordinate sys-
+tem. Instead, we reconstruct the local geometryPt in the current frame’s ego-
+coordinate system and predict the ego-poseEt relative to the previous frame.
+Our sliding-window streaming inference process can be formulated as:
+Pt,E t,C t−W+1:t =G window([It,C t−W:t−1 ]), (7)
+whereG window denotes sliding-window streaming reconstruction paradigm. After
+processingthecurrentframe,thecacheisupdatedinaFirst-In-First-Out(FIFO)
+manner,discardingtheearliestframe’sfeaturesC t−W andappendingthecurrent
+frame’s featuresCt. Our sliding-window streaming framework can efficiently
+process arbitrary-length video streams with constant overhead, adhering to the
+strict efficiency constraints of real-time autonomous driving systems.
+3.3 Streaming Driving Visual Geometry Transformer
+To realize the sliding-window streaming paradigm for efficient geometry recon-
+struction and trajectory planning, we proposeDVGT-2, a Streaming Driving
+Visual Geometry Transformer. At time stept, given multi-view image inputs
+It ∈R V×H×W×3 fromVcameras and a historical feature cacheC t−W:t−1 con-
+taining the pastWframes, the model predicts three components: (1) the multi-
+view 3D pointmapsPt ∈R V×H×W×3 in the current ego-coordinate system; (2)
+the current ego-poseE t ∈R 7 (comprising a 3D translation and a 4D rotation
+quaternion) relative to the previous frame; (3) the futureN-step planning tra-
+jectoryA t ∈R N×3 (representing x, y coordinates, and yaw angle). The cache is
+then updated to the current frame. The overall process can be expressed as:
+At,P t,E t,C t−W+1:t =M DVGT-2(It,C t−W:t−1 ). (8)
+8 S. Zuo, Z. Xie, W. Zheng et al.
+pose& trajectorytokens
+Sliding Window Cache (Size W)
+Cross-ViewAttention
+Current Frame Input
+Frame W-2
+Out-of-Window FramesTemporal CausalAttention
+Temporal Fused Tokens
+Multi-TaskHeads
+Cached
+DINOMRoPE-I𝑽𝟏𝑽𝟐
+Intra-ViewAttention
+×L
+…
+Frame W-1
+Frame W
+Fig.5: Efficient inference of DVGT-2. Given the current frame multi-view input
+and the cache of pastWframes, our model performs efficient geometry reconstruction
+and trajectory planning in an online manner, avoiding recomputing historical frames.
+Overall Architecture. As shown in Fig. 4, ourDVGT-2consists of an
+image encoderE, a geometry transformerG, and task-specific prediction heads
+[Hvis,H pose,H traj]. Given the multi-view imagesIt of the current time stept, we
+first employ a pre-trained vision foundation model [61] to extract visual tokens:
+Fvis
+t =E(I t). (9)
+To explicitly aggregate global representations for spatial reasoning and planning,
+we append learnable pose tokensFpose
+t and trajectory tokensFtraj
+t to the visual
+tokens of each view, forming the unified input tokens:
+Ft = [F vis
+t ,F pose
+t ,F traj
+t ]. (10)
+Subsequently, these combined tokens, along with the historical cacheCt−W:t−1,
+are fed into the geometry transformerGfor spatial-temporal reasoning:
+Gvis
+t ,G pose
+t ,G traj
+t =G(F t,C t−W:t−1 ). (11)
+Finally, the updated tokens are routed to their respective prediction heads to
+generate the 3D pointmapsPt, ego-poseE t, and future trajectoryAt:
+Pt =H vis(Gvis
+t ),E t =H pose(Gpose
+t ),A t =H traj(Gtraj
+t ). (12)
+Theoverallpipelineofourmodel’sefficientonlineinferenceisillustratedinFig.5.
+Geometry Transformer.Following DVGT [93], we utilize a factorized at-
+tention mechanism to efficiently model the complex spatial-temporal relations
+across multiple views and frames. The geometry transformerGcomprisesLcas-
+caded blocks, each executing three sequential attention operations:

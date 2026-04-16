@@ -1,0 +1,15 @@
+2604.12208|Robotics (cs.RO)|Unveiling the Surprising Efficacy of Navigation Understanding in End-to-End Autonomous Driving
+2604.09059|Computer Vision and Pattern Recognition (cs.CV)|Learning Vision-Language-Action World Models for Autonomous Driving
+2604.08509|Computer Vision and Pattern Recognition (cs.CV)|Visually-grounded Humanoid Agents
+2604.05449|Computer Vision and Pattern Recognition (cs.CV)|Not All Agents Matter: From Global Attention Dilution to Risk-Prioritized Game Planning
+2604.03325|Computer Vision and Pattern Recognition (cs.CV)|Safety-Aligned 3D Object Detection: Single-Vehicle, Cooperative, and End-to-End Perspectives
+2604.00813|Computer Vision and Pattern Recognition (cs.CV)|DVGT-2: Vision-Geometry-Action Model for Autonomous Driving at Scale
+2603.28116|Robotics (cs.RO)|$AutoDrive	ext{-}P^3$: Unified Chain of Perception-Prediction-Planning Thought via Reinforcement Fine-Tuning
+2603.24581|Computer Vision and Pattern Recognition (cs.CV)|Latent-WAM: Latent World Action Modeling for End-to-End Autonomous Driving
+2603.15364|Artificial Intelligence (cs.AI)|CRASH: Cognitive Reasoning Agent for Safety Hazards in Autonomous Driving
+2603.15185|Robotics (cs.RO)|What Matters for Scalable and Robust Learning in End-to-End Driving Planners?
+2603.13399|Computer Vision and Pattern Recognition (cs.CV)|FlowAD: Ego-Scene Interactive Modeling for Autonomous Driving
+2603.09420|Computer Vision and Pattern Recognition (cs.CV)|Open-World Motion Forecasting
+2603.02413|Computer Vision and Pattern Recognition (cs.CV)|TruckDrive: Long-Range Autonomous Highway Driving Dataset
+2602.23499|Robotics (cs.RO)|TaCarla: A comprehensive benchmarking dataset for end-to-end autonomous driving
+2602.22091|Computer Vision and Pattern Recognition (cs.CV)|Learning to Drive is a Free Gift: Large-Scale Label-Free Autonomy Pretraining from Unposed In-The-Wild Videos
