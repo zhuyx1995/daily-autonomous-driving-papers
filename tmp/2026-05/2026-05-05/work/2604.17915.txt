@@ -1,0 +1,344 @@
+OneDrive: Unified Multi-Paradigm Driving with
+Vision-Language-Action Models
+Yiwei Zhang1,2,3,4, Xuesong Chen4,†, Jin Gao1,2,∗, Hanshi Wang, Fudong
+Ge1,2, Weiming Hu1,2,5, Shaoshuai Shi4,∗, and Zhipeng Zhang3,∗
+∗ Corresponding authors, † Project Leader
+1 State Key Laboratory of Multimodal Artificial Intelligence Systems, CASIA
+2 School of Artificial Intelligence, University of Chinese Academy of Sciences
+3 AutoLab, School of Artificial Intelligence, Shanghai Jiao Tong University
+4 Voyager Research, Didi Chuxing
+5 School of Information Science and Technology, ShanghaiTech University
+{ywzhang.ai,shuaishaocs}@gmail.com, jin.gao@nlpr.ia.ac.cn,
+zhipeng.zhang.cv@outlook.com
+Abstract.Vision-LanguageModels(VLMs)excelatautoregressivetext
+generation, yet end-to-end autonomous driving requires multi-task learn-
+ing with structured outputs and heterogeneous decoding behaviors, such
+as autoregressive language generation, parallel object detection and tra-
+jectory regression. To accommodate these differences, existing systems
+typically introduce separate or cascaded decoders, resulting in archi-
+tectural fragmentation and limited backbone reuse. In this work, we
+present a unified autonomous driving framework built upon a pretrained
+VLM, where heterogeneous decoding behaviors are reconciled within
+a single transformer decoder. We demonstrate that pretrained VLM
+attention exhibits strong transferability beyond pure language model-
+ing. By organizing visual and structured query tokens within a sin-
+gle causal decoder, structured queries can naturally condition on vi-
+sual context through the original attention mechanism. Textual and
+structured outputs share a common attention backbone, enablingsta-
+ble joint optimization across heterogeneous tasks. Trajectory planning
+is realized within the same causal LLM decoder by introducing struc-
+tured trajectory queries. This unified formulation enables planning to
+share the pretrained attention backbone with images and perception to-
+kens. Extensive experiments on end-to-end autonomous driving bench-
+marks demonstrate state-of-the-art performance, including 0.28 L2 and
+0.18 collision rate on nuScenes open-loop evaluation and competitive re-
+sults (86.8 PDMS) on NAVSIM closed-loop evaluation. The full model
+preserves multi-modal generation capability, while an efficient inference
+mode achieves approximately 40% lower latency. Code and models are
+available athttps://github.com/Z1zyw/OneDrive
+Keywords:End-to-end Autonomous Driving·Vision Language Model
+arXiv:2604.17915v1  [cs.CV]  20 Apr 2026
+2 Y.Zhang et al.
+1 Introduction
+Recent breakthroughs in Vision Language Models (VLMs) [1,10,45,61] highlight
+their extraordinary multimodal reasoning capabilities. This success naturally in-
+spires the pursuit of Vision Language Action (VLA) models for autonomous driv-
+ing [28,60]. Yet integrating these foundational models into driving systems typ-
+ically demands intricate 3D structural modifications like Bird Eye View (BEV)
+modeling [18,24]. Such severe architectural deviations from native VLMs hinder
+the possibility of joint training with massive general domain data, fundamentally
+bottlenecking model scalability. Conversely, attempting to preserve the original
+architecture exposes a critical dilemma. When structural changes are kept min-
+imal, the model falls significantly behind leading methods on diverse heteroge-
+neous driving tasks. Although previous works manage to mask this deficiency by
+relying heavily on point cloud inputs, their performance degrades sharply under
+pure vision settings. This degradation is highly undesirable since pure vision
+settings naturally align with the original VLM architecture [18]. Furthermore,
+given that these models are inherently constrained to output information intex-
+tual form, bridging the massive gap between pure text generation and complex
+driving outputs remains a formidable challenge. Then,
+Can a single pretrained multimodal model simultaneously handle diverse
+E2E autonomous driving tasks with various forms of output, while main-
+taining coherent textual generation and generalizing to generative mod-
+eling paradigms?
+T able 1:Diagnostic study on transferring
+pretrained LLM weights to a parallel de-
+coder.✗means random initialize.
+VLM Attn FFN NDS↑
+InternVL3-1B [61]
+✓ ✓31.95
+✓✗32.05
+✗✓29.90
+✗ ✗31.48
+Qwen2.5-VL-3B [1]
+✓ ✓27.14
+✓✗31.37
+✗✓27.95
+✗ ✗30.15
+Tackling this question requires
+confronting the inherent complexity
+of autonomous driving, where interde-
+pendent tasks demand distinct input
+and output formats. Perception and
+planning typically employ parallel de-
+coders with specific attention mecha-
+nisms for simultaneous predictions [4,
+6, 12, 25, 30, 32, 34, 48, 52, 56, 57, 62].
+Conversely,textualreasoningrelieson
+sequential autoregressive decoding [8,
+24,38,47] (see Fig. 2 (b)). This pro-
+foundstructuralgap forcestraditional
+approaches to use isolated [48] or cas-
+caded [8,19,23,25,41,47] decoders. Such fragmented designs strictly prevent
+the unified application of pretrained weights and restrict information flow
+across tasks. Consequently, engineering a singular architecture that harmonizes
+these diverse modalities while preserving the native VLM structure remains a
+formidable open challenge.
+To determine whether native pretrained VLM models can actually overcome
+this challenge and support diverse driving tasks, we conduct a preliminary di-
+agnostic study. We adapt pretrained VLM weights into a parallel decoder using
+OneDrive 3
+the first six layers of the language model, inspired by DETR [4] and Stream-
+PETR [46]. Specifically, we freeze the visual backbone and map each pretrained
+self attention module to the corresponding cross attention in the parallel de-
+coder.Forthefeedforwardnetworks,wecomparepretrained initializationagainst
+random initialization, alongside a fully random baseline for all modules to en-
+sure completeness. As Tab. 1 demonstrates, attention weights transfer effectively
+across tasks. Conversely, reusing feedforward weights provides limited benefits
+and occasionally causes severe performance degradation alongside training insta-
+bility (31.37→27.14). These observations reveal that feedforward networks op-
+timized strictly for text generation lack the flexibility required for heterogeneous
+downstream tasks. However, attention modules pretrained to align visual and
+textual tokens retain remarkable transferability. This success likely stems from
+their ability to capture fundamental correspondence patterns between queries
+and visual features. Inspired by this crucial insight, we investigate whether such
+transferable attention mechanisms can model a broader range of relationships,
+ultimately enabling the construction of a unified multitask decoder.
+Fig. 1:(a) dual-system design with sepa-
+rate decoders; (b) Q-Former–style cascaded
+decoding; (c) our unified single-decoder
+framework handling both within one trans-
+former.
+OneDrive(see Fig. 3) is our
+definitive answer. It is a unified mul-
+titask framework elegantly leverages
+pretrained attention to support het-
+erogeneous decoding behaviors within
+a single transformer decoder. Specif-
+ically, we organize visual tokens and
+structured query tokens into a uni-
+fied sequence. This arrangement al-
+lows query tokens to deeply condition
+on visual context through the pre-
+trained causal attention of the lan-
+guage model. To enable structured
+prediction, we augment the shallow
+layerswithdedicatedattentionamong
+perception query tokens. This modi-
+fication enhances comprehensive per-
+ception capabilities while keeping the foundational backbone attention strictly
+unchanged. Furthermore, we insert task-specific feedforward networks to execute
+necessary feature transformations. This elegant design allows autoregressive tex-
+tual generation alongside parallel perception and planning to share a common
+attention backbone. Consequently, our design enables stable joint optimization
+across diverse tasks without introducing isolated transformer branches. More-
+over, the unified sequence and shared attention structure inherently facilitate
+seamless interaction across all driving tasks.
+Extensiveexperimentsonend-to-endautonomousdrivingbenchmarksdemon-
+strate that our framework achieves state-of-the-art performance, including 0.28
+L2 error and 0.18 collision rate on nuScenes open-loop evaluation and competi-
+tive results on NAVSIM closed-loop evaluation. The full model preserves multi-
+4 Y.Zhang et al.
+modal generation capability, while a truncated inference mode that forwards
+only the early layers reduces latency by approximately 40% (264→156 ms) for
+planning-focused deployment.
+The main contributions of this work are as follows:
+1. We show that pretrained VLM causal attention, originally trained to cap-
+ture text–image or text–text relations, can be adapted through training to
+model relations between queries and visual, whereas FFNs pretrained for
+text generation are difficult to transfer.
+2. We propose OneDrive, a unified archicture for multitask, enabling a sin-
+gle transformer decoder to perform both autoregressive text generation and
+parallel perception and planning tasks.
+3. Extensive experiments on nuScenes and NAVSIM demonstrate the effective-
+ness of our approach, achieving state-of-the-art performance.
+2 Related Work
+Fig. 2:Two representative decoding
+paradigms: (a) an autoregressive decoder,
+(b) a parallel decoder. Existing end-to-end
+multi-task autonomous driving models
+typically organize heterogeneous decoders
+either in a cascaded manner or in parallel.
+Unified Architectures for End-
+to-end Autonomous Driving.Au-
+tonomous driving requires the in-
+tegration of multiple interdependent
+tasks, including perception, predic-
+tion, and planning, such as 3D object
+detection [21, 30, 36, 52], lane detec-
+tion [5,32,34], BEV segmentation [36,
+56], occupancy prediction [58,59], and
+trajectory planning. Early systems
+decomposed these tasks into separate
+modules with predefined interfaces,
+which limited information flow and
+hindered global optimization. Recent
+unified frameworks [6, 19, 23, 25, 48],
+often referred to as conventional end-to-end driving models [53], advocate for
+the joint optimization of perception, mapping, motion forecasting, and plan-
+ning within a shared backbone. These approaches demonstrate that multi-task
+learning effectively enhances cross-task consistency and overall computational ef-
+ficiency. However, these systems do not incorporate language modeling into the
+unified architecture. Notably, the autoregressive decoding paradigm of language
+models (Fig. 2(b)) differs fundamentally from the parallel structured decoders
+(Fig. 2(a)) commonly adopted in end-to-end driving frameworks.
+Vision-Language Models in Autonomous Driving.Recent studies have
+explored integrating vision-language models into autonomous driving to enhance
+scene understanding, instruction following, and interpretability. Dual-system de-
+signs (see Fig. 1(a)), such as Senna [24] and DriveVLM [41], employ separate
+OneDrive 5
+Fig. 3:Architecture of OneDrive. Surround-view images are encoded into image tokens
+by a ViT and concatenated with structured query tokens for detection, lane estimation,
+and planning, as well as text tokens. The unified token sequence is processed by mixed
+decoderlayersbuiltuponthepretrainedLLMcausalattention.Perceptionquerytokens
+are augmented with additional self-attention and task-specific feed-forward networks,
+while the backbone attention remains unchanged. Task-specific MLP heads decode 3D
+bounding boxes, lanes, and trajectories in parallel, alongside autoregressive next-token
+prediction for textual generation, enabling unified multi-task learning within a single
+transformer decoder.
+decoders for structured prediction and language generation. Other works, in-
+cluding OmniDrive [47], Orion [17] and SOLVE [8], adopt cascaded architec-
+tures that combine structured decoders with autoregressive LLM decoders (see
+Fig. 1(b)). In contrast, some approaches [22,51] directly formulate all tasks as
+text generation using a single autoregressive decoder. Despite these efforts, ex-
+isting methods typically organize heterogeneous decoders either in parallel or in
+cascaded forms. Conventional end-to-end driving models rely primarily on par-
+allel decoding, while large language models operate in an autoregressive manner.
+The structural discrepancy between autoregressive token generation and parallel
+structured prediction remains largely unresolved.
+In contrast to prior VLM-based driving works that treat language as an
+auxiliary modality and unified driving frameworks that integrate tasks through
+shared representations, our work focuses on unifying heterogeneous driving out-
+puts at the decoding level. We adopt a token-centric formulation based on a
+pretrained VLM, enabling a single Transformer decoder to generate structured
+perception, planning trajectories, and textual responses within a unified causal
+attention framework.
+6 Y.Zhang et al.
+3 OneDrive
+Experiments in Table 1 show that adapting pretrained VLMs to heterogeneous
+driving structures and tasks is nontrivial: attention modules transfer well, but
+feedforward layers often degrade performance. These findings highlight the need
+for careful architectural and training design for a unified multitask decoder.
+Fig. 3 illustrates the overall architecture of OneDrive. We build upon a pre-
+trained vision-language model and unify perception, planning, and language gen-
+eration within a single Transformer decoder. Visual tokens, structured query
+tokens, and text tokens are concatenated into a shared sequence and processed
+by the pretrained causal attention. To accommodate heterogeneous prediction
+paradigms, we introduce task-specific adaptations, including additional self at-
+tention among structured perceptual queries and task-specific feed-forward net-
+works, while preserving the original attention backbone.
+3.1 Problem Formulation
+We formulate end-to-end autonomous driving as a multi-task prediction problem
+over heterogeneous output spaces. Given multi-view imagesIand optional tex-
+tual inputs, the system is required to jointly predict(i)structured perception
+outputs, such as 3D bounding boxes and lane structures;(ii)continuous tra-
+jectory predictions for planning; and(iii)optional textual descriptions. These
+tasks differ not only in output representation but also in decoding paradigms,
+including parallel query-based prediction and autoregressive token generation.
+3.2 Unified Token Representation
+Instead of introducing task-specific decoders, we organize heterogeneous outputs
+using a unified token-based formulation. Structured prediction tasks, such as 3D
+object detection and lane estimation, are represented by fixed sets of learnable
+query tokens. Planning is modeled with dedicated planning tokens, while textual
+outputs follow standard autoregressive token generation. All tokens are concate-
+nated into a shared sequence processed by a single Transformer decoder:
+Z= [X img,Q det,Q lane,Q plan,X text],
+whereX img denotes image tokens,Q · denote task-specific query tokens, and
+Xtext represents text tokens. This unified token organization enables heteroge-
+neous prediction paradigms to be handled within a shared decoder architecture.
+Similar to SOLVE [8] and OmniDrive [47], we adopt StreamPETR [46] to
+organize the detection and lane queries. Specifically,Qdet andQ lane are con-
+structed following the query formulation of StreamPETR. For planning, we allo-
+cate one planning query per future timestep. Each planning query is initialized
+with an anchor trajectory derived from VAD [25]. In addition, an ego-status
+embedding is prepended to the planning queries, forming the completeQplan.
+OneDrive 7
+3.3 Mixed Decoder Layers
+Although all tokens share a unified representation space, heterogeneous tasks
+entail distinct interaction patterns and feature transformation requirements. To
+preserve the transferable relational modeling capacity of pretrained VLMs while
+enabling parallel structured prediction, mixed decoder layers are introduced in
+the shallow stages, retaining the original causal attention while incorporating
+minimal task-specific adaptations. The query outputs for structured prediction
+are directly taken from these shallow mixed layers, whereas the deeper layers
+remain unchanged from the pretrained decoder.
+Causal Attention as Conditional InterfaceAt the core of each decoder
+layer, we retain the pretrained LLM causal self-attention. All tokens, including
+image tokens, perception queries, planning queries, and text tokens, are pro-
+cessed under a shared causal mask.
+To enhance spatial modeling for perception and planning, we follow Stream-
+PETR and incorporate 3D positional embeddings [35] for image tokens and
+structured query tokens, applied after RoPE [39], while text tokens remain un-
+changed. Specifically, for image tokensXimg and structured query tokensQtask,
+the attention projections are computed as
+Q=RoPE(XW q) +e 3D,K=RoPE(XW k) +e 3D,
+whereX∈ {X img,Q det,Q lane,Q plan}ande 3D denotes the corresponding 3D
+positional embedding. Text tokensXtext follow the original RoPE formulation
+without additional 3D positional encoding. For the query tokens, we remove
+the residual connection in the causal attention module, which stabilizes training
+when adapting from pretrained VLM weights.
+This shared attention backbone serves as a unified conditional modeling in-
+terface across modalities and tasks. Since query tokens are placed after image
+tokens, they naturally condition on visual context via causal attention without
+requiring explicit cross-attention modules. Planning tokens are further appended
+after perception queries, enabling implicit conditioning on perception features
+through the same attention mechanism.
+QueryInteractionandTask-SpecificTransformationAutoregressivecausal
+attention enforces sequential dependencies, which is not ideal for parallel struc-
+tured prediction. To support end-to-end perception [4,40], we introduce an ad-
+ditional self-attention block applied only among structured query tokens:
+Qperception =SelfAttn q(Qperception) =SelfAttn q([Qdet,Q lane]),
+This module enables bidirectional interaction within each query group, facilitat-
+ing parallel reasoning while leaving the backbone causal attention unchanged.
+Furthermore, we replace the pretrained language-modeling feed-forward net-
+works (FFNs) for structured queries with task-specific FFNs:
+8 Y.Zhang et al.
+Q′ =FFN t( ˜Q),
+wheret∈ {det,lane,plan}. Text tokens continue to use the original pretrained
+FFNs.Thisdesignpreservestransferableattentionwhileallowingtask-dependent
+feature transformations.
+3.4 Multi-Stage Training
+We adopt a three-stage training strategy for stable adaptation from pretrained
+VLMs to multi-task driving. In the first stage (Perception–language pre-
+training), we freeze the ViT encoder and train the mixed decoder with per-
+ception and text-generation objectives. The causal attention is fully fine-tuned,
+theLLMdecoderisadaptedviaLoRA,andtheperception-specificself-attention,
+perceptionFFNs,andMLPheadsarerandomlyinitializedandoptimized.Gradi-
+entsaredrivenbyperceptionandlanguagemodelinglosses,denotedasL pretrain =
+λpercLperc +Ltext. In the second stage (Planning adaptation), planning tokens
+are introduced. We optimize planning queries, the planning FFN, and the plan-
+ning MLP head in an end-to-end manner, while continuing LoRA adaptation of
+the LLM decoder. Perception-specific modules remain fixed. Gradients are pro-
+vided by planning and language modeling lossLadaptation =λ planLplan +Ltext. In
+the final stage (Joint finetuning), all modules, including the ViT encoder, are
+jointly fine-tuned under the combined perception, planning, and text objectives,
+with the overall training lossLjoint =λ percLperc +λplanLplan+Ltext, enabling full
+end-to-end optimization of the framework. For object detection [30,46,57,62],
+deeply supervision [27] is often applied to propagate gradients at every layer,
+where each decoder layer computes its own loss. Similarly, we employ deeply
+supervision for the planning task.
+4 Experiments
+4.1 Implement Details
+Datasets and Evaluation.We conduct experiments on two autonomous driv-
+ing benchmarks:nuScenesandNAVSIM.
+nuScenes[2]contains1,000urbandrivingscenes,eachapproximately20sec-
+onds long, captured with six surround-view cameras and a LiDAR sensor. The
+dataset provides 3D bounding box annotations for 10 object categories, along
+with high-definition semantic maps. We follow the standard split with 700 train-
+ing, 150 validation, and 150 test scenes. For perception supervision, we use 3D
+detection annotations and lane annotations derived from OpenLaneV2 [43]. To
+enrich language and reasoning signals, we additionally leverage the OmniDrive
+extension [47], which augments nuScenes with QA-style annotations spanning
+perception, prediction, and planning. For planning in the open-loop setting, we
+measure trajectory accuracy using the L2 displacement error and assess safety
+using collision rate.
