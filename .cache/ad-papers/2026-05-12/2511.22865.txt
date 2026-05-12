@@ -1,0 +1,736 @@
+SUPER-AD: Semantic Uncertainty-aware Planning
+for End-to-End Robust Autonomous Driving
+Wonjeong Ryu1, Seungjun Yu1, Seokha Moon2, Hojun Choi1,
+Junsung Park1, Jinkyu Kim,2 and Hyunjung Shim1
+1KAIST AI 2Korea University
+Abstract
+End-to-End (E2E) planning has become a powerful
+paradigm for autonomous driving, yet current systems re-
+main fundamentally uncertainty-blind. They assume per-
+ception outputs are fully reliable, even in ambiguous or
+poorly observed scenes, leaving the planner without an
+explicit measure of uncertainty. To address this limita-
+tion, we propose a camera-only E2E framework that esti-
+mates aleatoric uncertainty directly in BEV space and in-
+corporates it into planning. Our method produces a dense,
+uncertainty-aware drivability map that captures both se-
+mantic structure and geometric layout at pixel-level resolu-
+tion. To further promote safe and rule-compliant behavior,
+we introduce a lane-following regularization that encodes
+lane structure and traffic norms. This prior stabilizes trajec-
+tory planning under normal conditions while preserving the
+flexibility needed for maneuvers such as overtaking or lane
+changes. Together, these components enable robust and in-
+terpretable trajectory planning, even under challenging un-
+certainty conditions. Evaluated on the NAVSIM benchmark,
+our method achieves state-of-the-art performance, deliver-
+ing substantial gains on both the challenging NAVHARD
+and NAVSAFE subsets. These results demonstrate that our
+principled aleatoric uncertainty modeling combined with
+driving priors significantly advances the safety and relia-
+bility of camera-only E2E autonomous driving.
+1. Introduction
+End-to-End (E2E) planning has emerged as a scalable and
+data-driven paradigm for autonomous driving [4]. Unlike
+conventional pipelines, which train perception, prediction,
+and planning as disjoint modules, E2E systems learn these
+components jointly within a single differentiable architec-
+ture. This unified design enables direct mapping from raw
+sensor observations to driving trajectories, greatly reduc-
+ing manual engineering effort and unlocking richer driving
+strategies through holistic optimization.
+Despite its promise, current E2E systems exhibit a crit-
+ical structural weakness: they treat perceptual outputs as
+fully reliable and ignore the underlying uncertainty. When
+the perception module encounters uncertain scenarios (e.g.,
+ambiguous, dynamic, or poorly observed scenes), the plan-
+ner has no mechanism to recognize or compensate for this
+uncertainty. This can lead to unsafe decisions [3, 29, 37],
+such as entering non-drivable regions. (Fig. 1a). This issue
+is reflected in the high expected calibration errors observed
+in E2E systems, indicating a persistent mismatch between
+confidence and accuracy (Fig. 1b). Such miscalibration ex-
+poses a fundamental limitation of E2E planning and high-
+lights the importance of explicit uncertainty modeling to
+achieve safer and more reliable decision-making.
+Recently, several approaches have attempted to incor-
+porate uncertainty into planning. Sensor fusion meth-
+ods [6, 7, 19, 21, 23, 40] combine camera and LiDAR to
+reduce observational noise and improve 3D understanding.
+However, they still overlook the uncertainty in perception it-
+self, limiting their reliability during planning. Alternatively,
+HD map-based method [39] explicitly estimates both road
+boundary vectors and their confidence levels. While con-
+ceptually appealing, this method assumes that vector pre-
+dictions are sufficiently accurate to support meaningful un-
+certainty estimation. This leads to a paradox: uncertainty
+estimates become unreliable precisely in regions where they
+are most needed [5]. Additionally, their vector-centered, el-
+lipsoidal uncertainty representations are too rigid to capture
+the complex geometric and semantic richness of real-world
+driving scenes.
+To address these limitations, we propose a novel E2E
+framework that explicitly integrates perceptual uncertainty
+into the trajectory planning process. Our model computes
+uncertainty by sampling from the predictive distribution of
+the output logits from the semantic segmentation head in
+BEV space. By measuring the variance across sampled
+probabilities, the system derives a principled Bayesian esti-
+mate of perceptual uncertainty. The resulting semantic pre-
+dictions and uncertainty values are then fused into a high-
+resolution drivable score map. Each pixel in this map is cat-
+1
+arXiv:2511.22865v1  [cs.RO]  28 Nov 2025
+TransFuser [7] DiffusionDrive [23] OursWoTE [19]
+Pred Trajectory
+GT Trajectory
+Trajectories
+on Score map
+Trajectories
+on GT Seg map
+Low HighDrivable confidence score
+(a)
+0.1
+0.2
+0.3
+0.4
+0.5
+0.6
+Transfuser DiffusionDrive WoTE
+0.1997
+0.5108
+0.1795
+0.5567
+0.2145
+0.5590
+Drivable Area Compliance
+Non-drivable Area Compliance
+Expected Calibration Error
+(a) (b) (b)
+Figure 1. Illustration of overconfidence-induced misplanning. It shows that the model deviates from the correct path toward non-drivable
+regions, as confirmed by the drivable confidence score map where these areas receive undesirably high confidence, leading to overconfident
+misplanning. (a) shows representative examples of such failure cases, where the model is misled by overconfident predictions. (b) presents
+quantitative evidence capturing this general trend.
+egorized as drivable, non-drivable, or uncertain, with an as-
+sociated confidence score. This dense pixel-level represen-
+tation captures geometric layout in BEV and semantic con-
+text from segmentation outputs, enabling the planner to rea-
+son about uncertainty at pixel-level granularity. In contrast
+to prior works that treat uncertainty as a mere exclusion sig-
+nal, our model leverages it as contextual guidance, enabling
+flexible, interpretable, and risk-aware trajectory planning in
+complex driving environments.
+Although leveraging uncertainty enhances adaptability
+in complex scenarios, safe driving also depends on respect-
+ing road structure and traffic norms. E2E models learn
+directly from data, but essential norms such as lane fol-
+lowing are often implicit and underrepresented. Conse-
+quently, these models often drift toward lane boundaries or
+perform unsafe deviations, even in areas with high confi-
+dence. To address this, we incorporate a lane-following
+regularization term that encodes lane keeping as a safety
+prior [33, 35]. This term promotes alignment with the lane
+center under normal conditions, while still allowing neces-
+sary deviations, such as during overtaking or lane changes.
+By translating intuitive driving norms into explicit learn-
+ing constraints, our approach produces trajectories that are
+both uncertainty-aware and aligned with safe-driving prac-
+tices. This enhancement moves beyond simple avoidance
+of uncertain areas, yielding robust, safe, and human-aligned
+driving behaviors across diverse and challenging scenes.
+We validate our approach on the NA VSIM benchmark
+[2, 9], which features challenging real-world scenes under
+a non-reactive evaluation protocol. Our method achieves
+state-of-the-art performance, significantly outperforming
+prior works in both the NA VHARD [2] and NA VSAFE
+[31] subsets, which emphasize robustness and safety.
+These results empirically demonstrate that our camera-only
+method, which deeply integrates uncertainty understanding
+and lane-following priors, not only matches but surpasses
+sensor fusion baselines, offering a practical and safer
+alternative for large-scale autonomous driving deployment.
+In summary:
+• We model uncertainty in the Bird’s-Eye View (BEV)
+feature space. This process generates high-resolution
+uncertainty-aware drivable score map to guide trajectory
+planning (Sec. 3.1).
+• We introduce a lane-following regularization term to en-
+sure trajectory stability. This term acts as a rigorous sta-
+bilizing prior for the driving policy (Sec. 3.2).
+• Our camera-only approach achieves state-of-the-art per-
+formance on the NA VSIM benchmark. It shows sub-
+stantial improvements on challenging (NA VHARD) and
+safety-critical (NA VSAFE) splits.
+2. Related Work
+2.1. End-to-End Autonomous Driving
+End-to-End (E2E) autonomous driving has steadily ad-
+vanced alongside developments in perception technolo-
+gies such as Convolutional Neural Networks (CNNs) and
+Transformers. In particular, early methods stemmed from
+perception-based approaches that jointly addressed multiple
+tasks like detection and segmentation. For example, UniAD
+[13] integrated perception tasks to improve planning perfor-
+mance, while Transfuser [7] demonstrated the feasibility of
+end-to-end planning by fusing LiDAR and camera inputs
+using a Transformer.
+Subsequent research focused on scene representation
+and architectural efficiency. V AD [16] represented the scene
+through vectorization, which SparseDrive [32] extended
+into a sparse scene representation. DriveTransformer [15]
+proposed a Transformer-based parallelized architecture, and
+PARA-Drive [36] achieved state-of-the-art performance
+2
+Multi-view Images
+Transformer-based
+BEV Encoder
+Diffusion-based
+Trajectory Planner
+Trajectory sampling with uncertainty
+Trajectory planning
+BEV feats
+Object feats
+. . .
+Ego query
+ Status
+featEgo status
+Used Features
+flatten
+. . .
+Flatten BEV
+featsBEV feats
+Cross-Attn
+. . .
+Refined feats
+Q K, V
+Drivable
+Score map
+Seg 
+Head
+Trajectory
+Sampling
+Candidate TrajectoriesSampled
+Noisy trajectories
+Pred Trajectory
+Uncertainty
+Probability
+Figure 2. Overview of our framework at inference time. Our model first extracts Bird’s-Eye View (BEV) features from multi-view
+images. The segmentation head then uses these features to predict a distribution composed of logits and uncertainty. In parallel, the
+planner based on DiffusionDrive [23] estimates candidate trajectories using the encoder outputs, and ego vehicle features. After estimate
+trajectories, predicted distribution is utilized to evaluate the candidates. This weighting mechanism prevents trajectories from being sampled
+by penalizing those that pass through high uncertainty areas.
+and improved runtime efficiency by co-training the percep-
+tion, prediction, and planning modules. DRAMA [40] in-
+troduced the State Space Model in place of Transformers,
+implementing more efficient feature fusion and trajectory
+generation.
+More recently, there has been a diversification in mod-
+eling paradigms. DiffusionDrive [23] demonstrated strong
+performance by leveraging diffusion policies, while LAW
+[18] and WoTE [19] enhanced planning safety and inter-
+pretability using world model-based approaches. GraphAD
+[41] strengthened the understanding of interactions between
+surrounding objects via a graph structure. Additionally,
+models like FASIONAD++ [28], OpenDriveVLA [42], and
+Hydra-MDP [21] have expanded higher-order reasoning ca-
+pabilities and generalization through VLM integration or
+multi-teacher knowledge distillation.
+Despite this remarkable progress in end-to-end planning,
+existing methods still struggle to ensure safe and reliable
+driving in safety-critical scenarios. Therefore, this study
+aims to address this challenge by leveraging uncertainty.
+2.2. Uncertainty in Autonomous Driving
+Uncertainty estimation, broadly used in serveral tasks [26,
+30], has been introduced into autonomous driving. In line
+with this, one of the approaches [10] analyzes the influence
+of map uncertainty and emphasizes that explicitly consider-
+ing map estimation uncertainty leads to more robust predic-
+tions. Alternatively, MapDiffusion [25] represents uncer-
+tainty by repeatedly predicting vectorized maps and com-
+puting the variance across samples to generate an uncer-
+tainty map. Extending to depth level, GaussianLSS [24] ex-
+plicitly models depth uncertainty by learning the mean and
+variance of depth distributions, thereby improving the reli-
+ability of image-based depth estimation. In the trajectory
+level, CUQDS [14] proposed a framework that effectively
+mitigates predictive uncertainty under distribution shift con-
+ditions for trajectory prediction. Finally, UncAD [39] mod-
+els uncertainty using a Laplace distribution and provides
+practical guidelines into E2E framework.
+These recent studies have successfully modeled un-
+certainty in their respective ways. Following this recent
+trend in uncertainty representation [10, 39], our work pro-
+poses a Bayesian learning–based approach that estimates
+high-resolution drivable confidence map across the en-
+tire BEV feature space [17], which explicitly incorpo-
+rates uncertainty into the planning process. Although vector
+map–based methods are also effective, their uncertainty es-
+timation remains highly dependent on the accuracy of ini-
+tial vector predictions. In contrast, our approach operates
+over the entire feature space, enabling more reliable uncer-
+tainty quantification that contributes to planning safer tra-
+jectories.
+3. Method
+While LiDAR offers precise 3D geometry, its cost and hard-
+ware complexity hinder scalability. As a more scalable,
+camera-only approaches have emerged as a practical alter-
+native, and recent transformer-based models [20, 34, 38]
+convert multi-view images directly into Bird’s-Eye-View
+(BEV) features, enabling strong 3D representations.
+However, camera-based models inherently face higher
+perceptual uncertainty, which spans geometric and seman-
+tic uncertainties from raw sensor data. This perceptual un-
+certainty becomes pronounced under occlusions caused by
+objects or adverse weather and at long ranges, where ele-
+vated sensor noise significantly degrades the reliability of
+the measurement. In our method, we capture this percep-
+3
+tual uncertainty through the BEV segmentation head. Al-
+though the model predicts pixel-level semantic labels, each
+BEV pixel is anchored to a specific location and thus im-
+plicitly carries geometric information. We therefore treat
+the resulting semantic uncertainty on BEV pixels as a form
+of perceptual uncertainty.
+To mitigate the impact of this perceptual uncertainty, we
+propose a transformer-based BEV encoder that models per-
+ceptual uncertainty directly in the BEV map segmentation
+and propagates it to the planning. The perception mod-
+ule performs BEV map segmentation to represent the driv-
+ing scene and simultaneously conducts 3D object detec-
+tion to refine the geometric understanding of objects. No-
+tably, the segmentation head outputs both per-pixel classes
+and corresponding uncertainty estimates, enabling the net-
+work to recognize uncertain, ambiguous regions and miti-
+gate overconfidence in map prediction. These outputs are
+consolidated into an uncertainty-aware drivable score map.
+Segmentation classes are grouped into drivable and non-
+drivable sets, and each pixel is assigned a drivable score
+that quantifies the reliability of its assignment. As this un-
+certainty is computed in the perception module, our method
+is planner-agnostic and can be seamlessly integrated into
+diverse planning modules.
+Our planning module, built upon the DiffusionDrive [23]
+decoder, receives BEV features along with ego-vehicle and
+agent features to generate multiple candidate trajectories.
+Each candidate trajectory is then assigned a likelihood from
+the uncertainty-aware drivable score map, which serves as
+a weight that penalizes paths traversing uncertain or non-
+drivable regions. To prevent the planner from being bi-
+ased toward low uncertainty regions at the expense of ig-
+noring lane structures, we introduce a lane-following reg-
+ularization that encourages alignment with the lane center.
+As a result, our model produces robust and safe trajecto-
+ries even under uncertain scenarios, significantly reducing
+safety-critical failures.
+3.1. Uncertainty Model
+In this section, we describe constructing an uncertainty-
+aware drivable score map from the perceptual uncertainty
+to enable risk-aware trajectory planning. We model uncer-
+tainty densely across the entire BEV feature space because
+prior vector-map approaches represent it only at sparse
+boundary points. This design allows the planner to gener-
+ate safe trajectories not only about clearly drivable or non-
+drivable areas but also about ambiguous, uncertain regions
+where the environment cannot be confidently perceived. By
+providing this richer (denser) uncertainty representation,
+the planner can make safer and more informed trajectory
+decisions in complex scenes.
+To formally model this uncertainty based on conven-
+tional method [17] (See supplementary materials), we treat
+each BEV pixel’s class logits as a Gaussian distribution
+with a meanµ∈R H×W×K and a standard deviation
+σ∈R H×W×K . Theµdenotes the central estimate of the
+model prediction for each pixel, while theσrepresents the
+class-wise logit aleatoric uncertainty caused by factors such
+as sensor noise or occlusions. In this way, the model learns
+a distribution over predictions instead of producing a single
+deterministic output. This enables the model to account for
+the inherent uncertainty present in the scene. Accordingly,
+the training objective is defined as follows:
+Lperc =−log
+ 
+1
+T
+TX
+t=1
+softmax
+ 
+µ+σ⊙ε (t)
+y
+!
+.(1)
+According to this formulation,y i denotes the ground truth
+target for a given inputx i, andε (t) ∼ N(0,I)denotes i.i.d.
+standard gaussian noise used to sample logits through a dif-
+ferentiable change of variables. The loss approximates the
+expected softmax under the predicted gaussian over logits
+by sampling several logits from this distribution, applying
+the softmax to each, and averaging the resulting class prob-
+abilities. Since this sampling process introduces stochas-
+ticity that could hinder differentiability, we reparameterize
+the random logits so that gradients propagate through the
+stochastic variables while uncertainty is preserved in the
+forward pass.
+To propagate this perceptual uncertainty into the plan-
+ning, we incorporate it during the process of sampling can-
+didate trajectories. We first model uncertainty in the logit
+space, where the class-wiseσis defined for logits rather
+than probabilities. Its magnitude alone cannot be directly
+interpreted across classes, since even the sameσreflects
+different confidence levels depending on the corresponding
+µ. To obtain a consistent probabilistic interpretation, the
+logit distribution is mapped into probability space, and the
+expected probabilities¯pare computed as:
+¯p≈ 1
+T
+TX
+t=1
+softmax
+ 
+µ+σ⊙ε (t)
+.(2)
+The¯pcomputed via Monte Carlo sampling converts logit-
+level predictive distribution into probability space and pro-
+vides uncertainty-aware class probability estimates that the
+planner exploits for trajectory evaluation. Based on this
+probabilistic representation, the classes are grouped into
+drivableP drivable and non-drivable categories:
+¯ppos =
+X
+c∈Pdrivable
+¯pc,(3)
+Hgroup =−¯ppos log2
+ 
+¯ppos
+
+−
+ 
+1−¯ppos
+
+log2
+ 
+1−¯ppos
+
+.
+The group entropyH group quantifies decision ambiguity us-
+ing a binary cross-entropy formulation, normalized between
+4
+0 and 1. A value of 0 indicates full confidence, while 1 cor-
+responds to maximum uncertainty at¯ppos = 0.5. As a final
+step, we define a pixel-level safety scoreS saf e as follows:
+Ssafe = ¯ppos (1−H group) + 0.5Hgroup.(4)
+AsH group decreases to 0,S safe converges toward¯ppos,
+meaning the planner fully trusts the predicted drivable prob-
+ability. Conversely, asH group increases to 1,S safe moves
+toward 0.5, so the planner takes a more cautious and neutral
+decision under high uncertainty.
+For trajectory sampling, we project each candidate onto
+the uncertainty-aware drivable score map, defined byS safe
+in BEV space, and assign a score based on the minimum
+safety value along its path. The selection probability of
+each candidate is then weighted accordingly, and any path
+intersecting non-drivable pixels is discarded. This process
+prefers to prioritize with high drivable probability and low
+ambiguity. As a result, failure cases such as off-road driving
+are significantly reduced, demonstrating the enhanced capa-
+bility of the model for safer and more reliable planning.
+3.2. Lane-Following Regularization
+Uncertainty-aware planning encourages the vehicle to stay
+within drivable regions. However, such planning alone is in-
+sufficient to ensure that the resulting trajectories faithfully
+follow the intended lane structure. To mitigate this issue,
+a constraint to the lane centerline typically stabilizes be-
+havior [35], yet legitimate maneuvers such as turns or lane
+changes require the vehicle to intentionally deviate from the
+centerline. The planner, therefore, decides when to follow
+the lane center and apply the constraint only then. We in-
+troduce a two-part loss that produces guides to the model
+on when to follow the lane center and enforces adherence
+to the centerline when necessary.
+First, to learn the intent of following the lane, we define
+two masks. The first,M gt, indicates for each point on the
+expert trajectory whether it follows its lane centerline. The
+second,M pred, is the corresponding mask defined over the
+predicted trajectory points. To account for spatial misalign-
+ment between predicted and expert trajectories, each pre-
+dicted point ˆxt is matched to its nearest expert pointx gt
+π(t).
+The intent loss is computed as the L1 difference between
+the masks after this nearest-neighbor association:
+Lintent = 1
+Tpred
+TpredX
+t=1
+ Mpred(t)−M gt
+ 
+π(t)
+.(5)
+MinimizingL intent enables the model to learn when lane-
+following is appropriate.
+Next, we enforce geometric adherence to the lane cen-
+ter only at predicted points for which the matched expert
+points require lane following. Each such predicted point is
+projected into the BEV space, and we compute the pixel-
+level L2 distance to the nearest pixel labeled as the center-
+line class on the BEV segmentation map:
+Lcenter = 1
+Nc
+NcX
+t=1
+∥Π(ˆxt)− C center∥2,(6)
+whereN c is the number of predicted points required to fol-
+low the lane center,Π(·)denotes the projection into the
+BEV space, andC center represents the set of pixels labeled
+as the lane center class on the BEV segmentation map. This
+encourages those designated points to remain close to the
+lane centerline while avoiding penalties during legitimate
+deviations such as turns or lane changes.
+Finally, the lane-following regularization combines both
+components as follows:
+Llane =λ intent Lintent +λ center Lcenter.(7)
+The model first learns when to follow the lane center, and
+the loss subsequently penalizes any deviation precisely at
+those moments. This enhances both safety and robustness
+by acting as a stabilizing regularizer, especially by prevent-
+ing the planner tendency to veer from its lane to avoid high
+uncertainty regions.
+3.3. Objective Function
+The BEV objective aims to train the representation to be
+both semantics-balanced and geometry-aware by coupling
+segmentation with 3D detection. Specifically, the overall
+BEV lossL BEV augments the perception loss with Focal
+and Dice terms to mitigate class imbalance and preserve
+fine-grained structures. In addition, a 3D object detection
+loss injects explicit geometric supervision, encouraging the
+BEV features to encode the 3D dynamic properties of ob-
+jects. The objective is defined as:
+LBEV =λ perc Lperc+λfocal Lfocal+λdice Ldice+λdet Ldet,(8)
+whereλ perc, λfocal, λdice,andλ det balance the contribution
+of each term, and the resulting semantics-balanced and
+geometry-aware BEV encoder provides structured evidence
+for the planner.
+Building on this BEV feature, the planning module in-
+corporates uncertainty into the trajectory selection process
+and aligns the highest scoring trajectory with the expert.
+It scores each candidate trajectory by combining its class
+probabilities with the score map obtained in Sec. 3.1, and
+the classification term encourages the expert consistent can-
+didate to achieve the highest score. At the same time, the
+ranking loss enforces the correct order among predicted
+scores. After obtaining the highest scoring trajectory, the
+regression term minimizes the spatial gap between the se-
+lected and expert trajectories. The planning objective is ex-
+pressed as:
+Lplanning =λ cls Lcls +λ traj Ltraj +λ rank Lrank,(9)
+5
+Scene 
+A
+Scene 
+B
+DiffusionDrive [23] OursMulti-view frames
+ Transfuser [7]
+ WoTE [19]
+Non-Drivable area Drivable area Walkways Lane centerline Vehicle Pedestrian
+Pred Trajectory
+GT Trajectory
+Figure 3. Qualitative results on challenging scenes. SceneAdepicts a diverging lane entry where occlusions and viewpoint rotations
+increase uncertainty. SceneBinvolves safe lane changes in the presence of multiple objects, highlighting risk-aware planning.
+whereL cls,L traj, andL rank denote the classification, regres-
+sion, and ranking losses, respectively.
+Finally, the overall objective combines all components,
+including the lane-following regularization described in
+Sec. 3.2:
+Ltotal =L BEV +L lane +L planning.(10)
+Through this unified objective, the planner learns to avoid
+non-drivable and even uncertain regions by considering un-
+certainty, while maintaining safe and robust lane-following
+behavior.
+4. Experiments
+4.1. NA VSIM
+The NA VSIM dataset [2, 9] enables End-to-End (E2E)
+planning evaluation in real-world scenes using a non-
+reactive policy. It is constructed from OpenScene [8] a
+2Hz lightweight release of nuPlan [11] after filtering out
+simple scenes. As a result, NA VSIM provides a rigorous
+and complex setting. Although nuScenes [1] is another
+evaluation option, it is based on open-loop evaluation
+and predominantly contains simpler straight-forward
+scenes [22], thus we adopt NA VSIM to demonstrate the
+effectiveness of our method. Modeling uncertainty sub-
+stantially improves safety, particularly under challenging
+scenarios. Therefore, we provide further experimental
+evaluation using the NA VHARD [2] and NA VSAFE [31]
+splits of the NA VSIM test set.
+NA VHARD & NA VSAFE.NA VHARD is a test split as-
+sembled for the NA VSIM leaderboard by collecting chal-
+lenging scenes. It includes situations such as unprotected
+Table 1. Comparison of methods on PDM score (C: Camera, L:
+LiDAR).Bold: best; underline : second best. Results are reported
+on the NA VTEST split. The compared architectures are based on a
+ResNet-34 [12] backbone. The experiments were conducted using
+the NVIDIA RTX A6000.
+Method ModalityNC↑DAC↑EP↑TTC↑C↑PDMS↑
+V AD-v2 [6] C & L97.2 89.1 76.0 91.6100 80.9Transfuser [7]C & L97.9 92.8 79.2 92.8100 84.0DRAMA [40]C & L98.0 93.1 80.1 94.8100 85.5Hydra-MDP [21]C & L98.3 96.0 78.7 94.6100 86.5DiffusionDrive [23]C & L98.2 96.2 82.294.7100 88.1WoTE [19] C & L98.5 96.8 81.9 94.999.9 88.3
+UniAD [13] C 97.8 91.9 78.8 92.9100 83.4PARA-Drive [36]C 97.9 92.4 79.3 93.099.8 84.0LAW [18] C 96.4 95.4 81.788.7 99.9 84.6
+Ours C 98.1 97.0 81.5 93.999.8 87.7
+turns and dense traffic. At the same time, NA VSAFE is
+a safety-focused benchmark subset proposed by [31]. To
+construct NA VSAFE, the benchmark follows the NHTSA
+crash-scenario definitions [27] and identifies the corre-
+sponding frames within NA VTEST (the NA VSIM test split)
+via a semi-automatic pipeline. Accordingly, to evaluate ro-
+bustness under these challenging and safety-critical scenes,
+we additionally report results on both NA VHARD and
+NA VSAFE.
+4.2. Experiment Results
+We evaluated our proposed method on the NA VSIM bench-
+mark [2, 9], comparing it against several state-of-the-
+art methods. As presented in Tab. 1, which details the
+PDM score from the NA VSIM v1 benchmark [9], our
+approach significantly outperforms existing camera-only
+methods [13, 18, 36]. Furthermore, our camera-only ap-
+proach performs comparably with multi-modal systems. On
+the Drivable Area Compliance (DAC), we surpass the per-
+6
+Table 2. Comparison of methods on extended PDM score. (C: Camera, L: LiDAR).Bold: best; underline : second best. Split (a)
+corresponds to the full NA VTEST, whereas split (b) denotes its challenging subset, consisting of NA VHARD and NA VSAFE scenes.
+(a)
+Method Modality NC↑DAC↑DDC↑TLC↑ EP↑TTC↑LK↑C↑EC↑ EPDMS↑
+Human – 100 100 99.50 100 87.51 100 100 98.07 90.90 89.70
+Const – 84.83 22.62 52.78 99.64 79.01 81.69 70.74 96.95 65.44 9.90
+Transfuser [7] C & L 97.67 92.80 98.50 99.74 87.6296.54 95.88 98.30 89.05 80.40
+DiffusionDrive [23] C & L 98.21 96.24 98.67 99.82 87.50 97.30 97.02 98.3588.21 83.96
+WoTE [19] C & L 98.5396.83 97.9099.84 86.1997.8895.48 98.26 84.31 83.31
+Ours C 98.1497.25 98.7299.81 86.75 97.30 97.4798.28 86.07 84.26
+(b)
+Method Modality NC↑DAC↑DDC↑TLC↑ EP↑TTC↑LK↑C↑EC↑ EPDMS↑
+Human – 100 100 99.28 100 85.68 100 100 97.31 87.12 89.74
+Const – 84.83 22.62 52.78 99.64 79.01 81.69 70.74 96.95 65.44 9.90
+Transfuser [7] C & L 94.88 68.76 96.68 96.68 84.94 92.82 91.2097.4982.62 55.28
+DiffusionDrive [23] C & L 95.78 78.99 96.41 99.64 85.0993.0096.59 97.49 83.84 66.24
+WoTE [19] C & L 97.04 82.23 95.6999.82 81.7696.2394.4397.4975.87 67.27
+Ours C 97.44 83.75 97.4499.64 83.32 94.88 96.05 97.31 82.56 69.74
+Table 3. Ablations on extended PDM score (EPDMS;Bold: best;
+underline: second best) with NA VHARD & NA VSAFE split (C:
+Camera, L: LiDAR). We highlight the effect of map type (vector
+vs. segmentation) on performance. This table reports the EPDMS
+components associated with safety-critical aspects.
+Method ModalityNC↑DAC↑DDC↑TLC↑EPDMS↑
+DiffusionDrive [23]C & L95.78 79.89 96.41 99.6466.24
+Our BEV Enc C 95.60 73.43 96.14 99.6459.70Our BEV EncVector UncC 96.4173.0797.94 99.8259.02Our BEV EncSeg Unc C 95.7884.5697.6799.64 69.19
+Ours C 97.4483.7597.44 99.6469.74
+formance of systems that combine camera and LiDAR [7,
+19, 23]. This indicates that our method addresses the key
+factors for safe driving in a sensor-efficient manner.
+To examine driving quality across additional factors that
+matter for real-world trajectory planning, we further bench-
+mark on NA VSIM v2 [2], which covers a broader set of
+evaluation factors than NA VSIM v1 in Tab. 2a. Fig. 3 pro-
+vides visual evidence with representative NA VTEST split
+and shows safe driving in these scenes. Given our fo-
+cus on safety-critical situations, we also report results on
+the combined NA VHARD and NA VSAFE splits to empha-
+size performance in particularly challenging and safety-
+critical scenarios. In Tab. 2b, our method especially in-
+dicates the strongest performance in road-compliance fac-
+tors (e.g., DAC, DDC) and remains comparable elsewhere.
+Notably, the advantage becomes more pronounced on the
+NA VHARD & NA VSAFE splits. This result shows that our
+approach becomes particularly strong in challenging and
+safety-critical scenes due to high aleatoric uncertainty.
+4.3. Ablation Studies
+This ablation study investigates the individual contributions
+of our two proposals: uncertainty-aware planning and lane-
+following regularization, quantifying their effectiveness.
+Our model utilizes the planning module from Diffusion-
+Drive [23], paired with our custom Transformer-based BEV
+encoder (Our BEV Enc) that relies solely on camera in-
+put. We then incrementally employ our uncertainty-aware
+drivable score map and the lane-following regularization to
+our model to measure the resulting performance gains. To
+validate our approach in complex and safety-critical sce-
+narios, we conducted ablation studies on the challenging
+NA VHARD and NA VSAFE splits from the NA VTEST split.
+Incorporating uncertainty from the segmentation map
+leads to safer trajectory planning in challenging and safety-
+critical scenes. As illustrated in Fig. 4, although Scene
+A shows severe weather degrading perception, planning
+with uncertainty-aware drivable score map produces con-
+siderably risk-aware trajectories than the baseline that relies
+solely on segmentation map estimation without modeling
+uncertainty. Our uncertainty-aware planning method blocks
+entry into high uncertainty regions and ensures safe trajec-
+tories. In another case shown in Fig. 4 Scene B, aleatoric
+uncertainty induced by long range distance leads to er-
+rors near the boundaries of drivable areas. However, using
+the uncertainty-aware drivable score map, the planner ex-
+plicitly avoids such high uncertainty regions and produces
+safer trajectories. These qualitative observations clearly
+demonstrate the benefits of incorporating uncertainty into
+planning. Building on this observation, Tab. 3 further
+compares different uncertainty modeling approaches, show-
+ing that utilizing segmentation map uncertainty (Our BEV
+Enc Vector Unc) achieves better overall performance than vec-
+tor map uncertainty (Our BEV Enc Seg Unc). These results
+confirm that perceptual uncertainty is particularly effective
+in challenging and safety-critical scenarios.
+Our second methodology, lane-following regularization,
+ensures the planning of more robust trajectories. This ef-
+fect is indicated in Tab. 4, which reports both the overall
+7
+Ground Truth Prediction Score map Multi-view frames
+w/o Uncertainty
+w/ Uncertainty
+w/o Uncertainty
+w/ Uncertainty
+Scene A
+Scene B
+Figure 4. Qualitative results of our ablation study on uncertainty. The w/o Uncertainty employs the DiffusionDrive planning module with
+its perception module replaced by an camera-only BEV encoder. The w/ Uncertainty denotes our proposed method which incorporates
+uncertainty. The pink bounding boxes highlight how effectively the predicted trajectory leverages uncertainty.
+EPDMS score and the components related to trajectory ro-
+bustness. The model that employs only segmentation map
+estimation without uncertainty (Our BEV Enc Seg) serves
+as comparison model. When lane-following regularization
+is applied (Our BEV Enc Seg+Lane), the trajectories become
+noticeably more stable and reliable. This demonstrates the
+benefit of encouraging the planner to follow the lane center-
+line during trajectory planning. In conclusion, combining
+segmentation map uncertainty with lane-following regular-
+ization allows our approach to produce trajectories that are
+both safer and more robust.
+5. Conclusion
+We address safety-critical challenges in autonomous driv-
+ing by directly confronting the role of uncertainty in end-
+to-end planning. Our method explicitly models aleatoric
+uncertainty in the BEV representation and propagates it to
+the planner. This effectively prevents the system from gen-
+erating unsafe trajectories, such as going off-road. We also
+introduce a lane-following regularization that supplies driv-
+ing norms that are difficult to learn purely from data. It
+stabilizes the trajectory, supports consistent lane keeping,
+and promotes adherence to traffic rules even in uncer-
+tain situations. Together, these components yield plans
+that remain robust, interpretable, and aligned with safe-
+Table 4. Ablations on extended PDM score (EPDMS;Bold: best;
+underline: second best) with NA VHARD & NA VSAFE split (C:
+Camera, L: LiDAR). We examine the impact of incorporating
+lane-following regularization. This table focuses on the EPDMS
+components that specifically measure trajectory robustness.
+Method ModalityEP↑TTC↑LK↑C↑EC↑EPDMS↑
+DiffusionDrive [23]C & L85.09 93.00 96.59 97.49 83.8466.24
+Our BEV Enc C 84.16 93.54 94.08 97.4975.2159.70Our BEV EncSeg C 85.0293.89 94.97 97.4981.8066.55Our BEV EncSeg+LaneC 84.7894.0895.8797.6777.7867.78
+Ours C 83.3294.88 96.0597.3182.5969.74
+driving practices across a wide range of conditions. On the
+NA VSIM benchmark, our method outperformed existing
+state-of-the-art works. In particular, we prove the effective-
+ness of the proposed method by demonstrating significantly
+improved performance in safety-critical and challenging
+scenarios. This study represents a significant progress to-
+ward safe and reliable autonomous driving by effectively
+handling the inherent uncertainties of real-world environ-
+ments. Although our work focuses mainly on uncertainties
+arising from data and the perception pipeline, future exten-
+sions that incorporate uncertainties arising after perception
+or from the model could make the trajectories even more
+reliable.
+8

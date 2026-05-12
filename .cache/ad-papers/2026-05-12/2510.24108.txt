@@ -1,0 +1,604 @@
+ZTRS: ZERO-IMITATIONEND-TO-ENDAUTONOMOUS
+DRIVING WITHTRAJECTORYSCORING
+Zhenxin Li1,2, Wenhao Yao1, Zi Wang2, Xinglong Sun 2, Jingde Chen 2, Nadine Chang 2
+Maying Shen2, Jingyu Song 3, Zuxuan Wu1, Shiyi Lan 2, Jose M. Alvarez 2
+1Fudan University 2NVIDIA 3University of Michigan
+ABSTRACT
+End-to-end autonomous driving maps raw sensor inputs directly into ego-vehicle
+trajectories to avoid cascading errors from perception modules and to leverage
+rich semantic cues. Existing frameworks largely rely on Imitation Learning (IL),
+which can be limited by sub-optimal expert demonstrations and covariate shift
+during deployment. On the other hand, Reinforcement Learning (RL) has re-
+cently shown potential in scaling up with simulations, but is typically confined
+to low-dimensional symbolic inputs (e.g. 3D objects and maps), falling short
+of full end-to-end learning from raw sensor data. We introduce ZTRS (Zero-
+Imitation End-to-End Autonomous Driving with Trajectory Scoring), a frame-
+work that combines the strengths of both worlds: sensor inputs without losing
+information and RL training for robust planning. To the best of our knowl-
+edge, ZTRS is the first framework that eliminates IL entirely by only learning
+from rewards while operating directly on high-dimensional sensor data. ZTRS
+utilizes offline reinforcement learning with our proposed Exhaustive Policy Op-
+timization (EPO), a variant of policy gradient tailored for enumerable actions
+and rewards. ZTRS demonstrates strong performance across three benchmarks:
+Navtest (generic real-world open-loop planning), Navhard (open-loop planning
+in challenging real-world and synthetic scenarios), and HUGSIM (simulated
+closed-loop driving). Specifically, ZTRS achieves the state-of-the-art result on
+Navhard and outperforms IL-based baselines on HUGSIM. Code will be available
+athttps://github.com/woxihuanjiangguo/ZTRS.
+1 INTRODUCTION
+End-to-end autonomous driving, which aims to map high-dimensional sensor data into an ego-
+vehicle trajectory with a neural planner, has emerged as a critical research direction. Unlike modu-
+larized approaches, where a privileged planner relies on low-dimensional symbolic inputs (e.g. 3D
+objects and map information), end-to-end methods avoid cascading errors from perception mod-
+ules (Hu et al., 2023) and leverage rich semantic cues that privileged planners cannot access (Mu
+et al., 2024).
+Two main paradigms have emerged for training planners: Imitation Learning (IL) and Reinforce-
+ment Learning (RL). IL requires human demonstrations for training, while RL requires reliable
+simulation environments. In current research, RL-based methods can scale with massive simulation
+data (Cusumano-Towner et al., 2025; Jaeger et al., 2025) and simple rewards (Jaeger et al., 2025).
+They demonstrate more robustness compared with IL-based counterparts, which often face covariate
+shift during deployment and rely on human demonstrations that can be either noisy or sub-optimal.
+However, RL-based methods are still restricted to symbolic inputs. Scaling RL online with sen-
+sor data remains impractical: real-world exploration is unsafe, and large-scale sensor simulation is
+both costly and difficult to make realistic. For instance, diffusion-based world models (Guo et al.,
+2025; Agarwal et al., 2025) demand thousands of GPU hours just to approximate the scale of public
+datasets (Dauner et al., 2024).
+To achieve the best of both worlds: preserving rich sensor inputs and leveraging reinforcement
+learning for robust planning, we propose ZTRS:Z ero-Imitation End-to-end Autonomous Driving
+withTR ajectoryS coring, the first framework that eliminates imitation learning entirely from the
+end-to-end training pipeline.
+1
+arXiv:2510.24108v1  [cs.RO]  28 Oct 2025
+Neural Planner Neural Planner
+Low-Dimensional Symbolic Inputs
+(a) E2E IL-based Planners (b) RL-based Planners (c) ZTRS (Our Framework)
+Neural Planner
+Human Demonstrations
+High-Dimensional Real-World Images
+Trajectories
+ Trajectories
+Rewards
+Environment
+High-Dimensional Real-World Images
+Trajectories
+RewardsRule-based Scorer
+Figure 1:Comparisons between three paradigms for end-to-end autonomous driving.
+ZTRS builds on three pillars: data, rewards, and policy optimization. For the data pillar, since large-
+scale sensor data collection is difficult, we rely on offline driving datasets. This naturally transforms
+our problem into offline reinforcement learning (Levine et al., 2020), where the planner learns to
+maximize the reward at each data point. For the reward pillar, this offline setting aligns with the
+open-loop trajectory planning problem (Dauner et al., 2023; Li et al., 2024c; Dauner et al., 2024) in
+the end-to-end autonomous driving literature, so we adopt the widely-used open-loop planning met-
+rics (Dauner et al., 2024; Li et al., 2025b; Cao et al., 2025) as rewards, enabling efficient evaluation
+of safety, rule-compliance, and comfort.
+The final pillar is policy optimization. Without human demonstrations, policy optimization suffers
+from the cold-start problem, as random exploration in the continuous trajectory space is highly
+inefficient (Lillicrap et al., 2015). To address this, we propose Exhaustive Policy Optimization
+(EPO), a variant of policy gradient designed for offline data and enumerable action spaces. By
+enumerating a rich trajectory set as the action space, EPO provides dense supervision by optimizing
+each action in the trajectory set rather than randomly sampled actions. This formulation allows us
+to efficiently train a high-capacity planner entirely in the offline setting, without imitation learning
+or additional environment interaction.
+We evaluate ZTRS on three autonomous driving benchmarks: Navtest (Dauner et al., 2024) for
+generic real-world open-loop planning, Navhard (Cao et al., 2025) for planning in challenging real-
+world and synthetic scenarios, and HUGSIM (Zhou et al., 2024) for simulated closed-loop driving.
+Our experiments demonstrate that ZTRS exhibits general planning abilities comparable to IL-based
+planners while maintaining robustness in safety-critical driving situations. Notably, ZTRS estab-
+lishes a new state-of-the-art on the open-loop planning benchmark Navhard and outperforms IL-
+based baselines on the closed-loop driving benchmark HUGSIM.
+Our contributions are as follows:
+1. We introduce ZTRS, a zero-imitation end-to-end autonomous driving framework with tra-
+jectory scoring. This framework is the first to solely learn from rewards rather than human
+demonstrations, while operating fully on high-dimensional real-world images.
+2. We propose offline reinforcement learning with Exhaustive Policy Optimization, a variant
+of policy gradient tailored for enumerable actions and rewards. This optimization process
+allows us to efficiently train an end-to-end policy from scratch.
+3. We evaluate ZTRS on three benchmarks: Navtest, Navhard, and HUGSIM. ZTRS demon-
+strates strong planning performance compared with other IL-based trajectory scorers under
+different evaluation protocols (i.e. open-loop planning and closed-loop driving) and di-
+verse sensor data (i.e. real-world images and 3DGS-rendered images). It also achieves the
+state-of-the-art result on the challenging Navhard benchmark and outperforms IL-based
+baselines on HUGSIM.
+2
+Image
+Backbone
+Offline Sensor Data
+Trajectory Vocabulary
+Trajectory
+Tokenizer
+Rewards of All
+Trajectories
+Transformer
+Decoder
+Q
+KV
+Image Tokens
+Trajectory Tokens
+Scoring
+Heads
+Policy
+Head
+Scores
+Likelihoods
+Rule-based Scorer
+Figure 2:The Overall Framework of ZTRS.Given offline sensor data and a fixed set of trajec-
+tories, ZTRS first tokenizes these two modalities. In a Transformer Decoder, the trajectory tokens
+attend to image tokens to acquire the context. Finally, scoring heads and a policy head map the
+trajectory tokens to rule-based scores and action likelihoods.
+2 METHODOLOGY
+In this section, we elaborate on the framework and the policy optimization technique used in ZTRS.
+2.1 OVERALLFRAMEWORK
+As shown in Fig. 2, ZTRS is a trajectory scorer (Li et al., 2024b; 2025b;e; Wang et al., 2025; Sima
+et al., 2025; Yao et al., 2025; Li et al., 2025f), whose functionality is to score a discrete set of
+trajectoriesA={a i}n
+i=1 instead of regressing to a continuous trajectory. The discrete formula-
+tion sidesteps the need for exploring in a large continuous space, also facilitating efficient reward
+computation in an offline manner.
+ZTRS consists of five modules: an image backbone, a trajectory tokenizer, a Transformer Decoder,
+a policy head, and several scoring heads. The policy head produces probabilities for taking each
+action inA, while the scoring heads predict the scores for each open-loop metric in the Extended
+Predictive Driver Model Score (EPDMS,E) (Dauner et al., 2024; Li et al., 2025b; Cao et al., 2025).
+EPDMS evaluates multiple aspects of driving behavior (e.g., safety, progress, and rule compliance)
+and can be efficiently computed in an offline manner. Given a statessampled from an offline dataset
+D, wherescontains sensor data and ego-vehicle status, the forward process involves three steps:
+• The image backbone extractsLimage tokens{x i
+img}L
+i=1 from a frontal-view image, while
+the trajectory tokenizer encodes trajectory candidates into queries{x i
+traj }n
+i=1.
+• In the Transformer Decoder, the trajectory queries attend to image tokens.
+• The policy head maps the attended trajectory queries{x i
+traj }n
+i=1 to probabilitiesπ(·|s),
+andmscoring heads map them tomrule-based scores{S i(·|s)}m
+i=1.
+During training, the scoring heads are trained with binary classification losses againstE(s,·), while
+the policy head is trained with Exhaustive Policy Optimization (See Sec. 2.3). At inference, the final
+trajectorya∈ Ais chosen using a weighted average ofm+ 1scores:π(·|s)and{S i(·|s)}m
+i=1.
+2.2 PRELIMINARY:THEPOLICYGRADIENTTHEOREM
+To optimize a trajectory scorer with only rewards, we start with a simplified one-step policy opti-
+mization problem where the action space is a finite discrete setA, andπis a policy parameterized
+byθ. In the online RL setting (Sutton et al., 1998), the actionais sampled withπ(a|s), wheresis
+the current state. In our offline RL setting (Levine et al., 2020), the statesis sampled from an offline
+3
+datasetD. Following the notation of Schulman et al. (2015), the policy gradientgis defined as
+g:=E[Ψ(s, a)∇ θ logπ θ(a|s)],(1)
+where the advantage functionΨ(s, a)can represent many quantities, such as the cumulative return
+or the state-action value function. The gradient can be equivalently written as
+g=E[Ψ(s, a)∇ θ logπ θ(a|s)](2)
+=
+X
+a′∈A
+Ψ(s, a′)πθ(a′ |s)∇ θ logπ θ(a′ |s)(3)
+=
+X
+a′∈A
+Ψ(s, a′)πθ(a′ |s) ∇θπθ(a′ |s)
+πθ(a′ |s) (4)
+=
+X
+a′∈A
+Ψ(s, a′)∇θπθ(a′ |s).(5)
+This formulation matches the classical Policy Gradient Theorem (Sutton et al., 1999). Notably, the
+summation over all actions inAsuggests that if the advantage functionΨcan be computed for each
+action at states, policy optimization can be carried out directly on action likelihoods rather than
+log-likelihoods, as shown in Eq. 5.
+2.3 OFFLINEREINFORCEMENTLEARNING WITHEXHAUSTIVEPOLICYOPTIMIZATION
+When the action spaceAis a set of trajectories covering almost all driving possibilities, policy
+optimization can be formulated as maximizing the objective for an offline datasetD
+Es∼D, a∼A [Ψ(s, a)].(6)
+This is consistent with the one-step policy optimization problem in Sec. 2.2 ifΨis derived from
+open-loop reward signals, which do not require additional environment interaction. This objective
+can be optimized either in the log-likelihood form on a sampled action (Eq. 1) or in the likelihood
+form on the entire action space (Eq. 5). The latter formulation,
+g:=
+X
+a′∈A
+s∼D
+Ψ(s, a′)∇ θπθ(a′ |s)(7)
+provides much denser supervision for the policy. Eq. 7 also defines our proposedExhaustive Policy
+Optimization (EPO), a variant of policy gradient tailored for offline data and enumerable actions.
+Specifically, EPO optimizes the policy by exhaustively considering every possible actiona∈ Aand
+its respective advantageΨ(s, a). An overview of the pipeline is shown in Fig. 2.
+To compute the advantage functionΨ, we adopt the EPDMS metric scoreEfor its efficient and
+comprehensive evaluation of trajectories. Specifically,Ecan cover safety, rule-compliance, and
+progress for each state-action pair(s, a). The scoresE(s,·)can also be reused for each states∈ D
+since the action space is fixed throughout the training process. To further enforce temporal con-
+sistency, we subtract a correction termb(s t, at, at−1) =λ1[EC(a t−1, at)],whereλis a constant,
+at−1 =argmax
+a
+π(a|st−1), and EC indicates the violation of Extended Comfort (EC) thresholds (Li
+et al., 2025b):
+Ψ(st, at) =E(s t, at)−b(s t, at, at−1).(8)
+Note that this formulation penalizes inconsistent predictions more strongly than the one used in Li
+et al. (2025b); Cao et al. (2025). Finally,Ψis normalized to zero mean and unit variance follow-
+ing Huang et al. (2022); Shao et al. (2024).
+3 EXPERIMENTS
+3.1 DATASET AND METRICS
+Dataset.We conduct experiments on three benchmarks, including Navtest (Dauner et al., 2024),
+Navhard (Cao et al., 2025), and HUGSIM (Zhou et al., 2024).
+4
+Navtest (Dauner et al., 2024) is the evaluation dataset used in NA VSIM. NA VSIM contains 103k
+and 12k diverse and challenging driving scenarios for model training (Navtrain) and evaluation
+(Navtest), and introduces simulation-based metrics to better review closed-loop planning capability
+through open-loop evaluation. During evaluation, the output trajectory is evaluated by a simulator
+to get rule-based simulation metric scores related to multiple driving aspects, such as traffic rule
+compliance, comfort, and progress.
+Navhard (Cao et al., 2025) further proposes pseudo-simulation on the challenging scenarios in
+NA VSIM, extending the evaluation to a two-stage paradigm. The first stage follows the original
+NA VSIM evaluation, while the second stage adopts 3D Gaussian Splatting (3DGS) (Kerbl et al.,
+2023; Li et al., 2025c) to synthesize subsequent driving scenarios, resulting in 244 initial scenarios
+and 4164 synthetic scenarios.
+HUGSIM (Zhou et al., 2024) is a closed-loop driving benchmark featuring 3DGS-synthesized im-
+ages. It integrates multiple driving datasets, including KITTI-360 (Liao et al., 2022), Waymo (Sun
+et al., 2020), nuScenes (Caesar et al., 2020), and Pandaset (Xiao et al., 2021), into a collection of 345
+driving scenarios. These scenarios are categorized by difficulty into four levels: easy, medium, hard,
+and extreme. Specifically, HUGSIM released 49 easy scenarios for regular driving, 126 medium sce-
+narios with inserted vehicles, and 86 hard scenarios as well as 84 extreme scenarios with aggressive
+vehicles.
+Metrics.Navtest and Navhard evaluate open-loop planning with EPDMSE(s, a):
+E(s, a) =
+
+ Y
+m∈Spen
+m(s, a)
+
+ ·
+ P
+m∈Savg wm m(s, a)
+P
+m∈Savg wm
+!
+,(9)
+wheresis the current state andais a 4-second trajectory. The penalty metric setS pen is applied
+multiplicatively and includes No-at-fault Collisions (NC), Drivable Area Compliance (DAC), Driv-
+ing Direction Compliance (DDC), and Traffic Light Compliance (TLC), while the weighted metric
+setS avg contains Time-to-Collision (TTC), Ego Progress (EP), Lane Keeping (LK), and History
+Comfort (HC). The extended comfort (EC) from Li et al. (2025b) is also used as a weighted metric
+to promote temporally consistent driving.w m is the aggregation weight for metricm. Note that
+human filtering is used in Cao et al. (2025) for calculatingEbut not in our training. For HUGSIM,
+HD-Score is used for closed-loop evaluation. It aggregates Route Completion (RC) with NC, DAC,
+TTC, HC across an episode of lengthT:
+HD-Score=RC·
+TX
+t=1
+
+ Y
+m∈{N C,DAC}
+m(st,˜at)
+
+ ·
+ P
+m∈{T T C,HC} wm m(st,˜at)
+P
+m∈{T T C,HC} wm
+!
+,(10)
+where˜ais the ego-vehicle acceleration and steering angle transformed from a trajectory.
+3.2 IMPLEMENTATIONDETAILS
+All our models are trained on the Navtrain split with 24 NVIDIA A100 GPUs, while the synthetic
+data from Navhard and HUGSIM are not used for training. Models are trained for 15 epochs with a
+total batch size of 528, using a learning rate and weight decay of2×10 −4 and 0.0. The frontal view
+with center-cropped front-left and front-right views are concatenated as the input image, which is
+then resized to512×2048. The hyperparameterλin the correction termbis set to0.2. By default,
+the action space used in our method has 16384 trajectories, each spanning 4 seconds at 10Hz. These
+trajectories are obtained through K-means clustering on the nuPlan dataset (H. Caesar, 2021). Fol-
+lowing Li et al. (2024b; 2025b); Yao et al. (2025), we default to use the DD3D-pretrained (Park et al.,
+2021) V2-99 (Lee et al., 2019) as the image backbone in our experiments. The ViT-L Dosovitskiy
+et al. (2020) backbone is pretrained from Depth-Anything (Yang et al., 2024).
+3.3 QUANTITATIVERESULTS
+Table 1 reports performance on the challenging Navhard benchmark. Compared with IL-based
+methods, ZTRS achieves superior scores across most safety and comfort metrics, attaining the high-
+est overall EPDMS (45.5%) with the V2-99 backbone. Further, Tab. 2 shows performance on
+5
+Table 1:Performance on the Navhard Benchmark.PDM-Closed uses ground-truth symbolic
+inputs for planning, while other methods rely on sensor data.
+Method IL Backbone Stage NC DAC DDC TLC EP TTC LK HC EC EPDMS
+PDM-Closed (Dauner et al., 2023) - Stage 1
+Stage 2
+94.4
+88.1
+98.8
+90.6
+100
+96.3
+99.5
+98.5
+100
+100
+93.5
+83.1
+99.3
+73.7
+87.7
+91.5
+36.0
+25.4 51.3
+LTF (Chitta et al., 2022) ResNet34 Stage 1
+Stage 2
+96.2
+77.7
+79.5
+70.2
+99.1
+84.2
+99.5
+98.0
+84.1
+85.1
+95.1
+75.6
+94.2
+45.4
+97.5
+95.7
+79.1
+75.9 23.1
+DriveSuprim (Yao et al., 2025)
+V2-99 Stage 1
+Stage 2
+98.9
+87.9
+95.1
+88.8
+99.2
+89.6
+99.6
+98.8
+76.1
+80.3
+99.1
+86.0
+94.7
+53.5
+97.6
+97.1
+54.2
+56.1 42.1
+EV A-ViT-L Stage 1
+Stage 2
+98.7
+89.5
+98.0
+89.6
+99.1
+92.9
+99.8
+98.5
+75.9
+78.9
+98.7
+86.4
+94.7
+55.3
+97.6
+96.5
+49.8
+52.7 44.7
+ViT-L Stage 1
+Stage 2
+97.8
+90.3
+97.3
+88.9
+98.9
+90.8
+99.3
+98.9
+77.1
+81.1
+98.2
+87.4
+95.8
+54.2
+97.6
+95.1
+50.2
+48.3 43.4
+GTRS-Dense (Li et al., 2025f)
+V2-99 Stage 1
+Stage 2
+98.7
+91.4
+95.8
+89.2
+99.4
+94.4
+99.3
+98.8
+72.8
+69.5
+98.7
+90.1
+95.1
+54.6
+96.9
+94.1
+40.4
+49.7 41.7
+EV A-ViT-L Stage 1
+Stage 2
+97.6
+91.9
+95.8
+91.3
+99.7
+92.7
+99.8
+99.0
+77.2
+72.7
+97.8
+90.4
+95.3
+53.8
+97.3
+94.1
+46.7
+41.6 43.4
+ViT-L Stage 1
+Stage 2
+98.9
+91.5
+98.2
+90.8
+99.8
+94.7
+99.6
+98.5
+73.9
+70.8
+98.9
+90.1
+95.3
+55.4
+97.3
+97.2
+40.0
+54.2 45.3
+ZTRS (Ours)
+ViT-L Stage 1
+Stage 2
+98.6
+88.9
+96.7
+90.9
+99.8
+94.6
+99.8
+97.9
+72.1
+70.8
+98.0
+87.1
+95.6
+58.6
+97.6
+97.5
+51.6
+63.6 45.0
+V2-99 Stage 1
+Stage 2
+98.9
+91.1
+97.6
+90.4
+100.0
+95.8
+100.0
+99.0
+66.7
+63.6
+98.9
+89.8
+96.2
+60.4
+96.7
+97.6
+44.0
+66.1 45.5
+Table 2:Performance on the Navtest Benchmark.
+Method IL BackboneNC↑DAC↑DDC↑TL↑EP↑TTC↑LK↑HC↑EC↑ EPDMS↑
+Human Agent - - 100 100 99.8 100 87.4 100 100 98.1 90.1 90.3
+Ego Status MLP - 93.1 77.9 92.7 99.6 86.0 91.5 89.4 98.3 85.4 64.0
+Transfuser (Chitta et al., 2022)ResNet3496.9 89.9 97.8 99.7 87.1 95.4 92.7 98.3 87.2 76.7
+HydraMDP++ (Li et al., 2025b)
+ResNet3497.2 97.5 99.4 99.6 83.1 96.5 94.4 98.2 70.9 81.4
+V2-99 98.4 98.0 99.4 99.8 87.5 97.7 95.3 98.3 77.4 85.1
+ViT-L 98.5 98.5 99.5 99.7 87.4 97.9 95.8 98.2 75.7 85.6
+DriveSuprim (Yao et al., 2025)
+ResNet3497.5 96.5 99.4 99.6 88.4 96.6 95.5 98.3 77.0 83.1
+V2-99 97.8 97.9 99.5 99.9 90.6 97.1 96.6 98.3 77.9 86.0
+ViT-L 98.4 98.6 99.6 99.8 90.5 97.8 97.0 98.3 78.6 87.1
+ZTRS (Ours) V2-99 97.8 99.4 99.8 99.8 84.1 97.0 96.2 98.2 77.2 85.3
+ViT-L 98.2 99.1 99.7 99.8 86.9 97.5 96.6 98.2 78.2 86.2
+Table 3:Zero-shot Performance on the HUGSIM Benchmark.*Official results from Zhou et al.
+(2024) on both public and unreleased private scenarios. The rest are based on the public scenarios.
+Method Easy Medium Hard Extreme Overall
+RC HD-Score RC HD-Score RC HD-Score RC HD-Score RC HD-Score
+UniAD (Hu et al., 2023)*58.6 48.7 41.2 29.5 40.4 27.3 26.0 14.3 40.6 28.9V AD (Jiang et al., 2023)*38.7 24.3 27.0 9.9 25.5 10.4 23.0 8.2 27.9 12.3LTF (Chitta et al., 2022)*68.4 52.8 40.7 24.6 36.9 19.8 25.5 8.1 41.4 24.8
+LTF (Chitta et al., 2022)60.4 42.5 39.4 17.7 32.7 11.8 27.9 10.6 37.9 18.0GTRS-Dense (Li et al., 2025f)64.2 55.5 50.0 39.0 20.7 11.7 22.3 14.3 38.0 28.6ZTRS (Ours) 74.4 60.8 50.9 34.2 32.7 20.5 21.9 11.0 42.6 28.9
+the real-world Navtest benchmark. ZTRS achieves better open-loop planning performance than
+Hydra-MDP++ (Li et al., 2025b) with both V2-99 and ViT-L backbones, but still falls behind
+DriveSuprim (Yao et al., 2025), which utilizes more advanced data augmentation techniques and
+scoring architectures. Finally, Tab. 3 shows the zero-shot performance on the HUGSIM benchmark.
+Without adaptation to simulated data or closed-loop driving, ZTRS achieves the best RC and HD-
+Score on public scenarios, outperforming IL-based GTRS-Dense by 4.6% RC and 0.3% HD-Score.
+3.4 ABLATIONSTUDY
+In Tab. 4, we study the effects of different learning paradigms and targets. When using the tra-
+jectory with the maximum EPDMS score (i.e., ˆE=argmax
+a
+E(s, a)) as the imitation target, perfor-
+6
+Table 4:Ablation study on different learning paradigms and targets. ˆErepresents using the tra-
+jectory with the maximum ground-truth EPDMS as the imitation target, while ll and log-ll represent
+optimization with likelihoods over all actions and the log-likelihood over a sampled action.
+IL RL Target NC↑DAC↑DDC↑TL↑EP↑TTC↑LK↑HC↑EC↑ EPDMS↑
+Human 98.5 98.7 98.9 99.9 88.5 98.2 97.0 98.3 80.5 86.2
+ˆE 96.6 96.8 99.5 99.6 88.3 96.0 96.7 92.2 18.5 76.7
+llE 97.5 99.2 99.8 99.7 89.3 96.9 96.8 98.0 53.8 84.2
+llE −b 97.8 99.4 99.8 99.8 84.1 97.0 96.2 98.2 77.2 85.3
+log-llE −b 97.7 96.7 99.7 99.9 73.0 96.1 93.2 97.7 36.1 75.0
+Table 5:The relationship between the size of the action space and evaluation data.EPDMS 1
+measures the real-world portion of Navhard, while EPDMS2 measures the simulated portion.
+Backbone |A|for training|A|for inference
+Navtest Navhard
+EPDMS EPDMS 1 EPDMS 2 EPDMS
+V2-99
+8192 8192 84.6 73.3 57.4 43.0
+16384 16384 85.3 74.957.1 43.4
+16384 8192 82.0 74.260.7 45.5
+ViT-L
+8192 8192 84.6 73.7 55.9 41.9
+16384 16384 86.2 76.150.5 38.8
+16384 8192 84.3 73.459.9 45.0
+mance drops significantly compared to the IL baseline, as many trajectories inAcan achieve high
+EPDMS and a single target fails to capture the underlying pattern. Using likelihoods over the entire
+action space mitigates this issue, improving EPDMS by 7.5%, but introduces serious oscillation,
+as indicated by the low EC metric. This highlights the need for our correction termbto enforce
+temporal consistency. UsingE −bas the reward increases EC by 23.4%. In contrast, computing
+log-likelihoods over a sampled action fails to perform equally, which demonstrates the effectiveness
+of our EPO method in providing dense supervision for the entire action space.
+Tab. 5 shows the relationship between the size of the action space and evaluation data. We observe
+that models using the full action space during inference achieve the best results on real-world data,
+as reflected by EPDMS on Navtest and Navhard, while shrinking the action space improves perfor-
+mance on the simulated portion. This finding is consistent with GTRS (Li et al., 2025f): regardless
+of whether the model is trained with human demonstrations, reducing model complexity tends to
+enhance generalization on unseen simulated data.
+3.5 QUALITATIVERESULTS.
+Fig. 3 and Fig. 4 show visualization results on the open-loop planning benchmark Navtest and
+the closed-loop driving benchmark HUGSIM, respectively. Interestingly, ZTRS learns driving pat-
+terns that resemble human trajectories from rule-based rewards, though it is trained without human
+demonstrations. Moreover, ZTRS manages to navigate safely in safety-critical driving scenarios
+without training on simulated data, as shown in Fig. 4. Even under the extreme condition depicted
+in Fig. 4 (c), where the ego agent must overtake a parked car while facing an oncoming vehicle,
+ZTRS can safely complete the route. This demonstrates the strong closed-loop driving ability of
+ZTRS.
+4 RELATED WORK
+4.1 END-TO-ENDIMITATIONLEARNING FORAUTONOMOUSDRIVING
+Given an offline expert dataset, Imitation Learning (IL) trains a policy to mimic expert be-
+havior. In the end-to-end autonomous driving literature (Chen et al., 2024a), early IL-
+based approaches (Codevilla et al., 2018) proved effective in the closed-loop driving simulator
+7
+(c) Cautious driving near parked vehicles and pedestrians
+(b) Interactive lane changing
+(a) Long-term path following
+Figure 3:Visualizations of planned trajectories (blue curves) and the human trajectory (green
+curves) on the open-loop planning benchmark Navtest.
+(c) Overtaking with oncoming traffic
+(b) Overtaking a slow vehicle
+(a) Collision avoidance with rogue vehicles
+Figure 4:Visualizations of planned trajectories (orange dots) on the challenging closed-loop
+driving benchmark HUGSIM.
+CARLA (Dosovitskiy et al., 2017). Subsequent works improve the closed-loop driving performance
+with modern neural architectures (e.g. Transformers (Vaswani et al., 2017)) (Chitta et al., 2022),
+intermediate representations (Hu et al., 2022; Renz et al., 2022; Shao et al., 2023; Jia et al., 2023b),
+and policy distillation (Chen et al., 2020; Zhang et al., 2021; Wu et al., 2022; Jia et al., 2023a). The
+introduction of UniAD (Hu et al., 2023) highlighted the strength of IL on real-world sensor data,
+whose complexity and diversity greatly exceed synthetic data produced by simulators. Building on
+this foundation, numerous efforts further focus on efficiency (Jiang et al., 2023; Liao et al., 2025),
+multi-modal behaviors (Chen et al., 2024b; Liao et al., 2025), vision-language understanding (Wang
+et al., 2024; Li et al., 2025d), and safety constraints (Li et al., 2024b).
+8
