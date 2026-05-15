@@ -1,0 +1,725 @@
+Learning Vision-Language-Action World Models for Autonomous Driving
+Guoqing Wang1 Pin Tang1 Xiangxuan Ren1 Guodongfang Zhao2 Bailan Feng2 Chao Ma1†
+1 MoE Key Lab of Artificial Intelligence, AI Institute, Shanghai Jiao Tong University
+2 Central Research Institute, Huawei
+{guoqing.wang, pin.tang, bunny_renxiangxuan, chaoma}@sjtu.edu.cn
+{zhaoguodongfang, fengbailan}@huawei.com
+VLA-World
+Stage1VisualPretrain
+Stage2SupervisedFine-Tuning
+Stage3ReinforcementLearning
+480k
+20k
+20k
+Generatethedrivingworld.
+ObservationsFutureimagination
+Trytoexplorethedrivingworldstep-by-step.Perception->Generation->Think->PlanningColdStart
+Trytounderstandthedrivingworldbygeneration.
+ThinkwithGeneratedfuture
+NotableObject:truck at (0.31,10.57).
+PlanningTrajectory:[…,…,…]
+GenerationResults(↓)
+ReasoningResults(↓)
+CollisionRate(%)0.10
+0.17
+0.94
+1.09
+PotentialEffect:Safein1s.
+9.8
+Figure 1. Visual overview of VLA-World. The model learns through three progressive stages. We first activate visual generation by
+predicting future frames from multi-view inputs to learn generation knowledge. Then, we fine-tune the model to link perception, future
+generation, and planning to learn driving conceptual knowledge. Finally, we use reinforcement learning to refine decisions through interaction
+with generated futures to explore reasoning knowledge. The results on the right show that VLA-World achieves both the lowest collision rate
+and FID score, highlighting its strengths in future generation and driving-oriented reasoning.
+Abstract
+Vision-Language-Action (VLA) models have recently
+achieved notable progress in end-to-end autonomous driving
+by integrating perception, reasoning, and control within a
+unified multimodal framework. However, they often lack ex-
+plicit modeling of temporal dynamics and global world con-
+sistency, which limits their foresight and safety. In contrast,
+world models can simulate plausible future scenes but gener-
+ally struggle to reason about or evaluate the imagined future
+they generate. In this work, we present VLA-World, a simple
+yet effective VLA world model that unifies predictive imagi-
+nation with reflective reasoning to improve driving foresight.
+VLA-World first uses an action-derived feasible trajectory to
+guide the generation of the next-frame image, capturing rich
+spatial and temporal cues that describe how the surround-
+ing environment evolves. The model then reasons over this
+self-generated future imagined frame to refine the predicted
+†Corresponding author.
+trajectory, achieving higher performance and better inter-
+pretability. To support this pipeline, we curate nuScenes-GR-
+20K, a generative reasoning dataset derived from nuScenes,
+and employ a three-stage training strategy that includes pre-
+training, supervised fine-tuning, and reinforcement learning.
+Extensive experiments demonstrate that VLA-World consis-
+tently surpasses state-of-the-art VLA and world-model base-
+lines on both planning and future-generation benchmarks.
+Project page:https://vlaworld.github.io
+1. Introduction
+Recently, two major paradigms have gained attention in end-
+to-end autonomous driving: Vision-Language-Action (VLA)
+models [3, 16, 20, 30, 33, 42, 76, 84, 86] and World Mod-
+els [22, 28, 41, 44, 59–61]. Unlike traditional end-to-end
+pipelines [12, 13, 15, 25, 29] that learn perception and con-
+trol only from driving data, VLA models are built on power-
+ful Vision-Language Models (VLMs) [1, 2, 4, 5, 39, 40] pre-
+arXiv:2604.09059v1  [cs.CV]  10 Apr 2026
+VLAImagePrompt
+Action
+WorldModelImagePrompt
+PolicyAction
+(a) (b)VLA-World
+ImagePrompt
+Perception
+Short-termPredictionVisualGeneration
+ThinkAction
+(c)
+Figure 2. Comparison of the (a) VLA, (b) World Model, and (c)
+the proposed VLA-World paradigm.
+trained on large vision-instruction datasets. By combining
+perception, language-based reasoning, and action generation
+in an autoregressive manner, they offer strong generalization
+and scalability. World models focus on predicting how the
+environment will evolve by generating future frames. Using
+generative architectures, they learn latent spatiotemporal dy-
+namics that allow the models to anticipate upcoming events
+and support more informed decision-making.
+However, both paradigms face fundamental limitations.
+Existing VLA models [30, 53, 84, 86] inherently lack explic-
+itly spatiotemporal modeling of other dynamic agents in the
+driving scenes, making it difficult to predict the evolution of
+complex scenarios, a capability that is essential for safe and
+proactive driving. In contrast, world models typically rely
+on large-scale visual data to learn a prior distribution and
+then sample from it, without capturing the underlying causal
+relationships of the world effectively. As a result, they tend
+tosimulatethe world rather than trulyunderstandit.
+To address these limitations, recent works [ 11, 14, 63,
+65, 74, 77] have begun exploring unified architectures that
+integrate generation and understanding, using generation as
+a bridge to enhance latent representations. Building upon
+these works, we argue that an ideal paradigm for end-to-end
+autonomous driving should merge the spatiotemporal mod-
+eling strength of world models with the reasoning ability
+of VLA models. Such a pipeline would not only envision
+how the scene will evolve but also interpret and reflect on
+those imagined futures, much as human drivers do. A vivid
+driving example illustrates this intuition. When cruising on
+an open road, a human driver relies on quick, intuitive imag-
+ination, like world models, to predict the next few moments
+without conscious effort. But if a pedestrian suddenly steps
+into the lane, the driver immediately shifts into reflective
+reasoning: the mind simulates what would happen if the car
+kept moving at the same speed, evaluates the outcome, and
+then overrides the initial impulse to continue forward.
+We introduce VLA-World, a simple yet effective Vision-
+Language-Action World Model that not only generates short-
+term future frames conditioned on predicted short-term tra-
+jectories but also reasons over these imagined futures to
+assess potential risks. This enables more informed deci-
+sions and safer trajectory planning. Our key insight is that
+short-term predicted futures naturally encode rich spatiotem-
+poral information about how the scene will evolve, capturing
+both ego motion and the behaviors of surrounding agents,
+which are essential for reliable driving reasoning. As illus-
+trated in Figure 2, VLA-World follows a multi-step pipeline
+that includes perception, short-term prediction, generation,
+reasoning, and planning. VLA-World first perceives the
+environment by detecting relevant traffic participants and
+estimating distances to road boundaries. It then predicts the
+ego trajectory and driving direction for the next 0.5 seconds
+and generates the corresponding future frame based on these
+predictions. The model reasons over this generated future im-
+age to identify important agents and potential risks that may
+emerge. Finally, it outputs the appropriate driving decision
+along with the long-term trajectory. By integrating imagina-
+tion and reasoning within one framework, VLA-World can
+both anticipate and reflect on upcoming events, resulting in
+more human-like and safety-aware driving behavior.
+To support this pipeline, we curate a dataset from
+nuScenes [10], named nuScenes-GR-20K, specifically de-
+signed for generating future frames and reasoning condi-
+tioned on them. We further introduce a three-stage train-
+ing strategy to fully explore the reasoning capability, as
+shown in Figure 1. The process includes: (1) pretraining on
+large image–instruction datasets to activate visual generation
+knowledge, (2) supervised fine-tuning (SFT) on a multi-task
+mixed dataset to learn driving-related conceptual knowledge,
+and (3) reinforcement learning (RL) with Group Relative
+Policy Optimization (GRPO) to explore human-like reason-
+ing knowledge. This three-stage training pipeline maintains
+end-to-end policy consistency and enables joint optimization
+across all components, from future generation to reasoning
+and planning. Extensive experiments show that VLA-World
+significantly outperforms state-of-the-art VLA and world
+model baselines on both generation and reasoning bench-
+marks, highlighting the effectiveness and versatility of our
+approach. In summary, our contributions are as follows:
+• We introduce a simple yet effective VLA world model
+for autonomous driving that unifies predictive imagination
+and reflective reasoning in a single framework.
+• We curate nuScenes-GR-20K, a dataset for generation and
+reasoning, and propose a three-stage training strategy to
+fully unleash the intelligence of VLA-World.
+• We thoroughly evaluate VLA-World and show that it
+achieves strong performance on both future-frame gen-
+eration and planning benchmarks, outperforming previous
+VLA and world models.
+2. Related Work
+2.1. Vision-Language-Action Models
+Vision-Language-Action (VLA) models [ 6–8, 11, 17, 30,
+43, 45, 46, 53, 67, 81, 84, 86, 87] have achieved notable
+progress in robotics and autonomous driving, driven by
+the rapid advances of multimodal large language mod-
+els (MLLMs) [ 4, 5, 35, 36, 39, 40, 47, 54, 56]. Several
+works [50, 53, 58, 67] for autonomous driving leverage pre-
+trained LLMs to generate driving actions accompanied by
+textual rationales, thus can enhance the reasoning and inter-
+pretability of the model. DriveMoE [72] introduces a Mix-
+ture of Experts framework that dynamically selects special-
+ized networks to better handle diverse and complex scenarios.
+OmniDrive [57] presents a unified LLM-agent system that
+supports 3D perception, reasoning, and planning through
+a query-based 3D vision-language architecture and a new
+counterfactual benchmark. Inspired by the reasoning style
+of DeepSeek-R1 [19], several methods [30, 73, 81] incorpo-
+rate GRPO-based reinforcement learning [51] to strengthen
+reasoning and self-reflection in VLA models. Despite these
+advances, current VLA approaches still have limited tempo-
+ral understanding and weak world consistency, as they often
+map observations directly to actions without modeling how
+the environment evolves over time.
+2.2. World Models for Autonomous Driving
+Most existing world models [9, 32, 34, 59, 61, 64, 66, 69–
+71, 78–80, 83] for autonomous driving focus on generating
+driving-compliant videos from past image sequences and
+current actions. A pioneering work is DriveDreamer [ 59],
+which uses a diffusion-based framework to generate realistic
+future driving videos and predict subsequent actions. Driv-
+ingWorld [24] introduces a GPT-style world model for au-
+tonomous driving, featuring several spatial-temporal fusion
+mechanisms, which enable effective modeling of both spa-
+tial and temporal dynamics, facilitating high-fidelity, long-
+duration video generation. To maintain multi-view consis-
+tency due to the absence of an effective 3D spatial repre-
+sentation, OccWorld [78] leverages the past 3D occupancy
+observations to generate future 3D occupancy maps. Most
+existing world models focus on generating temporally con-
+sistent future scenes but lack explicit reasoning or action
+awareness, limiting their interpretability and decision relia-
+bility. Recently, FSDrive [74] introduces a spatiotemporal
+Chain-of-Thought (CoT) [48, 62] based on Qwen2-VL [68]
+model thatthinks visuallyby generating a future image frame
+as an intermediate reasoning step. Different from FSDrive,
+our proposed VLA-World integrates the predictive imagina-
+tion of world models with the reflective reasoning of VLA
+frameworks, enabling both accurate foresight and cognitively
+grounded decision-making for autonomous driving.
+3. Proposed Method
+In this section, we first introduce the preliminaries on VLA
+and world models. Then, we present the overview of VLA-
+World. Finally, we introduce the three training stages in
+order, shown in Figure 3: (1) visual pretraining, (2) super-
+vised fine-tuning, and (3) reinforcement learning.
+3.1. Preliminaries: VLA vs. World Models
+We consider an agent that drives in discrete time t=
+{1,2, . . .} with a fixed step ∆t (e.g., 0.5 s). At time t, the
+driving agent receives multi-view visual observations and its
+ego status ot ={I 1:K
+t , St}, where I k
+t ∈R H×W×3 denote
+the input images from camerak∈ {1, . . . , K} and St ∈R ds
+includes ego-velocity, acceleration, yaw rate, and other CAN
+signals. The agent is conditioned on a mission goal g (e.g.,
+left/right/forward). We denote the future waypoint trajectory
+in an ego-centric BEV coordinate as
+τt:t+H ={p t+1, pt+2, . . . , pt+H }, p t+h ∈R 2, (1)
+and the next-frame image (for a chosen camera or view) as
+xt+1. The action space can be low-level controls at (throttle,
+brake, steering) or a trajectoryτ t:t+H.
+VLA Models.The VLA models learn a direct mapping from
+history observations and goals to trajectories as πθ(τt:t+H |
+o1:t, g). This paradigm unifies perception, reasoning, and
+planning within a large language or multimodal language
+model framework. Similar to a one-stage end-to-end au-
+tonomous driving pipeline, it can be trained purely on large-
+scale trajectory data, making the overall optimization highly
+concise and efficient. However, VLA lacks explicit mod-
+eling of temporal dynamics and world consistency, which
+causes the model to focus mainly on the ego vehicle while
+neglecting the motion modeling of other traffic participants,
+an essential component that must be captured in end-to-end
+autonomous driving pipelines [13, 25, 29].
+World Models.World models aim to capture the latent dy-
+namics of the surrounding environment by predicting how
+the world evolves under actions. Formally, it learns a tran-
+sition distribution pψ(wt+1 |w t, at), where wt is a latent
+state summarizing past observations o1:t, and at is the action
+taken by the agent. The latent state is typically obtained
+through an encoder, and the model can reconstruct or imag-
+ine future observations through a decoder. Intuitively, a
+world model serves as an internal simulator that allows an
+agent todreamplausible futures, visualizing potential out-
+comes of its actions without physically interacting with the
+environment. By repeatedly rolling out {wt+1, wt+2, . . .},
+the model can perform long-horizon prediction and reason-
+ing in latent space. While conventional world models are
+strong at temporal prediction and future imagination, they
+usually lack reflective reasoning, meaning they can simulate
+what may happen but cannot assess whether those imagined
+futures are safe, feasible, or desirable.
+VLM
+(a) Visual Generation Activation
+VLMCondition-guidedGeneration
+Drivingperception.
+Generate next frontframe.
+Frontobjectdetected,position:(x,y),type:Truck…
+(b) Supervised Fine-Tuning
+VLM
+Q: Output the perception results, next frame, action and trajectory.
+Policy Update
+(c) Reinforcement Learning 
+(d) Inference 
+Image-prompt
+A: <Perception> … </Perception>    <Prediction> …  </Prediction>    <Visual>...</Visual>    <Think> …         </Think><Action>…</Action>    <Answer>… </Answer>
+Condition
+Short-termprediction.
+ PredictedTrajectory0.5slateris(x,y),directionxxx…VisualTokens:<|9382|><|10020|>….<|4219|>
+Action:KeepTrajectory:[(x1,y1),…,(x2,y2)]
+VisionTokensDecodingAutoregressivePrediction
+VLM
+NotableObject:NonePotentialEffect:NoneReason on the predictedimage.Output trajectories.
+VLM
+Figure 3. The illustration of the three-stage training and inference pipeline of VLA-World. Our training pipeline consists of three key
+stages: (a) visual pretrain to activate generation capability, (b) supervised fine-tuning to seed conceptual knowledge to the model, and (c)
+reinforcement learning with GRPO to explore higher performance like humans.
+3.2. Vision-Language-Action World Model
+VLA-World is a unified framework that combines the
+strengths of VLA and world models to improve decision-
+making in autonomous driving. It harnesses the predictive
+imagination of world models to simulate future scenarios
+and refines these predictions through reflective reasoning, en-
+abling more accurate, interpretable, and safety-aware driving
+decisions. We formulate this paradigm as
+p(τt:t+H ,xt+1 |o 1:t, g) =
+p(τt:t+H |o 1:t, g)| {z }
+decision / policy
+·p(x t+1 |o 1:t, τt+1)| {z }
+imagination / world model
+, (2)
+where τt+1 conditions the near-future evolution. Pure VLA
+models focus on the left factor, and pure world models focus
+on the right factor. For safe and interpretable driving, re-
+flective thinking is needed: after imagining ˆxt+1, the policy
+should query future evidence and revise its plan accordingly.
+Given a sequence of observations o1:t and a mission goal
+g, VLA-World first predicts an initial future trajectoryˆτt:t+1.
+Conditioned on this predicted trajectory and the past ob-
+servations, the model then imagines the expected visual
+observation at the next time step:
+ˆxt+1 ∼p ψ(xt+1 |o 1:t,ˆτt:t+1). (3)
+The generated image ˆxt+1 represents the anticipated near-
+future view under its current plan. Rather than treating visual
+generation as an auxiliary output, we use this imagined future
+as an explicit cue for reflective reasoning:
+˜τt:t+H =f ref(o1:t,ˆxt+1,ˆτt:t+1), (4)
+where fref denotes the reflective reasoning module. This
+refinement step preserves the intent of the initial prediction
+while correcting decisions that are unsafe or inconsistent
+with the self-generated future. The final trajectory ˜τt:t+H
+therefore reflects both the model’s predicted dynamics and
+its reasoning over the imagined future scene.
+Intuitive Insight.Our core insight enablesthinking and
+reflection through future images generated from short-term
+predicted trajectories. First, the model produces an intuitive
+short-term plan that samples the high-dimensional future
+into a reasonable and trustworthy space. It then visualizes
+the intuitive outcome on its sketchpad, which contains rich
+spatiotemporal cues. Most importantly, the model explicitly
+reflects on the content of its own generated images to identify
+potential risks that intuition might have overlooked. This
+closed loop from simulation to reflection allows the model
+to first act on intuition to find a path and then thoughtfully
+evaluate its consequences to seek the optimal solution.
+3.3. Visual Pretraining of VLA-World
+Following the alignment strategy of FSDrive [74], our visual
+pretraining stage aims to activate both the visual understand-
+ing and visual generation abilities of VLA-World, allowing
+the model to interpret complex driving scenes and imagine
+their short-term evolution. Unlike FSDrive, which gener-
+ates future frames only for the front view, our pretraining
+stage explicitly enforces multi-view consistency, enabling
+the model to later produce coherent future images from any
+camera viewpoint required in the SFT and RL stages.
+Formally, given a multi-view image set I={I k
+t }K
+k=1
+and an instruction L describing the desired view or driving
+intent (e.g., generate CAM_FRONT_LEFT 0.5 s later), the
+model learns to predict the next visual token sequence Qk
+t+1
+through autoregressive next-token prediction:
+P(Q k
+t+1) =
+NY
+i=1
+Pθ(qk
+i |q k
+<i, ht, L), (5)
+where ht =f ϕ(It, St) encodes the current multi-view ob-
+servations and ego stateS t, andq k
+i denotes thei-th discrete
+token of the VQGAN [18, 55] codebook for camera k. The
+generated tokens can be decoded into future images ˆI k
+t+1
+using the visual tokenizer of VQGAN.
+This formulation allows the model to learn how each cam-
+era view evolves based on motion and control cues, giving it
+a unified spatiotemporal prior across all perspectives. This
+design ensures that in downstream tasks, when the planner
+predicts a short-term trajectory and requests the correspond-
+ing future view (such as turning left, turning right, or going
+forward), the pretrained generator can produce consistent
+and physically plausible images from any viewpoint. In this
+way, we extend FSDrive into a multi-view, goal-conditioned
+world model, creating a strong foundation for reflective rea-
+soning and safety-aware planning in later stages.
+3.4. Supervised Fine-Tuning of VLA-World
+We perform supervised fine-tuning to seed driving concep-
+tual knowledge into the base model through imitation learn-
+ing, following thegeneration-to-thinkparadigm. To achieve
+this, we train VLA-World on a comprehensive multi-task
+mixed dataset that is carefully designed to cover several
+essential learning objectives.
+Perception.The perception module acts as the visual
+grounding stage of VLA-World, converting raw multi-view
+inputs into structured spatial and semantic representations
+that support later short-term prediction and reasoning. Using
+six camera-view images together with ego status, it detects
+surrounding dynamic agents such as vehicles and pedestrians,
+estimates their 3D positions, possible motion paths, road-
+shoulder distances, and drivable-area boundaries. These
+outputs form a scene-level world state, a compact and in-
+terpretable summary that captures object categories, spatial
+layout, and motion cues, providing the foundation for ego-
+trajectory prediction and reflective reasoning to ensure safety
+and consistency in future scenarios.
+Short-term Prediction.The short-term prediction module
+transforms the current perception results and ego status into
+near-future estimates of how the world will evolve, providing
+the basis for trajectory planning and temporal consistency
+in VLA-World. Using the history of ego states, it predicts
+the next waypoint and driving direction at regular intervals,
+for example, every 0.5 seconds. By explicitly modeling
+short-horizon dynamics, this module supports the visual
+generation step that imagines the corresponding future frame
+and ensures that the predicted trajectories remain smooth,
+temporally coherent, and physically plausible.
+Condition-guided Generation.The generation module
+serves as the imagination core of VLA-World, transforming
+the predicted trajectory and direction into a fixed number
+of visual tokens of the near future. Conditioned on the en-
+coded scene context o1:t and the predicted waypoint ˆτt+1,
+this module generates the next-frame imageˆxt+1, effectively
+visualizing how the environment is expected to evolve if the
+planned trajectory were executed, expressed as a compact
+set of visual tokens that encode spatial layout, object motion,
+and lighting continuity. By bridging low-level perception
+and high-level reasoning, this module not only offers inter-
+pretable evidence for the agent’s future state but also supplies
+the reflective reasoning module with a concrete scene hypoth-
+esis to evaluate for safety and consistency. This imagination
+step thus enables VLA-World to couple action-conditioned
+prediction with visual foresight, forming the foundation for
+reflective refinement in subsequent stages.
+Thinking with Visual Tokens.The thinking module embod-
+ies the reflective reasoning process of VLA-World, bridging
+imagination and decision refinement through causal interpre-
+tation of the generated future. After the generation module
+produces the next-frame prediction ˆxt+1, the reflective rea-
+soning analyzes salient entities, motion cues, and potential
+interactions to assess environmental risks and behavioral im-
+plications. This reflective process transforms visual evidence
+into situational understanding, quantifying safety margins,
+anticipating conflicts, and validating trajectory feasibility.
+Functionally, the think module serves as the cognitive layer
+of VLA-World, enabling the agent not only to predict what
+will happen but also to reason about whether it should hap-
+pen, thus providing the foundation for trajectory refinement
+and safety-aware action in the subsequent stage.
+Action and Trajectory Planning.These two modules con-
+stitute the final outputs of VLA-World, transforming reflec-
+tive understanding into concrete driving behavior. After the
+think module evaluates the safety and feasibility of the pre-
+dicted scenario, the model determines the appropriate action
+policy or maneuver that aligns with both the mission goal
+and reflective reasoning outcomes. Then, we translate this
+high-level action into a sequence of explicit spatial way-
+points ˜τt:t+H, representing the refined ego-trajectory at 0.5
+s intervals over a 3s horizon. Together, these stages close the
+perception–prediction-imagination–reflection–actionloop
+of VLA-World, ensuring that final decisions are both context-
+aware and future-consistent, executing maneuvers that are
+not only physically feasible but also reflectively validated
+for safety and goal alignment.
+3.5. Reinforcement Learning of VLA-World
+Building on the SFT-trained model, we further adopt
+GRPO [51] algorithm to strengthen the advanced reasoning
+and decision-making capabilities of VLA-World. As shown
+in Figure 3, this phase shifts the model from following prede-
+fined reasoning patterns to dynamically formulating optimal
+planning strategies through an iterative and self-correcting
+process. For each input prompt, GRPO samples a diverse
+set of candidate responses from the current policy. Then, we
+carefully designed a collection of rule-based reward func-
+tions to assess the quality of these responses across the entire
+VLA-World pipeline, spanning perception, short-term pre-
+diction, visual generation, and planning:
+Format Reward ( Rf mt).This reward enforces a well-
+structured output format. The perception description should
+appear inside the <Perception> tag, the short-term tra-
+jectory and driving direction inside the <Prediction>
+tag, the generated visual tokens inside the <Visual> tag,
+the reasoning content inside the <Think> tag, and the fi-
+nal high-level action and three-second trajectory within the
+<Action>and<Answer>tags.
+Short-term Prediction Reward ( Rpred).This reward
+serves two purposes: (1) it encourages accurate prediction
+of the short-term trajectory and heading, which conditions
+future frame generation; and (2) it enforces consistency be-
+tween the 0.5-second prediction and the refined long-term
+trajectory produced after reasoning.
+Visual Constrain Reward (Rvis).This reward ensures that
+the number of generated visual tokens matches the required
+length for correct image reconstruction. In addition, every
+token must correspond to a valid entry in the visual codebook
+to guarantee a decodable and meaningful generated frame.
+Action Reward ( Ract).To assess the correctness of the
+predicted high-level action, we compute a reward derived
+from the F1 score, which provides a balanced evaluation of
+precision and recall relative to the ground truth action set.
+Trajectory Reward (Rtraj).This reward ensures that the
+predicted trajectory over the final three seconds is accurate
+at each interval, while also enforcing kinematic consistency.
+For example, for an agent moving smoothly, the changes in
+acceleration should remain very small.
+The final reward is computed as a weighted combination
+of all the above components:
+Rall =λ fmt·Rfmt+λpred·Rpred+λvis·Rvis+λact·Ract+λtraj·Rtraj .
+(6)
+Overall, this training stage guides VLA-World toward pro-
+ducing outputs that are structurally correct, short-term pre-
+diction reasonable, visually coherent, and behaviorally safe,
+ultimately enabling more reliable driving decisions.
+4. Experiments
+4.1. Experimental Setup
+Datasets and Metrics.We conduct experiments on
+nuScenes dataset [10] following the traditional end-to-end
+methods [13, 25, 29], VLA [ 27, 57, 74] and world mod-
+els [31, 59, 61, 80]. We curate a nuScenes-GR-20K dataset,
+including 20K samples for generating future frames and rea-
+soning conditioned on them for SFT and RL stages. We
+evaluate trajectory planning performance using L2 displace-
+ment error and collision rate, following established protocols
+in prior studies [13, 23, 29, 57, 74]. In addition, consistent
+with prior works for generation [ 59, 61], we employ the
+Fréchet Inception Distance (FID) to evaluate the visual qual-
+ity of generated future frames. More details are listed in the
+supplementary materials.
+Implementation Details.We initialize our model with
+Qwen2-VL-2B [56] following FSDrive [74]. All training is
+conducted on 8×80 GB GPUs using the PyTorch frame-
+work. During the pretraining stage, the model is trained
+for 30 epochs using AdamW with an initial learning rate of
+5×10 −4, a per-device batch size of 16. For supervised fine-
+tuning, we train the model for 12 epochs with AdamW and
+an initial learning rate of 1×10 −4. Starting from the SFT
+checkpoint, the model undergoes an additional optimization
+phase using the GRPO for one epoch. The policy is trained
+with a learning rate of 1×10 −6 and a global batch size of
+16. For each prompt, we sample 8 candidate responses to
+estimate the policy gradient. More implementation details
+can be found in supplementary materials.
+4.2. Main Results
+End-to-End Trajectory Planning.We evaluate our method
+with both non-autoregressive and autoregressive baselines
+using ST-P3 and UniAD metrics on nuScenes. VLA-World
+achieves the best overall performance on both benchmarks,
+showing the lowest average L2 error and collision rate among
+autoregressive methods. Compared with non-autoregressive
+planners such as BEV-Planner [38] and UniAD [25], VLA-
+World maintains better performance while producing more
+stable long-horizon predictions, benefiting from its genera-
+tive world-model architecture. Unlike FSDrive, which di-
+rectly regress future waypoints without evaluating physical
+feasibility, VLA-World integrates short-term imagination
+with reflective correction, leading to stronger foresight and
+reduced temporal drift. The improvements are most pro-
+nounced at 3-second horizons, where traditional VLA mod-
+els tend to accumulate error. Overall, these results confirm
+that the proposed framework, combining action-conditioned
+future frame generation with reflective trajectory refinement,
+yields significant gains in both safety and trajectory fidelity,
+establishing VLA-World as a state-of-the-art method for
+autonomous driving.
+Table 1. End-to-end trajectory planning results on nuScenes [10]. We evaluate L2 error and collision rate following the respective protocols
+of ST-P3 [23] and UniAD [25]. The ∗ indicates the use of additional ego-state information. Results for V AD [29] and UniAD [25] are taken
+from BEV-Planner [38].
+Method
+ST-P3 metrics UniAD metrics
+LLML2 (m)↓Collision (%)↓L2 (m)↓Collision (%)↓
+1s 2s 3s Avg. 1s 2s 3s Avg. 1s 2s 3s Avg. 1s 2s 3s Avg.
+Non-Autoregressive methods
+ST-P3*[ECCV22][23] 1.33 2.11 2.90 2.11 0.23 0.62 1.27 0.71 - - - - - - - - -
+V AD[ICCV23][29] 0.69 1.22 1.83 1.25 0.06 0.68 2.52 1.09 - - - - - - - - -
+V AD*[ICCV23][29] 0.17 0.34 0.60 0.37 0.04 0.27 0.67 0.33 - - - - - - - - -
+UniAD[CVPR23][25] - - - - - - - - 0.59 1.01 1.48 1.03 0.16 0.51 1.64 0.77 -
+UniAD*[CVPR23][25] - - - - - - - - 0.20 0.420.75 0.46 0.02 0.25 0.84 0.37 -
+BEV-Planner[CVPR24][38] 0.30 0.52 0.830.55 0.10 0.37 1.30 0.59 - - - - - - - - -
+BEV-Planner*[CVPR24][38] 0.16 0.32 0.570.350.000.29 0.73 0.34 - - - - - - - - -
+PreWorld[ICLR25][37] - - - - - - - - 0.49 1.22 2.32 1.34 0.19 0.57 2.65 1.14 -
+Autoregressive methods
+ELM[ECCV24][85] - - - - - - - - 0.34 1.23 2.57 1.38 0.12 0.50 2.36 0.99 BLIP2-2.7B
+FeD*[CVPR24][75] - - - - - - - - 0.27 0.53 0.94 0.580.00 0.040.52 0.19 LLaV A-7B
+OccWorld[ECCV24][78] 0.39 0.73 1.18 0.77 0.11 0.19 0.67 0.32 0.52 1.27 2.41 1.40 0.12 0.40 2.08 0.87 GPT3-like
+Doe-1[arxiv24][80] 0.37 0.67 1.07 0.70 0.02 0.14 0.47 0.21 0.50 1.18 2.11 1.26 0.04 0.37 1.19 0.53 Lumina-mGPT-7B
+RDA-Driver*[ECCV24][26] 0.17 0.37 0.690.40 0.01 0.05 0.26 0.10 0.23 0.73 1.54 0.800.000.13 0.83 0.32 LLaV A-7B
+EMMA*[arxiv24][27] 0.14 0.29 0.54 0.32 - - - - - - - - - - - - Gemini 1.0 Nano-1
+OmniDrive[CVPR25][57] 0.40 0.80 1.32 0.84 0.04 0.46 2.32 0.94 - - - - - - - - LLaV A-7B
+OmniDrive*[CVPR25][57] 0.14 0.29 0.550.330.000.13 0.78 0.30 - - - - - - - - LLaV A-7B
+FSDrive[NeurIPS25][74] 0.28 0.52 0.80 0.53 0.06 0.13 0.32 0.17 0.40 0.89 1.60 0.96 0.07 0.12 1.02 0.40 Qwen2-VL-2B
+FSDrive*[NeurIPS25][74] 0.14 0.25 0.46 0.28 0.03 0.060.21 0.10 0.18 0.39 0.77 0.450.000.06 0.42 0.16 Qwen2-VL-2B
+VLA-World (ours)0.11 0.27 0.52 0.30 0.000.030.26 0.10 0.38 0.74 1.38 0.83 0.02 0.08 0.36 0.16 Qwen2-VL-2B
+VLA-World* (ours) 0.10 0.24 0.45 0.260.02 0.050.18 0.08 0.10 0.350.80 0.420.01 0.050.30 0.12 Qwen2-VL-2B
+Table 2. Comparison of future frame generation results with different generative models evaluated by FID (↓) on the nuScenes [10] dataset.
+Method DriveGAN DriveDreamer Drive-WM GenAD GEM Doe-1 FSDrive VLA-World[CVPR21 [31]] [ECCV24 [59]] [CVPR24 [61]] [CVPR24 [69]] [CVPR25 [21]] [arxiv24 [80]] [NeurIPS25 [74]]
+Type GAN Diffusion Diffusion Diffusion Diffusion Autoregressive Autoregressive Autoregressive
+Resolution 256×256 128×192 192×384 256×448 576×1024 384×672 128×192 128×192
+FID↓ 73.4 52.6 15.8 15.4 10.5 15.9 10.1 9.8
+Table 3. Action prediction performance on the nuScenes dataset
+measured by F1 score (%). † denotes models trained on nuScenes.
+Method Lateral(F1)↑ Longitudinal(F1)↑
+forward left right keep acc. dec. stop
+Qwen2-VL-2B 62.43 22.75 28.65 40.70 50.23 49.21 41.04
+Qwen2-VL-2B†92.60 61.78 66.52 56.42 74.32 76.10 74.85
+VLA-World 95.88 74.22 75.06 60.98 81.42 80.04 81.24
+Evaluation of Action.Table 3 shows the action prediction
+results of VLA-World across both lateral and longitudinal
+categories, evaluated using the F1-score. Our model achieves
+clear and consistent improvements in all action types, demon-
+strating its strong capability in learning goal-conditioned
+control. Compared with the base Qwen2-VL-2B backbone,
+the model fine-tuned on nuScenes (Qwen2-VL-2B†) shows
+a substantial performance boost, particularly for turning be-
+haviors where the left category improves from 22.75% to
+61.78% in F1-score. Our VLA-World delivers the best re-
+sults across every metric, achieving 95.88% for forward,
+74.22% for left, and 75.06% for right. These improvements
+highlight the effectiveness of our VLA-World pipeline. It
+learns to reason about the consequences of its own actions
+rather than only imitating labels by reinforcement learning.
+Quantitative Results of Generation.Although the ultimate
+goal of VLA-World is trajectory planning, the generation
+of the next frame serves only as an intermediate step to
+support subsequent reasoning. Nevertheless, as shown in
+Table 2, we evaluate the visual quality using the FID metric.
+Our method achieves competitive performance compared
+with dedicated diffusion models [ 59, 61, 69]. Moreover,
+compared with Doe-1 [80] and FSDrive [74], our approach
+still demonstrates a significant advantage, indicating that
+even with limited data, it can effectively unleash the visual
+generation capability of multimodal large language models.
+Visualization Results.We present a qualitative comparison
+CurrentObservationsImaginedFutureCurrentObservationsImaginedFuture
+FSDrive
+VLA-World(Ours)
+Figure 4. Visualization of our VLA-World compared with the
+SOTA FSDrive [74]. The top row shows the current scene, and the
+bottom row shows the generated scene for the next 0.5 seconds.
+The red trajectory is the model prediction, and the green trajectory
+is the ground truth. Zoom in for a better view.
+of trajectory prediction and future-frame generation between
+FSDrive [74] and our VLA-World. As shown in Figure 4,
+VLA-World produces noticeably sharper and more coherent
+future frames, benefiting from visual generation that is ex-
+plicitly conditioned on the predicted trajectory and driving
+direction. Furthermore, VLA-World can perform reflective
+reasoning over the imagined temporal cues, enabling it to
+refine its motion forecasts, resulting in future trajectories
+that are more precise compared with FSDrive.
+4.3. Ablation Study
+Effectiveness of training strategy.We conduct ablation
+studies on the training strategy of VLA-World.w/o. P .T.,w/o.
+SFT, andw/o. RLdenote variants of the proposed method
+with the pretraining, supervised fine-tuning (cold start), and
+reinforcement learning stages removed, respectively. As
+shown in Table 4 (a), we observe that although each stage
+contributes to overall performance improvement, the variant
+trained with SFT outperforms the one trained with RL. This
+indicates that reinforcement learning without cold-start su-
+pervision struggles to effectively navigate the large search
+space of our structured, multi-step reasoning task. Therefore,
+SFT is crucial for instilling coherent policies and a funda-
+mental understanding of causal chains. The pretraining stage
+also provides additional gains by enhancing the model’s spa-
+tiotemporal understanding of driving environments through
+future frame generation. The superior performance of the
+complete VLA-World model confirms the importance of our
+hybrid training design: pretraining aligns generation and
+understanding, SFT builds the essential knowledge founda-
+Table 4. Ablation studies of trajectory planning L2 errors (ST-P3)
+on nuScenes to validate each proposed component.
+Method L2 Error (m)↓
+1s 2s 3s Avg.
+(a)
+w/o. P.T. 0.35 0.56 0.81 0.57
+w/o. SFT 0.35 0.79 1.40 0.85
+w/o. RL 0.43 0.70 1.01 0.71
+(b)
+w/o. Perception 0.42 0.73 1.09 0.75
+w/o. Generation 0.41 0.67 0.96 0.68
+w/o. Reasoning 0.50 0.83 1.22 0.85
+(c)
+w/o.R pred 0.17 0.37 0.69 0.41
+w/o.R vis 0.20 0.40 0.67 0.42
+w/o.R act 0.40 0.54 0.92 0.62
+w/o.R traj 0.46 0.75 0.96 0.72
+(d) VLA-World0.11 0.27 0.52 0.30
+tion, and RL further refines the policy to achieve optimal
+performance.
+Effectiveness of data pipeline.To verify the effectiveness
+of each step in our data pipeline, we perform ablation studies
+on these three components. As shown in Table 4 (b), all
+components contribute positively to overall performance. In
+particular, perception and reasoning have a greater impact
+compared to visual generation. We attribute this to the fact
+that visual generation involves producing a large number
+of tokens, which dominate the gradient updates during op-
+timization, potentially limiting the exploration of the upper
+bound of model performance.
+Effectiveness of different rewards.We also conduct ab-
+lation studies on the contribution of different rewards in
+the reinforcement learning stage. As shown in Table 4 (c),
+all reward terms have a positive effect on policy optimiza-
+tion, with the trajectory and action rewards contributing the
+most. This indicates that reinforcement learning can directly
+optimize the planning process in an end-to-end manner.
+5. Conclusion
+We introduced VLA-World, a unified Vision-Language-
+Action World Model that integrates predictive imagination
+and reflective reasoning for end-to-end autonomous driving.
+Unlike VLA or world models, VLA-World combines future
+simulation with reasoning, enabling the model to both antic-
+ipate and evaluate outcomes for safer decision-making. To
+realize this framework, we constructed nuScenes-GR-20K, a
+dataset designed for future frame generation and reasoning,
+and developed a three-stage training pipeline including pre-
+training, supervised fine-tuning, and reinforcement learning
+with GRPO. Extensive experiments demonstrate that VLA-
+World surpasses existing methods in trajectory planning and
+visual generation, achieving improved interpretability and
+human-like reasoning, paving the way toward more intelli-
+gent and reliable autonomous driving.
