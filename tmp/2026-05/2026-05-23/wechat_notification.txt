@@ -12,4 +12,4 @@
 链接：https://arxiv.org/abs/2605.22600
 摘要：把分支式规划和随机 MPC 结合起来，让自动驾驶面对多意图交通参与者时能更少保守地实时安全规划。
 
-Git push：待执行
+Git push：成功（45c5375 已推送到 origin/main）
