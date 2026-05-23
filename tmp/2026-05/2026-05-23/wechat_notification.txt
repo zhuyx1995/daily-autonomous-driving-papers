@@ -1,0 +1,15 @@
+自动驾驶最新论文日报（2026-05-23）
+
+新增2篇
+
+1. Sensor2Sensor: Cross-Embodiment Sensor Conversion for Autonomous Driving
+日期：2026-05-21
+链接：https://arxiv.org/abs/2605.22809
+摘要：把海量单目 dashcam 视频生成式转换为多相机和 LiDAR 自动驾驶日志，让互联网长尾场景能进入自动驾驶训练与验证流程。
+
+2. Branch-Stochastic Model Predictive Control for Motion Planning under Multi-Modal Uncertainty with Scenario Clustering
+日期：2026-05-21
+链接：https://arxiv.org/abs/2605.22600
+摘要：把分支式规划和随机 MPC 结合起来，让自动驾驶面对多意图交通参与者时能更少保守地实时安全规划。
+
+Git push：待执行
