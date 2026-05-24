@@ -12,4 +12,4 @@
 链接：https://arxiv.org/abs/2605.22018
 摘要：发布首个聚焦积水/洪涝道路的多模态自动驾驶数据集，补足涉水长尾场景训练与评估。
 
-Git push：待执行
+Git push：成功（df6ab3c 已推送到 origin/main）
