@@ -12,4 +12,4 @@
 链接：https://arxiv.org/abs/2607.24224
 摘要：通过自适应多模态 BEV 融合和任务专属专家模块，提高自动驾驶多任务 3D 感知的联合建模能力。
 
-Git push：成功（84db295 已推送到 origin/main）
+Git push：成功（84db295 报告 commit、b5f2e55 通知 commit 均已推送到 origin/main）
