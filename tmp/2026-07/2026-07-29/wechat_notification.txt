@@ -1,0 +1,15 @@
+自动驾驶最新论文日报（2026-07-29）
+
+新增2篇
+
+1. The LAIA Dataset: Labelled Attention for Intelligent Automobiles
+日期：2026-07-28
+链接：https://arxiv.org/abs/2607.25570
+摘要：发布带同步眼动追踪的端到端自动驾驶数据集，用于研究驾驶注意力、异常注意力检测与模型可解释性。
+
+2. MATS: A novel multi-modality multi-task learning framework for 3D perception in autonomous driving
+日期：2026-07-27
+链接：https://arxiv.org/abs/2607.24224
+摘要：通过自适应多模态 BEV 融合和任务专属专家模块，提高自动驾驶多任务 3D 感知的联合建模能力。
+
+Git push：成功（84db295 已推送到 origin/main）
