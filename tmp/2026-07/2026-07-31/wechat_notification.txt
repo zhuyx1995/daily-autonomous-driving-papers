@@ -1,4 +1,4 @@
-新增2篇自动驾驶最新论文；git push origin main 结果待执行。
+新增2篇自动驾驶最新论文，git push origin main 已成功。
 
 1. Risk-Aware Motion Planning with Learned Trajectory Primitives and Probabilistic Safety Assessment
 日期：2026-07-29
@@ -10,4 +10,4 @@
 链接：https://arxiv.org/abs/2607.26165
 一句话摘要：这篇论文提出在线统一的深度感知视频全景分割框架，在自动驾驶场景中同时提升了度量深度、语义理解和实例时序建模能力。
 
-Push结果：待执行。
+Push结果：成功（0eaeb4b 已推送到 origin/main）。
