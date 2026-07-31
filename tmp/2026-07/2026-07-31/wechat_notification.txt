@@ -1,0 +1,13 @@
+新增2篇自动驾驶最新论文；git push origin main 结果待执行。
+
+1. Risk-Aware Motion Planning with Learned Trajectory Primitives and Probabilistic Safety Assessment
+日期：2026-07-29
+链接：https://arxiv.org/abs/2607.26802
+一句话摘要：这篇论文把学习得到的轨迹基元、碰撞概率评估和优化式轨迹细化结合起来，提升了城市自动驾驶运动规划的安全性与求解效率。
+
+2. DVPSFormer: Efficient Online Depth-aware Video Panoptic Segmentation for Autonomous Driving
+日期：2026-07-28
+链接：https://arxiv.org/abs/2607.26165
+一句话摘要：这篇论文提出在线统一的深度感知视频全景分割框架，在自动驾驶场景中同时提升了度量深度、语义理解和实例时序建模能力。
+
+Push结果：待执行。
