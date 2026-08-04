@@ -1,0 +1,10 @@
+https://github.com/zhuyx1995/daily-autonomous-driving-papers/blob/main/reports/2026-08/2026-08-04.md
+
+新增1篇自动驾驶最新论文。
+
+1. STAGE: STyle-controllable Action GEneration for personalized autonomous driving
+日期：2026-07-31
+链接：https://arxiv.org/abs/2607.29517
+一句话摘要：这篇论文提出一个可控驾驶风格的动作生成框架，让自动驾驶系统在保持决策合理性的同时，更好地贴近不同用户的驾驶偏好。
+
+Push结果：待执行。
