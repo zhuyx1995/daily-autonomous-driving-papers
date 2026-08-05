@@ -1,0 +1,15 @@
+https://github.com/zhuyx1995/daily-autonomous-driving-papers/blob/main/reports/2026-08/2026-08-05.md
+
+新增2篇自动驾驶最新论文。
+
+1. MoRAL: Sensor-Grounded BEV Reasoning for Compact VLMs toward Edge-Oriented Autonomous Driving
+日期：2026-08-03
+链接：https://arxiv.org/abs/2608.02449
+一句话摘要：这篇论文把 LiDAR / 雷达物理信息显式编码进 BEV 输入，让一个紧凑 VLM 在低算力条件下也能做更可靠的自动驾驶空间推理与决策。
+
+2. RSC-GestureNet: Reliability-Aware Selective Causal Recognition of Chinese Traffic Police Gestures
+日期：2026-08-03
+链接：https://arxiv.org/abs/2608.02200
+一句话摘要：这篇论文通过显式建模姿态可靠性与因果时序证据，提升了自动驾驶对交警手势的早期、稳定和鲁棒识别能力。
+
+Push结果：待执行。
