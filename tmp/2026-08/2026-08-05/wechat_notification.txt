@@ -12,4 +12,4 @@ https://github.com/zhuyx1995/daily-autonomous-driving-papers/blob/main/reports/2
 链接：https://arxiv.org/abs/2608.02200
 一句话摘要：这篇论文通过显式建模姿态可靠性与因果时序证据，提升了自动驾驶对交警手势的早期、稳定和鲁棒识别能力。
 
-Push结果：待执行。
+Push结果：成功（a5f7389 已推送到 origin/main）。
