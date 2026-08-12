@@ -1,0 +1,13 @@
+新增2篇自动驾驶最新论文（最近7天内首次提交，已检查）
+
+1. FactorDrive: Adaptive Multi-Step Reasoning Driven by Planning-Critical Factors for End-to-End Autonomous Driving
+- 日期：2026-08-10
+- arXiv：https://arxiv.org/abs/2608.09591
+- 一句话摘要：围绕规划关键因素构建自适应多步推理链，让端到端自动驾驶模型把 reasoning 真正转化为更高质量的驾驶规划。
+
+2. DH-VLM: Dual-Horizon Cooperative Latent Reasoning for Autonomous Driving
+- 日期：2026-08-10
+- arXiv：https://arxiv.org/abs/2608.09333
+- 一句话摘要：提出双时域协同潜在推理框架，把基础设施侧全局语义信息与车侧局部决策结合起来，提升协同自动驾驶的感知与规划能力。
+
+Git push：待执行（本通知生成时尚未完成推送；最终结果见本次任务回执）。
