@@ -1,0 +1,2439 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<!-- new favicon config and versions by realfavicongenerator.net -->
+<link rel="apple-touch-icon" sizes="180x180" href="https://static.arxiv.org/static/base/1.0.0a5/images/icons/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://static.arxiv.org/static/base/1.0.0a5/images/icons/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="https://static.arxiv.org/static/base/1.0.0a5/images/icons/favicon-16x16.png">
+<link rel="manifest" href="https://static.arxiv.org/static/base/1.0.0a5/images/icons/site.webmanifest">
+<link rel="mask-icon" href="https://static.arxiv.org/static/base/1.0.0a5/images/icons/safari-pinned-tab.svg" color="#b31b1b">
+<link rel="shortcut icon" href="https://static.arxiv.org/static/base/1.0.0a5/images/icons/favicon.ico">
+<meta name="msapplication-TileColor" content="#b31b1b">
+<meta name="msapplication-config" content="images/icons/browserconfig.xml">
+<meta name="theme-color" content="#b31b1b">
+<!-- end favicon config -->
+<title>Search | arXiv e-print repository</title>
+<script defer src="https://static.arxiv.org/static/base/1.0.0a5/fontawesome-free-5.11.2-web/js/all.js"></script>
+<link rel="stylesheet" href="https://static.arxiv.org/static/base/1.0.0a5/css/arxivstyle.css" />
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    messageStyle: "none",
+    extensions: ["tex2jax.js"],
+    jax: ["input/TeX", "output/HTML-CSS"],
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+      processEscapes: true,
+      ignoreClass: '.*',
+      processClass: 'mathjax.*'
+    },
+    TeX: {
+        extensions: ["AMSmath.js", "AMSsymbols.js", "noErrors.js"],
+        noErrors: {
+          inlineDelimiters: ["$","$"],
+          multiLine: false,
+          style: {
+            "font-size": "normal",
+            "border": ""
+          }
+        }
+    },
+    "HTML-CSS": { availableFonts: ["TeX"] }
+  });
+</script>
+<script src='//static.arxiv.org/MathJax-2.7.3/MathJax.js'></script>
+<script src="https://static.arxiv.org/static/base/1.0.0a5/js/notification.js"></script>
+
+    
+  <script>document.documentElement.classList.add('js');</script>
+  <link rel="stylesheet" type="text/css" media="screen" href="https://static.arxiv.org/static/base/1.0.1/css/arxiv-header-footer.css?v=20260626" />
+  <script defer src="https://static.arxiv.org/static/base/1.0.1/js/arxiv-header.js?v=20260626"></script>
+  <link rel="stylesheet" href="https://static.arxiv.org/static/search/0.5.6/css/bulma-tooltip.min.css" />
+  <link rel="stylesheet" href="https://static.arxiv.org/static/search/0.5.6/css/search.css" />
+  <script
+    src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+    integrity="sha256-k2WSCIexGzOj3Euiig+TlR8gA0EmPjuc79OEeY5L45g="
+    crossorigin="anonymous"></script>
+
+  <script src="https://static.arxiv.org/static/search/0.5.6/js/fieldset.js"></script>
+  <style>
+  radio#cf-customfield_11400 {
+    display: none;
+  }
+  /* Render the spinout .ds-site-footer standalone / full-bleed. search extends the
+     legacy base, whose bare wrapping <footer> (in base/base.html, outside any
+     overridable block — so it can't be removed from here) is styled by
+     arxivstyle.css with a grey background (hsl(0,0%,95%)) + 1em 2em padding,
+     boxing our warm-wash footer inside a second grey band. display:contents drops
+     the wrapper's box entirely (cleaner than zeroing individual properties) so
+     .ds-site-footer renders in its place; it inherits flex-shrink:0 from the same
+     legacy `footer` rule, so the sticky footer still works. Search-specific
+     legacy-base integration; the shared chrome CSS stays byte-identical to the SSOT. */
+  body > footer {
+    display: contents;
+  }
+  </style>
+
+  </head>
+  <body>
+  
+  
+  <header><a href="#main-container" class="is-sr-only">Skip to main content</a>
+    <div class="ds-announcement" id="announcement-banner" role="region" aria-label="Announcement" data-banner-name="spinout-nonprofit">
+  <img class="ds-announcement-glyph" src="https://static.arxiv.org/static/base/1.0.1/images/icons/smileybones-small.svg" alt="" aria-hidden="true">
+  <span class="ds-announcement-text">arXiv is now an independent nonprofit!</span>
+  <a class="ds-announcement-link" href="https://info.arxiv.org/about">Learn more</a>
+  <button type="button" class="ds-announcement-close" aria-label="Dismiss announcement">&times;</button>
+</div>
+<header class="ds-site-header">
+  <a href="https://arxiv.org/" class="ds-site-header-logo" aria-label="archive home">
+    <img src="https://static.arxiv.org/static/base/1.0.1/images/arxiv-logo-primary-light.svg" alt="archive">
+  </a>
+  <button type="button" id="ds-nav-toggle" class="ds-site-header-nav-toggle"
+    aria-label="Open menu" aria-controls="ds-site-header-nav" aria-expanded="false">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+      <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+    </svg>
+  </button>
+  <nav class="ds-site-header-nav" id="ds-site-header-nav" aria-label="Main navigation">
+    <a id="arxiv-search-toggle" href="/search" aria-controls="arxiv-search-overlay" aria-expanded="false">
+      <svg class="ds-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+        <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+      </svg>
+      Search
+    </a>
+    <a href="https://arxiv.org/user/create">Submit</a>
+    <a href="https://info.arxiv.org/about/donate.html">Donate</a>
+    <span class="ds-site-header-divider" aria-hidden="true"></span>
+    <a href="https://arxiv.org/login" class="ds-site-header-login">Log in</a>
+  </nav>
+</header>
+
+<div class="arxiv-search-overlay" id="arxiv-search-overlay" hidden>
+  <div class="arxiv-search-panel" role="search">
+    <form method="GET" action="/search">
+      <label for="arxiv-search-input" class="is-sr-only">Search arXiv</label>
+      <input type="text" name="query" id="arxiv-search-input" autocomplete="off"
+        placeholder="Search papers by title, author, abstract, or ID...">
+      <input type="hidden" name="searchtype" value="all">
+      <input type="hidden" name="source" value="header">
+    </form>
+    <div class="arxiv-search-hint">
+      Press Enter to search &middot; <a href="/search/advanced">Advanced search</a>
+    </div>
+  </div>
+</div>
+
+  </header>
+  <main class="container" id="main-container">
+    
+
+
+    
+  <div class="level is-marginless">
+    <div class="level-left">
+      <h1 class="title is-clearfix">
+    
+        Showing 1&ndash;33 of 33 results for all: <span class="mathjax">traffic rule understanding autonomous driving</span>
+    
+</h1>
+    </div>
+    <div class="level-right is-hidden-mobile">
+      <!-- feedback for mobile is moved to footer -->
+      <span class="help" style="display: inline-block;"><a href="https://github.com/arXiv/arxiv-search/releases">Search v0.5.6 released 2020-02-24</a>&nbsp;&nbsp;</span>
+    </div>
+  </div>
+    <div class="content">
+      
+  <form method="GET" action="/search/"  aria-role="search">
+    
+
+    
+    <div class="field has-addons-tablet">
+      <div class="control is-expanded">
+        <label for="query" class="hidden-label">Search term or terms</label>
+        
+          <input class="input is-medium" id="query" name="query" placeholder="Search term..." type="text" value="traffic rule understanding autonomous driving">
+        
+        
+      </div>
+      <div class="select control is-medium">
+        <label class="is-hidden" for="searchtype">Field</label>
+        <select class="is-medium" id="searchtype" name="searchtype"><option selected value="all">All fields</option><option value="title">Title</option><option value="author">Author(s)</option><option value="abstract">Abstract</option><option value="comments">Comments</option><option value="journal_ref">Journal reference</option><option value="acm_class">ACM classification</option><option value="msc_class">MSC classification</option><option value="report_num">Report number</option><option value="paper_id">arXiv identifier</option><option value="doi">DOI</option><option value="orcid">ORCID</option><option value="license">License (URI)</option><option value="author_id">arXiv author ID</option><option value="help">Help pages</option><option value="full_text">Full text</option></select>
+      </div>
+      <div class="control">
+          <button class="button is-link is-medium">Search</button>
+      </div>
+    </div>
+    <div class="field">
+      <div class="control is-size-7">
+        
+        <label class="radio">
+          <input checked id="abstracts-0" name="abstracts" type="radio" value="show"> Show abstracts
+        </label>
+        
+        <label class="radio">
+          <input id="abstracts-1" name="abstracts" type="radio" value="hide"> Hide abstracts
+        </label>
+        
+      </div>
+    </div>
+    <div class="is-clearfix" style="height: 2.5em"> 
+      <div class="is-pulled-right">
+        
+        <a href="/search/advanced?terms-0-term=traffic+rule+understanding+autonomous+driving&amp;terms-0-field=all&amp;size=50&amp;order=-announced_date_first">Advanced Search</a>
+        
+      </div>
+    </div>
+    <input type="hidden" name="order" value="-announced_date_first">
+    <input type="hidden" name="size" value="50">
+  </form>
+
+  
+
+  
+      
+<div class="level breathe-horizontal">
+  <div class="level-left">
+    <form method="GET" action="/search/">
+      <div style="display: none;">
+        
+          
+            <select id="searchtype" name="searchtype"><option selected value="all">All fields</option><option value="title">Title</option><option value="author">Author(s)</option><option value="abstract">Abstract</option><option value="comments">Comments</option><option value="journal_ref">Journal reference</option><option value="acm_class">ACM classification</option><option value="msc_class">MSC classification</option><option value="report_num">Report number</option><option value="paper_id">arXiv identifier</option><option value="doi">DOI</option><option value="orcid">ORCID</option><option value="license">License (URI)</option><option value="author_id">arXiv author ID</option><option value="help">Help pages</option><option value="full_text">Full text</option></select>
+          
+        
+          
+            <input id="query" name="query" type="text" value="traffic rule understanding autonomous driving">
+          
+        
+          
+        
+          
+        
+          
+            <ul id="abstracts"><li><input checked id="abstracts-0" name="abstracts" type="radio" value="show"> <label for="abstracts-0">Show abstracts</label></li><li><input id="abstracts-1" name="abstracts" type="radio" value="hide"> <label for="abstracts-1">Hide abstracts</label></li></ul>
+          
+        
+      </div>
+      <div class="box field is-grouped is-grouped-multiline level-item">
+        <div class="control">
+          <span class="select is-small">
+            <select id="size" name="size"><option value="25">25</option><option selected value="50">50</option><option value="100">100</option><option value="200">200</option></select>
+          </span>
+          <label for="size">results per page</label>.
+        </div>
+        <div class="control">
+          <label for="order">Sort results by</label>
+          <span class="select is-small">
+            <select id="order" name="order"><option selected value="-announced_date_first">Announcement date (newest first)</option><option value="announced_date_first">Announcement date (oldest first)</option><option value="-submitted_date">Submission date (newest first)</option><option value="submitted_date">Submission date (oldest first)</option><option value="">Relevance</option></select>
+          </span>
+        </div>
+        <div class="control">
+          <button class="button is-small is-link">Go</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+      
+
+
+
+
+<ol class="breathe-horizontal" start="1"> 
+
+
+  <li class="arxiv-result">
+    <div class="is-marginless">
+      <p class="list-title is-inline-block"><a href="https://arxiv.org/abs/2607.24199">arXiv:2607.24199</a>
+        <span>&nbsp;[<a href="https://arxiv.org/pdf/2607.24199">pdf</a>, <a href="https://arxiv.org/ps/2607.24199">ps</a>, <a href="https://arxiv.org/format/2607.24199">other</a>]&nbsp;</span>
+      </p>
+      <div class="tags is-inline-block">
+        <span class="tag is-small is-link tooltip is-tooltip-top" data-tooltip="Computer Vision and Pattern Recognition">cs.CV</span>
+        </div>
+      
+    </div>
+    
+    <p class="title is-5 mathjax">
+      
+        Reasoning to Regulate: Chain-of-Thought for <span class="search-hit mathjax">Traffic</span> <span class="search-hit mathjax">Rule</span> <span class="search-hit mathjax">Understanding</span>
+      
+    </p>
+    <p class="authors">
+      <span class="has-text-black-bis has-text-weight-semibold">Authors:</span>
+      
+      <a href="/search/?searchtype=author&amp;query=Luo%2C+Y">Yueru Luo</a>, 
+      
+      <a href="/search/?searchtype=author&amp;query=Yan%2C+X">Xu Yan</a>, 
+      
+      <a href="/search/?searchtype=author&amp;query=Zhou%2C+C">Changqing Zhou</a>, 
+      
+      <a href="/search/?searchtype=author&amp;query=Yang%2C+Y">Yiming Yang</a>, 
+      
+      <a href="/search/?searchtype=author&amp;query=Zhan%2C+C">Chao Zhan</a>, 
+      
+      <a href="/search/?searchtype=author&amp;query=Mei%2C+S">Shuqi Mei</a>, 
+      
+      <a href="/search/?searchtype=author&amp;query=Zheng%2C+C">Chao Zheng</a>, 
+      
+      <a href="/search/?searchtype=author&amp;query=Li%2C+Z">Zhen Li</a>
+      
+    </p>
+    
+    <p class="abstract mathjax">
+      <span class="search-hit">Abstract</span>:
+      <span class="abstract-short has-text-grey-dark mathjax" id="2607.24199v1-abstract-short" style="display: inline;">
+        <span class="search-hit mathjax">Understanding</span> and complying with&hellip;
+        <a class="is-size-7" style="white-space: nowrap;" onclick="document.getElementById('2607.24199v1-abstract-full').style.display = 'inline'; document.getElementById('2607.24199v1-abstract-short').style.display = 'none';">&#9661; More</a>
+      </span>
+      <span class="abstract-full has-text-grey-dark mathjax" id="2607.24199v1-abstract-full" style="display: none;">
+        <span class="search-hit mathjax">Understanding</span> and complying with <span class="search-hit mathjax">traffic</span> regulations is a safety-critical requirement for <span class="search-hit mathjax">autonomous</span> <span class="search-hit mathjax">driving</span>, yet remains challenging due to the diversity and context dependence of <span class="search-hit mathjax">traffic</span> signage. Importantly, regulation <span class="search-hit mathjax">understanding</span> is not a simple recognition task, but a reasoning problem: whether a <span class="search-hit mathjax">rule</span> applies depends on interpreting the sign in relation to the spatial layout of lanes and scene context. To support such reasoning, MapDR provide fine-grained annotations that link each <span class="search-hit mathjax">traffic</span> sign&#39;s regulatory <span class="search-hit mathjax">rules</span> to the specific lanes they govern. Existing methods, however, largely treat this as direct sequence prediction, ignoring the underlying reasoning that connects sign semantics and map structure. To address this limitation, we explicitly incorporate reasoning into this task and propose a framework that equips vision-language models (VLMs) with chain-of-thought (CoT) capabilities. We first design a scalable CoT curation pipeline that bootstraps rationales from a strong LLM through a two-round strategy and employs a VLM-based verifier to filter out incorrect cases, yielding a high-quality set of (CoT, answer) pairs. Building on this foundation, we adopt a two-stage training scheme: supervised fine-tuning (SFT) to teach rationale-to-answer generation, followed by GRPO reinforcement learning with answer-grounded, fine-grained rewards to further improve final answer accuracy. Extensive experiments on MapDR show that our approach significantly improves both interpretability and accuracy, establishing the first reasoning-based framework for regulation-aware <span class="search-hit mathjax">autonomous</span> <span class="search-hit mathjax">driving</span>.
+        <a class="is-size-7" style="white-space: nowrap;" onclick="document.getElementById('2607.24199v1-abstract-full').style.display = 'none'; document.getElementById('2607.24199v1-abstract-short').style.display = 'inline';">&#9651; Less</a>
+      </span>
+    </p>
+    
+
+    <p class="is-size-7"><span class="has-text-black-bis has-text-weight-semibold">Submitted</span> 27 July, 2026; 
+      <span class="has-text-black-bis has-text-weight-semibold">originally announced</span> July 2026.
+      
+    </p>
+    
+    <p class="comments is-size-7">
+      <span class="has-text-black-bis has-text-weight-semibold">Comments:</span>
+      <span class="has-text-grey-dark mathjax">Technical Report</span>
+    </p>
+    
+
+    
+
+    
+  </li>
+
+  <li class="arxiv-result">
+    <div class="is-marginless">
+      <p class="list-title is-inline-block"><a href="https://arxiv.org/abs/2607.03182">arXiv:2607.03182</a>
+        <span>&nbsp;[<a href="https://arxiv.org/pdf/2607.03182">pdf</a>, <a href="https://arxiv.org/ps/2607.03182">ps</a>, <a href="https://arxiv.org/format/2607.03182">other</a>]&nbsp;</span>
+      </p>
+      <div class="tags is-inline-block">
+        <span class="tag is-small is-link tooltip is-tooltip-top" data-tooltip="Robotics">cs.RO</span>
+        
+          
+            <span class="tag is-small is-grey tooltip is-tooltip-top" data-tooltip="Artificial Intelligence">cs.AI</span>
+          
+        </div>
+      
+    </div>
+    
+    <p class="title is-5 mathjax">
+      
+        AnchorVLA: Bridging Discrete Decisions and Continuous Trajectories for Vision-Language-Action Planning
+      
+    </p>
+    <p class="authors">
+      <span class="has-text-black-bis has-text-weight-semibold">Authors:</span>
+      
+      <a href="/search/?searchtype=author&amp;query=Liu%2C+Q">Qi Liu</a>, 
+      
+      <a href="/search/?searchtype=author&amp;query=Li%2C+Y">Yabei Li</a>, 
+      
+      <a href="/search/?searchtype=author&amp;query=Wang%2C+H">Hongsong Wang</a>, 
+      
+      <a href="/search/?searchtype=author&amp;query=Zhang%2C+H">Heng Zhang</a>, 
+      
+      <a href="/search/?searchtype=author&amp;query=He%2C+L">Lei He</a>
+      
+    </p>
+    
+    <p class="abstract mathjax">
+      <span class="search-hit">Abstract</span>:
+      <span class="abstract-short has-text-grey-dark mathjax" id="2607.03182v1-abstract-short" style="display: inline;">
+        <span class="search-hit mathjax">Autonomous</span>&hellip;
+        <a class="is-size-7" style="white-space: nowrap;" onclick="document.getElementById('2607.03182v1-abstract-full').style.display = 'inline'; document.getElementById('2607.03182v1-abstract-short').style.display = 'none';">&#9661; More</a>
+      </span>
+      <span class="abstract-full has-text-grey-dark mathjax" id="2607.03182v1-abstract-full" style="display: none;">
+        <span class="search-hit mathjax">Autonomous</span> <span class="search-hit mathjax">driving</span> planning requires translating navigation intent, <span class="search-hit mathjax">traffic</span> <span class="search-hit mathjax">rules</span>, dynamic interactions, and language instructions into executable continuous trajectories. Vision-Language-Action models have been introduced into <span class="search-hit mathjax">driving</span> planning to improve long-tail generalization, commonsense reasoning, high-level semantic <span class="search-hit mathjax">understanding</span>, and explainability. However, existing VLA planners mainly follow planning-head-based trajectory prediction or full-trajectory autoregressive generation. The former only weakly constrains continuous trajectory generation with VLA reasoning, while the latter relies on long sequences of low-information-density coordinate tokens, making semantic-action alignment difficult and leading to discretization errors and inefficient inference. To address these limitations, we propose AnchorVLA, a hierarchical decision-anchored VLA planning framework that uses trajectory-pattern anchors as an explicit interface between high-level VLA reasoning and continuous trajectory execution. Specifically, Decision-as-Anchor Representation represents behavior-level <span class="search-hit mathjax">driving</span> decisions with anchor tokens, each encoding an entire local motion pattern rather than a single coordinate point. Decision-Anchored Residual Flow then generates fine-grained continuous trajectories in the selected anchor-defined residual space, capturing multi-modal execution refinements after high-level decision making. By reasoning over compact and semantically meaningful anchors instead of autoregressively generating waypoint sequences, AnchorVLA preserves LLM-based decision making while improving inference efficiency, semantic-action alignment, and continuous generation flexibility. Experiments on the Bench2Drive closed-loop benchmark show that AnchorVLA achieves a state-of-the-art Success Rate of 77.28 and a competitive <span class="search-hit mathjax">Driving</span> Score of 89.92.
+        <a class="is-size-7" style="white-space: nowrap;" onclick="document.getElementById('2607.03182v1-abstract-full').style.display = 'none'; document.getElementById('2607.03182v1-abstract-short').style.display = 'inline';">&#9651; Less</a>
+      </span>
+    </p>
+    
+
+    <p class="is-size-7"><span class="has-text-black-bis has-text-weight-semibold">Submitted</span> 3 July, 2026; 
+      <span class="has-text-black-bis has-text-weight-semibold">originally announced</span> July 2026.
+      
+    </p>
+    
+
+    
+
+    
+  </li>
+
+  <li class="arxiv-result">
+    <div class="is-marginless">
+      <p class="list-title is-inline-block"><a href="https://arxiv.org/abs/2606.02774">arXiv:2606.02774</a>
+        <span>&nbsp;[<a href="https://arxiv.org/pdf/2606.02774">pdf</a>, <a href="https://arxiv.org/ps/2606.02774">ps</a>, <a href="https://arxiv.org/format/2606.02774">other</a>]&nbsp;</span>
+      </p>
+      <div class="tags is-inline-block">
+        <span class="tag is-small is-link tooltip is-tooltip-top" data-tooltip="Computer Vision and Pattern Recognition">cs.CV</span>
+        </div>
+      
+    </div>
+    
+    <p class="title is-5 mathjax">
+      
+        GeoDrive-Bench: Benchmarking Region-Specific Multimodal Reasoning in <span class="search-hit mathjax">Autonomous</span> <span class="search-hit mathjax">Driving</span>
+      
+    </p>
+    <p class="authors">
+      <span class="has-text-black-bis has-text-weight-semibold">Authors:</span>
+      
+      <a href="/search/?searchtype=author&amp;query=Ma%2C+Y">Yingzi Ma</a>, 
+      
+      <a href="/search/?searchtype=author&amp;query=Xiao%2C+C">Chaowei Xiao</a>, 
+      
+      <a href="/search/?searchtype=author&amp;query=Jiang%2C+M">Ming Jiang</a>
+      
+    </p>
+    
+    <p class="abstract mathjax">
+      <span class="search-hit">Abstract</span>:
+      <span class="abstract-short has-text-grey-dark mathjax" id="2606.02774v1-abstract-short" style="display: inline;">
+        Vision-language models (VLMs) for <span class="search-hit mathjax">autonomous</span>&hellip;
+        <a class="is-size-7" style="white-space: nowrap;" onclick="document.getElementById('2606.02774v1-abstract-full').style.display = 'inline'; document.getElementById('2606.02774v1-abstract-short').style.display = 'none';">&#9661; More</a>
+      </span>
+      <span class="abstract-full has-text-grey-dark mathjax" id="2606.02774v1-abstract-full" style="display: none;">
+        Vision-language models (VLMs) for <span class="search-hit mathjax">autonomous</span> <span class="search-hit mathjax">driving</span> have shown promising performance, but their ability to handle region-specific <span class="search-hit mathjax">traffic</span> <span class="search-hit mathjax">rules</span> remains underexplored, raising uncertainties about their deployment across diverse global settings. We therefore introduce GeoDrive-Bench, a novel benchmark that enables the systematic investigation of VLMs&#39; geo-culturally grounded <span class="search-hit mathjax">driving</span> reasoning. We curated 5,053 human-validated multiple-choice QA pairs across six countries covering diverse <span class="search-hit mathjax">driving</span> cultures. Specifically, we emphasize four <span class="search-hit mathjax">driving</span> tasks: perception, prediction, planning, and region reasoning. Each question requires models to infer the correct <span class="search-hit mathjax">driving</span> behavior from visual evidence and local <span class="search-hit mathjax">traffic</span> conventions without explicit country labels. Beyond evaluation, we further design a distillation algorithm that injects region-specific <span class="search-hit mathjax">traffic</span>-<span class="search-hit mathjax">rule</span> knowledge into the internal representations of VLMs, enabling models to better align visual scene <span class="search-hit mathjax">understanding</span> with local <span class="search-hit mathjax">driving</span> policies. Experiments on nine state-of-the-art VLMs show substantial performance variations across geo-<span class="search-hit mathjax">driving</span> cultures for each task, while our proposed baseline models exhibit improved geo-cultural reasoning across regions. These results suggest that current VLMs still lack robust region-aware <span class="search-hit mathjax">driving</span> intelligence and highlight GeoDrive-Bench as a diagnostic and training-oriented testbed for deployable <span class="search-hit mathjax">autonomous</span> <span class="search-hit mathjax">driving</span> foundation models.
+        <a class="is-size-7" style="white-space: nowrap;" onclick="document.getElementById('2606.02774v1-abstract-full').style.display = 'none'; document.getElementById('2606.02774v1-abstract-short').style.display = 'inline';">&#9651; Less</a>
+      </span>
+    </p>
+    
+
+    <p class="is-size-7"><span class="has-text-black-bis has-text-weight-semibold">Submitted</span> 1 June, 2026; 
+      <span class="has-text-black-bis has-text-weight-semibold">originally announced</span> June 2026.
+      
+    </p>
+    
+
+    
+
+    
+  </li>
+
+  <li class="arxiv-result">
+    <div class="is-marginless">
+      <p class="list-title is-inline-block"><a href="https://arxiv.org/abs/2605.09425">arXiv:2605.09425</a>
+        <span>&nbsp;[<a href="https://arxiv.org/pdf/2605.09425">pdf</a>, <a href="https://arxiv.org/ps/2605.09425">ps</a>, <a href="https://arxiv.org/format/2605.09425">other</a>]&nbsp;</span>
+      </p>
+      <div class="tags is-inline-block">
+        <span class="tag is-small is-link tooltip is-tooltip-top" data-tooltip="Computer Vision and Pattern Recognition">cs.CV</span>
+        
+          
+            <span class="tag is-small is-grey tooltip is-tooltip-top" data-tooltip="Artificial Intelligence">cs.AI</span>
+          
+        </div>
+      
+    </div>
+    
+    <p class="title is-5 mathjax">
+      
+        AtteConDA: Attention-Based Conflict Suppression in Multi-Condition Diffusion Models and Synthetic Data Augmentation
+      
+    </p>
+    <p class="authors">
+      <span class="has-text-black-bis has-text-weight-semibold">Authors:</span>
+      
+      <a href="/search/?searchtype=author&amp;query=Noguchi%2C+S">Shogo Noguchi</a>
+      
+    </p>
+    
+    <p class="abstract mathjax">
+      <span class="search-hit">Abstract</span>:
+      <span class="abstract-short has-text-grey-dark mathjax" id="2605.09425v1-abstract-short" style="display: inline;">
+        &hellip;to image augmentation while preserving annotations, generated images can be used as additional training data and can improve recognition performance. However, for high-level <span class="search-hit mathjax">driving</span> tasks such as&hellip;
+        <a class="is-size-7" style="white-space: nowrap;" onclick="document.getElementById('2605.09425v1-abstract-full').style.display = 'inline'; document.getElementById('2605.09425v1-abstract-short').style.display = 'none';">&#9661; More</a>
+      </span>
+      <span class="abstract-full has-text-grey-dark mathjax" id="2605.09425v1-abstract-full" style="display: none;">
+        Recent conditional image generation methods can improve controllability by generating images that are faithful to conditions such as sketches, human poses, segmentation maps, and depth. By applying these techniques to image augmentation while preserving annotations, generated images can be used as additional training data and can improve recognition performance. However, for high-level <span class="search-hit mathjax">driving</span> tasks such as <span class="search-hit mathjax">traffic</span>-<span class="search-hit mathjax">rule</span> extraction and <span class="search-hit mathjax">driving</span>-behavior <span class="search-hit mathjax">understanding</span>, simply using annotations as conditions is insufficient. Instead, images must be augmented while preserving the detailed high-level structure of the original scene. One possible solution is to use multiple conditions so that generated images retain diverse structural cues after generation. However, when multiple conditions are used, conflicts among conditions can prevent reliable structure preservation. In this work, we input semantic segmentation, depth, and edges extracted from the original image into a multi-condition image generation model, thereby providing rich structural information as conditions. We further propose a modeling approach for handling conflicts among multiple conditions and show that it enables image generation with stronger structural preservation. We also build a generation framework and evaluation protocol for <span class="search-hit mathjax">driving</span> tasks, establishing a basis for comparison with prior and future models. As a result, this work contributes to image generation research by addressing condition conflicts in multi-condition generation and provides an important step toward mitigating data scarcity in high-level <span class="search-hit mathjax">autonomous</span>-<span class="search-hit mathjax">driving</span> tasks.
+        <a class="is-size-7" style="white-space: nowrap;" onclick="document.getElementById('2605.09425v1-abstract-full').style.display = 'none'; document.getElementById('2605.09425v1-abstract-short').style.display = 'inline';">&#9651; Less</a>
+      </span>
+    </p>
+    
+
+    <p class="is-size-7"><span class="has-text-black-bis has-text-weight-semibold">Submitted</span> 10 May, 2026; 
+      <span class="has-text-black-bis has-text-weight-semibold">originally announced</span> May 2026.
+      
+    </p>
+    
+    <p class="comments is-size-7">
+      <span class="has-text-black-bis has-text-weight-semibold">Comments:</span>
+      <span class="has-text-grey-dark mathjax">44 pages, 20 figures. Code and project page available at: https://github.com/ShogoNoguchi/AtteConDA</span>
+    </p>
+    
+
+    
+
+    
+  </li>
+
+  <li class="arxiv-result">
+    <div class="is-marginless">
+      <p class="list-title is-inline-block"><a href="https://arxiv.org/abs/2605.00907">arXiv:2605.00907</a>
+        <span>&nbsp;[<a href="https://arxiv.org/pdf/2605.00907">pdf</a>, <a href="https://arxiv.org/ps/2605.00907">ps</a>, <a href="https://arxiv.org/format/2605.00907">other</a>]&nbsp;</span>
+      </p>
+      <div class="tags is-inline-block">
+        <span class="tag is-small is-link tooltip is-tooltip-top" data-tooltip="Computer Vision and Pattern Recognition">cs.CV</span>
+        
+          
+            <span class="tag is-small is-grey tooltip is-tooltip-top" data-tooltip="Artificial Intelligence">cs.AI</span>
+          
+            <span class="tag is-small is-grey tooltip is-tooltip-top" data-tooltip="Machine Learning">cs.LG</span>
+          
+        </div>
+      
+    </div>
+    
+    <p class="title is-5 mathjax">
+      
+        TRIP-Evaluate: An Open Multimodal Benchmark for Evaluating Large Models in Transportation
+      
+    </p>
+    <p class="authors">
+      <span class="has-text-black-bis has-text-weight-semibold">Authors:</span>
+      
+      <a href="/search/?searchtype=author&amp;query=Gong%2C+H">Han Gong</a>, 
+      
+      <a href="/search/?searchtype=author&amp;query=Zhou%2C+Z">Zhen Zhou</a>, 
+      
+      <a href="/search/?searchtype=author&amp;query=Shi%2C+Y">Yunyang Shi</a>, 
+      
+      <a href="/search/?searchtype=author&amp;query=Tan%2C+Y">Yan Tan</a>, 
+      
+      <a href="/search/?searchtype=author&amp;query=Huo%2C+J">Jinbiao Huo</a>, 
+      
+      <a href="/search/?searchtype=author&amp;query=Hong%2C+Q">Qi Hong</a>, 
+      
+      <a href="/search/?searchtype=author&amp;query=Liu%2C+Z">Zhiyuan Liu</a>
+      
+    </p>
+    
+    <p class="abstract mathjax">
+      <span class="search-hit">Abstract</span>:
+      <span class="abstract-short has-text-grey-dark mathjax" id="2605.00907v1-abstract-short" style="display: inline;">
+        Large language models (LLMs) and multimodal large models (MLLMs) are increasingly used for transportation tasks such as regulation question answering, <span class="search-hit mathjax">traffic</span> management support, engineering review, and&hellip;
+        <a class="is-size-7" style="white-space: nowrap;" onclick="document.getElementById('2605.00907v1-abstract-full').style.display = 'inline'; document.getElementById('2605.00907v1-abstract-short').style.display = 'none';">&#9661; More</a>
+      </span>
+      <span class="abstract-full has-text-grey-dark mathjax" id="2605.00907v1-abstract-full" style="display: none;">
+        Large language models (LLMs) and multimodal large models (MLLMs) are increasingly used for transportation tasks such as regulation question answering, <span class="search-hit mathjax">traffic</span> management support, engineering review, and <span class="search-hit mathjax">autonomous</span>-<span class="search-hit mathjax">driving</span> scene reasoning. Yet transportation workflows are <span class="search-hit mathjax">rule</span>-intensive, computation-intensive, safety-critical, and inherently multimodal. Existing general benchmarks provide limited evidence of whether a model can apply regulations correctly, perform verifiable engineering calculations, or interpret <span class="search-hit mathjax">traffic</span> scenes reliably, while the small number of public transportation benchmarks remain narrow in scope and rarely support fine-grained diagnosis across text, images, and point-cloud data. To address this gap, we present TRIP-Evaluate, an open multimodal benchmark for large models in transportation. The benchmark organizes 837 items using a role-task-knowledge taxonomy that covers vehicle, <span class="search-hit mathjax">traffic</span>-management, traveler, and planning-and-design functions. Each item is annotated with capability, modality, and difficulty labels, enabling diagnosis from overall accuracy down to specific failure modes. The current release includes 596 text items, 198 image items, and 43 point-cloud items. TRIP-Evaluate also standardizes item construction, quality control, prompting, decoding, and scoring to improve cross-model comparability. Results on a diverse panel of models show that text-based performance is improving, but substantial weaknesses remain in multi-step engineering calculation, <span class="search-hit mathjax">rule</span>-constrained reasoning, multimodal scene <span class="search-hit mathjax">understanding</span>, and point-cloud <span class="search-hit mathjax">understanding</span>. Overall, TRIP-Evaluate provides a reproducible, diagnosable, and engineering-aligned evaluation baseline for model selection, regression testing, and safer deployment in transportation applications.
+        <a class="is-size-7" style="white-space: nowrap;" onclick="document.getElementById('2605.00907v1-abstract-full').style.display = 'none'; document.getElementById('2605.00907v1-abstract-short').style.display = 'inline';">&#9651; Less</a>
+      </span>
+    </p>
+    
+
+    <p class="is-size-7"><span class="has-text-black-bis has-text-weight-semibold">Submitted</span> 29 April, 2026; 
+      <span class="has-text-black-bis has-text-weight-semibold">originally announced</span> May 2026.
+      
+    </p>
+    
+    <p class="comments is-size-7">
+      <span class="has-text-black-bis has-text-weight-semibold">Comments:</span>
+      <span class="has-text-grey-dark mathjax">19 pages, 12 figures</span>
+    </p>
+    
+
+    
+
+    
+  </li>
+
+  <li class="arxiv-result">
+    <div class="is-marginless">
+      <p class="list-title is-inline-block"><a href="https://arxiv.org/abs/2604.22872">arXiv:2604.22872</a>
+        <span>&nbsp;[<a href="https://arxiv.org/pdf/2604.22872">pdf</a>, <a href="https://arxiv.org/ps/2604.22872">ps</a>, <a href="https://arxiv.org/format/2604.22872">other</a>]&nbsp;</span>
+      </p>
+      <div class="tags is-inline-block">
+        <span class="tag is-small is-link tooltip is-tooltip-top" data-tooltip="Computer Vision and Pattern Recognition">cs.CV</span>
+        
+          
+            <span class="tag is-small is-grey tooltip is-tooltip-top" data-tooltip="Systems and Control">eess.SY</span>
+          
+        </div>
+      
+    </div>
+    
+    <p class="title is-5 mathjax">
+      
+        Vision-Based Lane Following and <span class="search-hit mathjax">Traffic</span> Sign Recognition for Resource-Constrained <span class="search-hit mathjax">Autonomous</span> Vehicles
+      
+    </p>
+    <p class="authors">
+      <span class="has-text-black-bis has-text-weight-semibold">Authors:</span>
+      
+      <a href="/search/?searchtype=author&amp;query=Islam%2C+M+T">Md Tanjemul Islam</a>, 
+      
+      <a href="/search/?searchtype=author&amp;query=Kabir%2C+M+R">Md Rafiul Kabir</a>
+      
+    </p>
+    
+    <p class="abstract mathjax">
+      <span class="search-hit">Abstract</span>:
+      <span class="abstract-short has-text-grey-dark mathjax" id="2604.22872v1-abstract-short" style="display: inline;">
+        <span class="search-hit mathjax">Autonomous</span> vehicles (AVs) rely on real-time perception systems to&hellip;
+        <a class="is-size-7" style="white-space: nowrap;" onclick="document.getElementById('2604.22872v1-abstract-full').style.display = 'inline'; document.getElementById('2604.22872v1-abstract-short').style.display = 'none';">&#9661; More</a>
+      </span>
+      <span class="abstract-full has-text-grey-dark mathjax" id="2604.22872v1-abstract-full" style="display: none;">
+        <span class="search-hit mathjax">Autonomous</span> vehicles (AVs) rely on real-time perception systems to <span class="search-hit mathjax">understand</span> road environments and ensure safe navigation. However, implementing reliable perception algorithms on resource-constrained embedded platforms remains challenging due to limited computational resources. This paper presents a lightweight vision-based framework that integrates lane detection, lane tracking, and <span class="search-hit mathjax">traffic</span> sign recognition for embedded <span class="search-hit mathjax">autonomous</span> vehicles. A computationally efficient threshold-based lane segmentation method combined with perspective transformation and histogram-based curvature estimation is used for robust lane tracking under varying illumination conditions. A <span class="search-hit mathjax">rule</span>-based steering controller generates steering commands to maintain stable vehicle navigation. For <span class="search-hit mathjax">traffic</span> sign recognition, two lightweight convolutional neural networks (CNNs), EfficientNet-B0 and MobileNetV2, are evaluated using a custom dataset captured from the vehicle&#39;s onboard camera. Experimental results show that the system achieves real-time performance while maintaining accurate lane tracking with only 3.16% maximum offset RMSE. EfficientNet-B0 achieves a high offline classification accuracy of 98.77% on the test dataset, while achieving 90% accuracy during real-time on-device deployment, outperforming MobileNetV2 in both settings. MobileNetV2, however, offers slightly faster inference and lower computational cost. These results highlight the effectiveness of lightweight vision-based perception pipelines for resource-constrained <span class="search-hit mathjax">autonomous</span> <span class="search-hit mathjax">driving</span> applications.
+        <a class="is-size-7" style="white-space: nowrap;" onclick="document.getElementById('2604.22872v1-abstract-full').style.display = 'none'; document.getElementById('2604.22872v1-abstract-short').style.display = 'inline';">&#9651; Less</a>
+      </span>
+    </p>
+    
+
+    <p class="is-size-7"><span class="has-text-black-bis has-text-weight-semibold">Submitted</span> 23 April, 2026; 
+      <span class="has-text-black-bis has-text-weight-semibold">originally announced</span> April 2026.
+      
+    </p>
+    
+    <p class="comments is-size-7">
+      <span class="has-text-black-bis has-text-weight-semibold">Comments:</span>
+      <span class="has-text-grey-dark mathjax">2026 International Conference on Intelligent Systems, Blockchain, and Communication Technologies</span>
+    </p>
+    
+
+    
+
+    
+  </li>
+
+  <li class="arxiv-result">
+    <div class="is-marginless">
+      <p class="list-title is-inline-block"><a href="https://arxiv.org/abs/2603.01637">arXiv:2603.01637</a>
+        <span>&nbsp;[<a href="https://arxiv.org/pdf/2603.01637">pdf</a>, <a href="https://arxiv.org/ps/2603.01637">ps</a>, <a href="https://arxiv.org/format/2603.01637">other</a>]&nbsp;</span>
+      </p>
+      <div class="tags is-inline-block">
+        <span class="tag is-small is-link tooltip is-tooltip-top" data-tooltip="Computer Vision and Pattern Recognition">cs.CV</span>
+        </div>
+      
+    </div>
+    
+    <p class="title is-5 mathjax">
+      
+        DriveCombo: Benchmarking Compositional <span class="search-hit mathjax">Traffic</span> <span class="search-hit mathjax">Rule</span> Reasoning in <span class="search-hit mathjax">Autonomous</span> <span class="search-hit mathjax">Driving</span>
+      
+    </p>
+    <p class="authors">
+      <span class="has-text-black-bis has-text-weight-semibold">Authors:</span>
+      
+      <a href="/search/?searchtype=author&amp;query=Ma%2C+E">Enhui Ma</a>, 
+      
+      <a href="/search/?searchtype=author&amp;query=Zhang%2C+J">Jiahuan Zhang</a>, 
+      
+      <a href="/search/?searchtype=author&amp;query=Zheng%2C+G">Guantian Zheng</a>, 
+      
+      <a href="/search/?searchtype=author&amp;query=Tang%2C+T">Tao Tang</a>, 
+      
+      <a href="/search/?searchtype=author&amp;query=Li%2C+S+E">Shengbo Eben Li</a>, 
+      
+      <a href="/search/?searchtype=author&amp;query=Lu%2C+Y">Yuhang Lu</a>, 
+      
+      <a href="/search/?searchtype=author&amp;query=Zhou%2C+X">Xia Zhou</a>, 
+      
+      <a href="/search/?searchtype=author&amp;query=Zhang%2C+X">Xueyang Zhang</a>, 
+      
+      <a href="/search/?searchtype=author&amp;query=Zhan%2C+Y">Yifei Zhan</a>, 
+      
+      <a href="/search/?searchtype=author&amp;query=Zhan%2C+K">Kun Zhan</a>, 
+      
+      <a href="/search/?searchtype=author&amp;query=Hao%2C+Z">Zhihui Hao</a>, 
+      
+      <a href="/search/?searchtype=author&amp;query=Lang%2C+X">Xianpeng Lang</a>, 
+      
+      <a href="/search/?searchtype=author&amp;query=Yu%2C+K">Kaicheng Yu</a>
+      
+    </p>
+    
+    <p class="abstract mathjax">
+      <span class="search-hit">Abstract</span>:
+      <span class="abstract-short has-text-grey-dark mathjax" id="2603.01637v1-abstract-short" style="display: inline;">
+        Multimodal Large Language Models (MLLMs) are rapidly becoming the intelligence brain of end-to-end <span class="search-hit mathjax">autonomous</span>&hellip;
+        <a class="is-size-7" style="white-space: nowrap;" onclick="document.getElementById('2603.01637v1-abstract-full').style.display = 'inline'; document.getElementById('2603.01637v1-abstract-short').style.display = 'none';">&#9661; More</a>
+      </span>
+      <span class="abstract-full has-text-grey-dark mathjax" id="2603.01637v1-abstract-full" style="display: none;">
+        Multimodal Large Language Models (MLLMs) are rapidly becoming the intelligence brain of end-to-end <span class="search-hit mathjax">autonomous</span> <span class="search-hit mathjax">driving</span> systems. A key challenge is to assess whether MLLMs can truly <span class="search-hit mathjax">understand</span> and follow complex real-world <span class="search-hit mathjax">traffic</span> <span class="search-hit mathjax">rules</span>. However, existing benchmarks mainly focus on single-<span class="search-hit mathjax">rule</span> scenarios like <span class="search-hit mathjax">traffic</span> sign recognition, neglecting the complexity of multi-<span class="search-hit mathjax">rule</span> concurrency and conflicts in real <span class="search-hit mathjax">driving</span>. Consequently, models perform well on simple tasks but often fail or violate <span class="search-hit mathjax">rules</span> in real world complex situations. To bridge this gap, we propose DriveCombo, a text and vision-based benchmark for compositional <span class="search-hit mathjax">traffic</span> <span class="search-hit mathjax">rule</span> reasoning. Inspired by human drivers&#39; cognitive development, we propose a systematic Five-Level Cognitive Ladder that evaluates reasoning from single-<span class="search-hit mathjax">rule</span> <span class="search-hit mathjax">understanding</span> to multi-<span class="search-hit mathjax">rule</span> integration and conflict resolution, enabling quantitative assessment across cognitive stages. We further propose a Rule2Scene Agent that maps language-based <span class="search-hit mathjax">traffic</span> <span class="search-hit mathjax">rules</span> to dynamic <span class="search-hit mathjax">driving</span> scenes through <span class="search-hit mathjax">rule</span> crafting and scene generation, enabling scene-level <span class="search-hit mathjax">traffic</span> <span class="search-hit mathjax">rule</span> visual reasoning. Evaluations of 14 mainstream MLLMs reveal performance drops as task complexity grows, particularly during <span class="search-hit mathjax">rule</span> conflicts. After splitting the dataset and fine-tuning on the training set, we further observe substantial improvements in both <span class="search-hit mathjax">traffic</span> <span class="search-hit mathjax">rule</span> reasoning and downstream planning capabilities. These results highlight the effectiveness of DriveCombo in advancing compliant and intelligent <span class="search-hit mathjax">autonomous</span> <span class="search-hit mathjax">driving</span> systems.
+        <a class="is-size-7" style="white-space: nowrap;" onclick="document.getElementById('2603.01637v1-abstract-full').style.display = 'none'; document.getElementById('2603.01637v1-abstract-short').style.display = 'inline';">&#9651; Less</a>
+      </span>
+    </p>
+    
+
+    <p class="is-size-7"><span class="has-text-black-bis has-text-weight-semibold">Submitted</span> 2 March, 2026; 
+      <span class="has-text-black-bis has-text-weight-semibold">originally announced</span> March 2026.
+      
+    </p>
+    
+
+    
+
+    
+  </li>
+
+  <li class="arxiv-result">
+    <div class="is-marginless">
+      <p class="list-title is-inline-block"><a href="https://arxiv.org/abs/2602.20644">arXiv:2602.20644</a>
+        <span>&nbsp;[<a href="https://arxiv.org/pdf/2602.20644">pdf</a>, <a href="https://arxiv.org/ps/2602.20644">ps</a>, <a href="https://arxiv.org/format/2602.20644">other</a>]&nbsp;</span>
+      </p>
+      <div class="tags is-inline-block">
+        <span class="tag is-small is-link tooltip is-tooltip-top" data-tooltip="Software Engineering">cs.SE</span>
+        </div>
+      
+    </div>
+    
+    <p class="title is-5 mathjax">
+      
+        An LLM-driven Scenario Generation Pipeline Using an Extended Scenic DSL for <span class="search-hit mathjax">Autonomous</span> <span class="search-hit mathjax">Driving</span> Safety Validation
+      
+    </p>
+    <p class="authors">
+      <span class="has-text-black-bis has-text-weight-semibold">Authors:</span>
+      
+      <a href="/search/?searchtype=author&amp;query=Safa%2C+F+K">Fida Khandaker Safa</a>, 
+      
+      <a href="/search/?searchtype=author&amp;query=Jiang%2C+Y">Yupeng Jiang</a>, 
+      
+      <a href="/search/?searchtype=author&amp;query=Zheng%2C+X">Xi Zheng</a>
+      
+    </p>
+    
+    <p class="abstract mathjax">
+      <span class="search-hit">Abstract</span>:
+      <span class="abstract-short has-text-grey-dark mathjax" id="2602.20644v1-abstract-short" style="display: inline;">
+        Real-world crash reports, which combine textual summaries and sketches, are valuable for scenario-based testing of <span class="search-hit mathjax">autonomous</span>&hellip;
+        <a class="is-size-7" style="white-space: nowrap;" onclick="document.getElementById('2602.20644v1-abstract-full').style.display = 'inline'; document.getElementById('2602.20644v1-abstract-short').style.display = 'none';">&#9661; More</a>
+      </span>
+      <span class="abstract-full has-text-grey-dark mathjax" id="2602.20644v1-abstract-full" style="display: none;">
+        Real-world crash reports, which combine textual summaries and sketches, are valuable for scenario-based testing of <span class="search-hit mathjax">autonomous</span> <span class="search-hit mathjax">driving</span> systems (ADS). However, current methods cannot effectively translate this multimodal data into precise, executable simulation scenarios, hindering the scalability of ADS safety validation. In this work, we propose a scalable and verifiable pipeline that uses a large language model (GPT-4o mini) and a probabilistic intermediate representation (an Extended Scenic domain-specific language) to automatically extract semantic scenario configurations from crash reports and generate corresponding simulation-ready scenarios. Unlike earlier approaches such as ScenicNL and LCTGen (which generate scenarios directly from text) or TARGET (which uses deterministic mappings from <span class="search-hit mathjax">traffic</span> <span class="search-hit mathjax">rules</span>), our method introduces an intermediate Scenic DSL layer to separate high-level semantic <span class="search-hit mathjax">understanding</span> from low-level scenario rendering, reducing errors and capturing real-world variability. We evaluated the pipeline on cases from the NHTSA CIREN database. The results show high accuracy in knowledge extraction: 100% correctness for environmental and road network attributes, and 97% and 98% for oracle and actor trajectories, respectively, compared to human-derived ground truth. We executed the generated scenarios in the CARLA simulator using the Autoware <span class="search-hit mathjax">driving</span> stack, and they consistently triggered the intended <span class="search-hit mathjax">traffic</span>-<span class="search-hit mathjax">rule</span> violations (such as opposite-lane crossing and red-light running) across 2,000 scenario variations. These findings demonstrate that the proposed pipeline provides a legally grounded, scalable, and verifiable approach to ADS safety validation.
+        <a class="is-size-7" style="white-space: nowrap;" onclick="document.getElementById('2602.20644v1-abstract-full').style.display = 'none'; document.getElementById('2602.20644v1-abstract-short').style.display = 'inline';">&#9651; Less</a>
+      </span>
+    </p>
+    
+
+    <p class="is-size-7"><span class="has-text-black-bis has-text-weight-semibold">Submitted</span> 24 February, 2026; 
+      <span class="has-text-black-bis has-text-weight-semibold">originally announced</span> February 2026.
+      
+    </p>
+    
+
+    
+
+    
+  </li>
+
+  <li class="arxiv-result">
+    <div class="is-marginless">
+      <p class="list-title is-inline-block"><a href="https://arxiv.org/abs/2602.10771">arXiv:2602.10771</a>
+        <span>&nbsp;[<a href="https://arxiv.org/pdf/2602.10771">pdf</a>, <a href="https://arxiv.org/ps/2602.10771">ps</a>, <a href="https://arxiv.org/format/2602.10771">other</a>]&nbsp;</span>
+      </p>
+      <div class="tags is-inline-block">
+        <span class="tag is-small is-link tooltip is-tooltip-top" data-tooltip="Computer Vision and Pattern Recognition">cs.CV</span>
+        
+          
+            <span class="tag is-small is-grey tooltip is-tooltip-top" data-tooltip="Robotics">cs.RO</span>
+          
+        </div>
+      
+    </div>
+    
+    <p class="title is-5 mathjax">
+      
+        From Steering to Pedalling: Do <span class="search-hit mathjax">Autonomous</span> <span class="search-hit mathjax">Driving</span> VLMs Generalize to Cyclist-Assistive Spatial Perception and Planning?
+      
+    </p>
+    <p class="authors">
+      <span class="has-text-black-bis has-text-weight-semibold">Authors:</span>
+      
+      <a href="/search/?searchtype=author&amp;query=Nakka%2C+K+K">Krishna Kanth Nakka</a>, 
+      
+      <a href="/search/?searchtype=author&amp;query=Nakka%2C+V">Vedasri Nakka</a>
+      
+    </p>
+    
+    <p class="abstract mathjax">
+      <span class="search-hit">Abstract</span>:
+      <span class="abstract-short has-text-grey-dark mathjax" id="2602.10771v1-abstract-short" style="display: inline;">
+        Cyclists often encounter safety-critical situations in urban <span class="search-hit mathjax">traffic</span>, highlighting the need for assistive systems that support safe and informed decision-making. Recently, vision-language models (VLMs) have demonstrated strong performance on&hellip;
+        <a class="is-size-7" style="white-space: nowrap;" onclick="document.getElementById('2602.10771v1-abstract-full').style.display = 'inline'; document.getElementById('2602.10771v1-abstract-short').style.display = 'none';">&#9661; More</a>
+      </span>
+      <span class="abstract-full has-text-grey-dark mathjax" id="2602.10771v1-abstract-full" style="display: none;">
+        Cyclists often encounter safety-critical situations in urban <span class="search-hit mathjax">traffic</span>, highlighting the need for assistive systems that support safe and informed decision-making. Recently, vision-language models (VLMs) have demonstrated strong performance on <span class="search-hit mathjax">autonomous</span> <span class="search-hit mathjax">driving</span> benchmarks, suggesting their potential for general <span class="search-hit mathjax">traffic</span> <span class="search-hit mathjax">understanding</span> and navigation-related reasoning. However, existing evaluations are predominantly vehicle-centric and fail to assess perception and reasoning from a cyclist-centric viewpoint. To address this gap, we introduce CyclingVQA, a diagnostic benchmark designed to probe perception, spatio-temporal <span class="search-hit mathjax">understanding</span>, and <span class="search-hit mathjax">traffic</span>-<span class="search-hit mathjax">rule</span>-to-lane reasoning from a cyclist&#39;s perspective. Evaluating 31+ recent VLMs spanning general-purpose, spatially enhanced, and <span class="search-hit mathjax">autonomous</span>-<span class="search-hit mathjax">driving</span>-specialized models, we find that current models demonstrate encouraging capabilities, while also revealing clear areas for improvement in cyclist-centric perception and reasoning, particularly in interpreting cyclist-specific <span class="search-hit mathjax">traffic</span> cues and associating signs with the correct navigational lanes. Notably, several <span class="search-hit mathjax">driving</span>-specialized models underperform strong generalist VLMs, indicating limited transfer from vehicle-centric training to cyclist-assistive scenarios. Finally, through systematic error analysis, we identify recurring failure modes to guide the development of more effective cyclist-assistive intelligent systems.
+        <a class="is-size-7" style="white-space: nowrap;" onclick="document.getElementById('2602.10771v1-abstract-full').style.display = 'none'; document.getElementById('2602.10771v1-abstract-short').style.display = 'inline';">&#9651; Less</a>
+      </span>
+    </p>
+    
+
+    <p class="is-size-7"><span class="has-text-black-bis has-text-weight-semibold">Submitted</span> 11 February, 2026; 
+      <span class="has-text-black-bis has-text-weight-semibold">originally announced</span> February 2026.
+      
+    </p>
+    
+    <p class="comments is-size-7">
+      <span class="has-text-black-bis has-text-weight-semibold">Comments:</span>
+      <span class="has-text-grey-dark mathjax">Preprint</span>
+    </p>
+    
+
+    
+
+    
+  </li>
+
+  <li class="arxiv-result">
+    <div class="is-marginless">
+      <p class="list-title is-inline-block"><a href="https://arxiv.org/abs/2602.07249">arXiv:2602.07249</a>
+        <span>&nbsp;[<a href="https://arxiv.org/pdf/2602.07249">pdf</a>, <a href="https://arxiv.org/ps/2602.07249">ps</a>, <a href="https://arxiv.org/format/2602.07249">other</a>]&nbsp;</span>
+      </p>
+      <div class="tags is-inline-block">
+        <span class="tag is-small is-link tooltip is-tooltip-top" data-tooltip="Cryptography and Security">cs.CR</span>
+        
+          
+            <span class="tag is-small is-grey tooltip is-tooltip-top" data-tooltip="Machine Learning">cs.LG</span>
+          
+        </div>
+      
+    </div>
+    
+    <p class="title is-5 mathjax">
+      
+        Beyond Crash: Hijacking Your <span class="search-hit mathjax">Autonomous</span> Vehicle for Fun and Profit
+      
+    </p>
+    <p class="authors">
+      <span class="has-text-black-bis has-text-weight-semibold">Authors:</span>
+      
+      <a href="/search/?searchtype=author&amp;query=Sun%2C+Q">Qi Sun</a>, 
+      
+      <a href="/search/?searchtype=author&amp;query=Abdo%2C+A">Ahmed Abdo</a>, 
+      
+      <a href="/search/?searchtype=author&amp;query=Burbano%2C+L">Luis Burbano</a>, 
+      
+      <a href="/search/?searchtype=author&amp;query=Li%2C+Z">Ziyang Li</a>, 
+      
+      <a href="/search/?searchtype=author&amp;query=Yao%2C+Y">Yaxing Yao</a>, 
+      
+      <a href="/search/?searchtype=author&amp;query=Cardenas%2C+A">Alvaro Cardenas</a>, 
+      
+      <a href="/search/?searchtype=author&amp;query=Cao%2C+Y">Yinzhi Cao</a>
+      
+    </p>
+    
+    <p class="abstract mathjax">
+      <span class="search-hit">Abstract</span>:
+      <span class="abstract-short has-text-grey-dark mathjax" id="2602.07249v2-abstract-short" style="display: inline;">
+        <span class="search-hit mathjax">Autonomous</span> Vehicles (AVs), especially vision-based AVs, are rapidly being deployed without human operators. As AVs operate in safety-critical environments,&hellip;
+        <a class="is-size-7" style="white-space: nowrap;" onclick="document.getElementById('2602.07249v2-abstract-full').style.display = 'inline'; document.getElementById('2602.07249v2-abstract-short').style.display = 'none';">&#9661; More</a>
+      </span>
+      <span class="abstract-full has-text-grey-dark mathjax" id="2602.07249v2-abstract-full" style="display: none;">
+        <span class="search-hit mathjax">Autonomous</span> Vehicles (AVs), especially vision-based AVs, are rapidly being deployed without human operators. As AVs operate in safety-critical environments, <span class="search-hit mathjax">understanding</span> their robustness in an adversarial environment is an important research problem. Prior physical adversarial attacks on vision-based <span class="search-hit mathjax">autonomous</span> vehicles predominantly target immediate safety failures (e.g., a crash, a <span class="search-hit mathjax">traffic</span>-<span class="search-hit mathjax">rule</span> violation, or a transient lane departure) by inducing a short-lived perception or control error. This paper shows a qualitatively different risk: a long-horizon route integrity compromise, where an attacker gradually steers a victim AV away from its intended route and into an attacker-chosen destination while the victim continues to <span class="search-hit mathjax">drive</span> ``normally.&#39;&#39; This will not pose a danger to the victim vehicle itself, but also to potential passengers sitting inside the vehicle, who may not notice the route changes.
+  In this paper, we design and implement the first adversarial framework, called JackZebra, which performs route-level hijacking of a vision-based end-to-end <span class="search-hit mathjax">driving</span> stack using a physically plausible attacker vehicle with a reconfigurable display and a camera sensor mounted on the rear. The central challenge is temporal persistence: adversarial influence must remain effective in changing viewpoints, lighting, weather, <span class="search-hit mathjax">traffic</span>, and the victim&#39;s continual replanning -- without triggering conspicuous failures. Our key insight is to treat route hijacking as a closed-loop control problem and to convert adversarial patches into steering primitives that can be selected online via an interactive adjustment loop based on observed victim behavior using the rear camera. Our evaluations in both simulated and real-world scenarios show that JackZebra can successfully hijack victim vehicles to deviate from original routes and stop at places designated by the adversary with a high success rate.
+        <a class="is-size-7" style="white-space: nowrap;" onclick="document.getElementById('2602.07249v2-abstract-full').style.display = 'none'; document.getElementById('2602.07249v2-abstract-short').style.display = 'inline';">&#9651; Less</a>
+      </span>
+    </p>
+    
+
+    <p class="is-size-7"><span class="has-text-black-bis has-text-weight-semibold">Submitted</span> 4 May, 2026; <span class="has-text-black-bis has-text-weight-semibold">v1</span> submitted 6 February, 2026;
+      <span class="has-text-black-bis has-text-weight-semibold">originally announced</span> February 2026.
+      
+    </p>
+    
+
+    
+
+    
+  </li>
+
+  <li class="arxiv-result">
+    <div class="is-marginless">
+      <p class="list-title is-inline-block"><a href="https://arxiv.org/abs/2512.02777">arXiv:2512.02777</a>
+        <span>&nbsp;[<a href="https://arxiv.org/pdf/2512.02777">pdf</a>, <a href="https://arxiv.org/ps/2512.02777">ps</a>, <a href="https://arxiv.org/format/2512.02777">other</a>]&nbsp;</span>
+      </p>
+      <div class="tags is-inline-block">
+        <span class="tag is-small is-link tooltip is-tooltip-top" data-tooltip="Robotics">cs.RO</span>
+        
+          
+            <span class="tag is-small is-grey tooltip is-tooltip-top" data-tooltip="Multiagent Systems">cs.MA</span>
+          
+        </div>
+      
+    </div>
+    
+    <p class="title is-5 mathjax">
+      
+        CogDrive: Cognition-Driven Multimodal Prediction-Planning Fusion for Safe Autonomy
+      
+    </p>
+    <p class="authors">
+      <span class="has-text-black-bis has-text-weight-semibold">Authors:</span>
+      
+      <a href="/search/?searchtype=author&amp;query=Huang%2C+H">Heye Huang</a>, 
+      
+      <a href="/search/?searchtype=author&amp;query=Yang%2C+Y">Yibin Yang</a>, 
+      
+      <a href="/search/?searchtype=author&amp;query=Fan%2C+M">Mingfeng Fan</a>, 
+      
+      <a href="/search/?searchtype=author&amp;query=Wang%2C+H">Haoran Wang</a>, 
+      
+      <a href="/search/?searchtype=author&amp;query=Zhao%2C+X">Xiaocong Zhao</a>, 
+      
+      <a href="/search/?searchtype=author&amp;query=Wang%2C+J">Jianqiang Wang</a>
+      
+    </p>
+    
+    <p class="abstract mathjax">
+      <span class="search-hit">Abstract</span>:
+      <span class="abstract-short has-text-grey-dark mathjax" id="2512.02777v1-abstract-short" style="display: inline;">
+        Safe <span class="search-hit mathjax">autonomous</span>&hellip;
+        <a class="is-size-7" style="white-space: nowrap;" onclick="document.getElementById('2512.02777v1-abstract-full').style.display = 'inline'; document.getElementById('2512.02777v1-abstract-short').style.display = 'none';">&#9661; More</a>
+      </span>
+      <span class="abstract-full has-text-grey-dark mathjax" id="2512.02777v1-abstract-full" style="display: none;">
+        Safe <span class="search-hit mathjax">autonomous</span> <span class="search-hit mathjax">driving</span> in mixed <span class="search-hit mathjax">traffic</span> requires a unified <span class="search-hit mathjax">understanding</span> of multimodal interactions and dynamic planning under uncertainty. Existing learning based approaches struggle to capture rare but safety critical behaviors, while <span class="search-hit mathjax">rule</span> based systems often lack adaptability in complex interactions. To address these limitations, CogDrive introduces a cognition driven multimodal prediction and planning framework that integrates explicit modal reasoning with safety aware trajectory optimization. The prediction module adopts cognitive representations of interaction modes based on topological motion semantics and nearest neighbor relational encoding. With a differentiable modal loss and multimodal Gaussian decoding, CogDrive learns sparse and unbalanced interaction behaviors and improves long horizon trajectory prediction. The planning module incorporates an emergency response concept and optimizes safety stabilized trajectories, where short term consistent branches ensure safety during replanning cycles and long term branches support smooth and collision free motion under low probability switching modes. Experiments on Argoverse2 and INTERACTION datasets show that CogDrive achieves strong performance in trajectory accuracy and miss rate, while closed loop simulations confirm adaptive behavior in merge and intersection scenarios. By combining cognitive multimodal prediction with safety oriented planning, CogDrive offers an interpretable and reliable paradigm for safe autonomy in complex <span class="search-hit mathjax">traffic</span>.
+        <a class="is-size-7" style="white-space: nowrap;" onclick="document.getElementById('2512.02777v1-abstract-full').style.display = 'none'; document.getElementById('2512.02777v1-abstract-short').style.display = 'inline';">&#9651; Less</a>
+      </span>
+    </p>
+    
+
+    <p class="is-size-7"><span class="has-text-black-bis has-text-weight-semibold">Submitted</span> 2 December, 2025; 
+      <span class="has-text-black-bis has-text-weight-semibold">originally announced</span> December 2025.
+      
+    </p>
+    
+    <p class="comments is-size-7">
+      <span class="has-text-black-bis has-text-weight-semibold">Comments:</span>
+      <span class="has-text-grey-dark mathjax">25 pages, 6 figures</span>
+    </p>
+    
+
+    
+
+    
+  </li>
+
+  <li class="arxiv-result">
+    <div class="is-marginless">
+      <p class="list-title is-inline-block"><a href="https://arxiv.org/abs/2511.14977">arXiv:2511.14977</a>
+        <span>&nbsp;[<a href="https://arxiv.org/pdf/2511.14977">pdf</a>, <a href="https://arxiv.org/ps/2511.14977">ps</a>, <a href="https://arxiv.org/format/2511.14977">other</a>]&nbsp;</span>
+      </p>
+      <div class="tags is-inline-block">
+        <span class="tag is-small is-link tooltip is-tooltip-top" data-tooltip="Robotics">cs.RO</span>
+        
+          
+            <span class="tag is-small is-grey tooltip is-tooltip-top" data-tooltip="Artificial Intelligence">cs.AI</span>
+          
+        </div>
+      
+    </div>
+    
+    <p class="title is-5 mathjax">
+      
+        SVBRD-LLM: Self-Verifying Behavioral <span class="search-hit mathjax">Rule</span> Discovery for <span class="search-hit mathjax">Autonomous</span> Vehicle Identification
+      
+    </p>
+    <p class="authors">
+      <span class="has-text-black-bis has-text-weight-semibold">Authors:</span>
+      
+      <a href="/search/?searchtype=author&amp;query=Li%2C+X">Xiangyu Li</a>, 
+      
+      <a href="/search/?searchtype=author&amp;query=Wang%2C+T">Tianyi Wang</a>, 
+      
+      <a href="/search/?searchtype=author&amp;query=Jiao%2C+J">Junfeng Jiao</a>, 
+      
+      <a href="/search/?searchtype=author&amp;query=Claudel%2C+C">Christian Claudel</a>, 
+      
+      <a href="/search/?searchtype=author&amp;query=Guo%2C+Z">Zhaomiao Guo</a>
+      
+    </p>
+    
+    <p class="abstract mathjax">
+      <span class="search-hit">Abstract</span>:
+      <span class="abstract-short has-text-grey-dark mathjax" id="2511.14977v3-abstract-short" style="display: inline;">
+        As <span class="search-hit mathjax">autonomous</span> vehicles (AVs) are increasingly deployed on public roads,&hellip;
+        <a class="is-size-7" style="white-space: nowrap;" onclick="document.getElementById('2511.14977v3-abstract-full').style.display = 'inline'; document.getElementById('2511.14977v3-abstract-short').style.display = 'none';">&#9661; More</a>
+      </span>
+      <span class="abstract-full has-text-grey-dark mathjax" id="2511.14977v3-abstract-full" style="display: none;">
+        As <span class="search-hit mathjax">autonomous</span> vehicles (AVs) are increasingly deployed on public roads, <span class="search-hit mathjax">understanding</span> their real-world behaviors is critical for <span class="search-hit mathjax">traffic</span> safety analysis and regulatory oversight. However, many data-driven methods lack interpretability and cannot provide verifiable explanations of AV behavior in mixed <span class="search-hit mathjax">traffic</span>. This paper proposes SVBRD-LLM, a self-verifying behavioral <span class="search-hit mathjax">rule</span> discovery framework that automatically extracts interpretable behavioral <span class="search-hit mathjax">rules</span> from real-world <span class="search-hit mathjax">traffic</span> videos through zero-shot large language model (LLM) reasoning. The framework first derives vehicle trajectories using YOLOv26-based detection and ByteTrack-based tracking, then computes kinematic features and contextual information. It then employs GPT-5 zero-shot prompting to perform comparative behavioral analysis between AVs and human-driven vehicles (HDVs) across lane-changing and normal <span class="search-hit mathjax">driving</span> behaviors, generating 26 structured <span class="search-hit mathjax">rule</span> hypotheses that comprises both numerical thresholds and statistical behavioral patterns. These <span class="search-hit mathjax">rules</span> are subsequently evaluated through the AV identification task using an independent validation dataset, and iteratively refined through failure case analysis to filter spurious correlations and improve robustness. The resulting <span class="search-hit mathjax">rule</span> library contains 20 high-confidence behavioral <span class="search-hit mathjax">rules</span>, each including semantic description, quantitative thresholds or behavioral patterns, applicable context, and validation confidence. Experiments conducted on over 1,500 hours of real-world <span class="search-hit mathjax">traffic</span> videos from Waymo&#39;s commercial operating area demonstrate that the proposed framework achieves 90.0% accuracy and 93.3% F1-score in AV identification, with 98.0% recall. The discovered <span class="search-hit mathjax">rules</span> capture key AV traits in smoothness, conservatism, and lane discipline, informing safety assessment, regulatory compliance, and <span class="search-hit mathjax">traffic</span> management in mixed <span class="search-hit mathjax">traffic</span>. The dataset is available at: svbrd-llm-roadside-video-av.
+        <a class="is-size-7" style="white-space: nowrap;" onclick="document.getElementById('2511.14977v3-abstract-full').style.display = 'none'; document.getElementById('2511.14977v3-abstract-short').style.display = 'inline';">&#9651; Less</a>
+      </span>
+    </p>
+    
+
+    <p class="is-size-7"><span class="has-text-black-bis has-text-weight-semibold">Submitted</span> 22 March, 2026; <span class="has-text-black-bis has-text-weight-semibold">v1</span> submitted 18 November, 2025;
+      <span class="has-text-black-bis has-text-weight-semibold">originally announced</span> November 2025.
+      
+    </p>
+    
+
+    
+
+    
+  </li>
+
+  <li class="arxiv-result">
+    <div class="is-marginless">
+      <p class="list-title is-inline-block"><a href="https://arxiv.org/abs/2510.02803">arXiv:2510.02803</a>
+        <span>&nbsp;[<a href="https://arxiv.org/pdf/2510.02803">pdf</a>, <a href="https://arxiv.org/ps/2510.02803">ps</a>, <a href="https://arxiv.org/format/2510.02803">other</a>]&nbsp;</span>
+      </p>
+      <div class="tags is-inline-block">
+        <span class="tag is-small is-link tooltip is-tooltip-top" data-tooltip="Robotics">cs.RO</span>
+        
+          
+            <span class="tag is-small is-grey tooltip is-tooltip-top" data-tooltip="Artificial Intelligence">cs.AI</span>
+          
+            <span class="tag is-small is-grey tooltip is-tooltip-top" data-tooltip="Computer Vision and Pattern Recognition">cs.CV</span>
+          
+        </div>
+      
+    </div>
+    
+    <p class="title is-5 mathjax">
+      
+        Work Zones challenge VLM Trajectory Planning: Toward Mitigation and Robust <span class="search-hit mathjax">Autonomous</span> <span class="search-hit mathjax">Driving</span>
+      
+    </p>
+    <p class="authors">
+      <span class="has-text-black-bis has-text-weight-semibold">Authors:</span>
+      
+      <a href="/search/?searchtype=author&amp;query=Liao%2C+Y">Yifan Liao</a>, 
+      
+      <a href="/search/?searchtype=author&amp;query=Sun%2C+Z">Zhen Sun</a>, 
+      
+      <a href="/search/?searchtype=author&amp;query=Qiu%2C+X">Xiaoyun Qiu</a>, 
+      
+      <a href="/search/?searchtype=author&amp;query=Zhao%2C+Z">Zixiao Zhao</a>, 
+      
+      <a href="/search/?searchtype=author&amp;query=Tang%2C+W">Wenbing Tang</a>, 
+      
+      <a href="/search/?searchtype=author&amp;query=He%2C+X">Xinlei He</a>, 
+      
+      <a href="/search/?searchtype=author&amp;query=Zheng%2C+X">Xinhu Zheng</a>, 
+      
+      <a href="/search/?searchtype=author&amp;query=Zhang%2C+T">Tianwei Zhang</a>, 
+      
+      <a href="/search/?searchtype=author&amp;query=Huang%2C+X">Xinyi Huang</a>, 
+      
+      <a href="/search/?searchtype=author&amp;query=Han%2C+X">Xingshuo Han</a>
+      
+    </p>
+    
+    <p class="abstract mathjax">
+      <span class="search-hit">Abstract</span>:
+      <span class="abstract-short has-text-grey-dark mathjax" id="2510.02803v1-abstract-short" style="display: inline;">
+        Visual Language Models (VLMs), with powerful multimodal reasoning capabilities, are gradually integrated into <span class="search-hit mathjax">autonomous</span>&hellip;
+        <a class="is-size-7" style="white-space: nowrap;" onclick="document.getElementById('2510.02803v1-abstract-full').style.display = 'inline'; document.getElementById('2510.02803v1-abstract-short').style.display = 'none';">&#9661; More</a>
+      </span>
+      <span class="abstract-full has-text-grey-dark mathjax" id="2510.02803v1-abstract-full" style="display: none;">
+        Visual Language Models (VLMs), with powerful multimodal reasoning capabilities, are gradually integrated into <span class="search-hit mathjax">autonomous</span> <span class="search-hit mathjax">driving</span> by several automobile manufacturers to enhance planning capability in challenging environments. However, the trajectory planning capability of VLMs in work zones, which often include irregular layouts, temporary <span class="search-hit mathjax">traffic</span> control, and dynamically changing geometric structures, is still unexplored. To bridge this gap, we conduct the \textit{first} systematic study of VLMs for work zone trajectory planning, revealing that mainstream VLMs fail to generate correct trajectories in $68.0%$ of cases. To better <span class="search-hit mathjax">understand</span> these failures, we first identify candidate patterns via subgraph mining and clustering analysis, and then confirm the validity of $8$ common failure patterns through human verification. Building on these findings, we propose REACT-<span class="search-hit mathjax">Drive</span>, a trajectory planning framework that integrates VLMs with Retrieval-Augmented Generation (RAG). Specifically, REACT-<span class="search-hit mathjax">Drive</span> leverages VLMs to convert prior failure cases into constraint <span class="search-hit mathjax">rules</span> and executable trajectory planning code, while RAG retrieves similar patterns in new scenarios to guide trajectory generation. Experimental results on the ROADWork dataset show that REACT-<span class="search-hit mathjax">Drive</span> yields a reduction of around $3\times$ in average displacement error relative to VLM baselines under evaluation with Qwen2.5-VL. In addition, REACT-<span class="search-hit mathjax">Drive</span> yields the lowest inference time ($0.58$s) compared with other methods such as fine-tuning ($17.90$s). We further conduct experiments using a real vehicle in 15 work zone scenarios in the physical world, demonstrating the strong practicality of REACT-<span class="search-hit mathjax">Drive</span>.
+        <a class="is-size-7" style="white-space: nowrap;" onclick="document.getElementById('2510.02803v1-abstract-full').style.display = 'none'; document.getElementById('2510.02803v1-abstract-short').style.display = 'inline';">&#9651; Less</a>
+      </span>
+    </p>
+    
+
+    <p class="is-size-7"><span class="has-text-black-bis has-text-weight-semibold">Submitted</span> 3 October, 2025; 
+      <span class="has-text-black-bis has-text-weight-semibold">originally announced</span> October 2025.
+      
+    </p>
+    
+    <p class="comments is-size-7">
+      <span class="has-text-black-bis has-text-weight-semibold">Comments:</span>
+      <span class="has-text-grey-dark mathjax">13 pages,5 figures</span>
+    </p>
+    
+
+    
+
+    
+  </li>
+
+  <li class="arxiv-result">
+    <div class="is-marginless">
+      <p class="list-title is-inline-block"><a href="https://arxiv.org/abs/2508.21824">arXiv:2508.21824</a>
+        <span>&nbsp;[<a href="https://arxiv.org/pdf/2508.21824">pdf</a>, <a href="https://arxiv.org/ps/2508.21824">ps</a>, <a href="https://arxiv.org/format/2508.21824">other</a>]&nbsp;</span>
+      </p>
+      <div class="tags is-inline-block">
+        <span class="tag is-small is-link tooltip is-tooltip-top" data-tooltip="Computer Vision and Pattern Recognition">cs.CV</span>
+        </div>
+      
+    </div>
+    
+    <p class="title is-5 mathjax">
+      
+        DriveQA: Passing the <span class="search-hit mathjax">Driving</span> Knowledge Test
+      
+    </p>
+    <p class="authors">
+      <span class="has-text-black-bis has-text-weight-semibold">Authors:</span>
+      
+      <a href="/search/?searchtype=author&amp;query=Wei%2C+M">Maolin Wei</a>, 
+      
+      <a href="/search/?searchtype=author&amp;query=Liu%2C+W">Wanzhou Liu</a>, 
+      
+      <a href="/search/?searchtype=author&amp;query=Ohn-Bar%2C+E">Eshed Ohn-Bar</a>
+      
+    </p>
+    
+    <p class="abstract mathjax">
+      <span class="search-hit">Abstract</span>:
+      <span class="abstract-short has-text-grey-dark mathjax" id="2508.21824v1-abstract-short" style="display: inline;">
+        If a Large Language Model (LLM) were to take a <span class="search-hit mathjax">driving</span> knowledge test today, would it pass? Beyond standard spatial and visual question-answering (QA) tasks on current&hellip;
+        <a class="is-size-7" style="white-space: nowrap;" onclick="document.getElementById('2508.21824v1-abstract-full').style.display = 'inline'; document.getElementById('2508.21824v1-abstract-short').style.display = 'none';">&#9661; More</a>
+      </span>
+      <span class="abstract-full has-text-grey-dark mathjax" id="2508.21824v1-abstract-full" style="display: none;">
+        If a Large Language Model (LLM) were to take a <span class="search-hit mathjax">driving</span> knowledge test today, would it pass? Beyond standard spatial and visual question-answering (QA) tasks on current <span class="search-hit mathjax">autonomous</span> <span class="search-hit mathjax">driving</span> benchmarks, <span class="search-hit mathjax">driving</span> knowledge tests require a complete <span class="search-hit mathjax">understanding</span> of all <span class="search-hit mathjax">traffic</span> <span class="search-hit mathjax">rules</span>, signage, and right-of-way principles. To pass this test, human drivers must discern various edge cases that rarely appear in real-world datasets. In this work, we present DriveQA, an extensive open-source text and vision-based benchmark that exhaustively covers <span class="search-hit mathjax">traffic</span> regulations and scenarios. Through our experiments using DriveQA, we show that (1) state-of-the-art LLMs and Multimodal LLMs (MLLMs) perform well on basic <span class="search-hit mathjax">traffic</span> <span class="search-hit mathjax">rules</span> but exhibit significant weaknesses in numerical reasoning and complex right-of-way scenarios, <span class="search-hit mathjax">traffic</span> sign variations, and spatial layouts, (2) fine-tuning on DriveQA improves accuracy across multiple categories, particularly in regulatory sign recognition and intersection decision-making, (3) controlled variations in DriveQA-V provide insights into model sensitivity to environmental factors such as lighting, perspective, distance, and weather conditions, and (4) pretraining on DriveQA enhances downstream <span class="search-hit mathjax">driving</span> task performance, leading to improved results on real-world datasets such as nuScenes and BDD, while also demonstrating that models can internalize text and synthetic <span class="search-hit mathjax">traffic</span> knowledge to generalize effectively across downstream QA tasks.
+        <a class="is-size-7" style="white-space: nowrap;" onclick="document.getElementById('2508.21824v1-abstract-full').style.display = 'none'; document.getElementById('2508.21824v1-abstract-short').style.display = 'inline';">&#9651; Less</a>
+      </span>
+    </p>
+    
+
+    <p class="is-size-7"><span class="has-text-black-bis has-text-weight-semibold">Submitted</span> 29 August, 2025; 
+      <span class="has-text-black-bis has-text-weight-semibold">originally announced</span> August 2025.
+      
+    </p>
+    
+    <p class="comments is-size-7">
+      <span class="has-text-black-bis has-text-weight-semibold">Comments:</span>
+      <span class="has-text-grey-dark mathjax">Accepted by ICCV 2025. Project page: https://driveqaiccv.github.io/</span>
+    </p>
+    
+
+    
+
+    
+  </li>
+
+  <li class="arxiv-result">
+    <div class="is-marginless">
+      <p class="list-title is-inline-block"><a href="https://arxiv.org/abs/2505.05240">arXiv:2505.05240</a>
+        <span>&nbsp;[<a href="https://arxiv.org/pdf/2505.05240">pdf</a>, <a href="https://arxiv.org/format/2505.05240">other</a>]&nbsp;</span>
+      </p>
+      <div class="tags is-inline-block">
+        <span class="tag is-small is-link tooltip is-tooltip-top" data-tooltip="Computer Vision and Pattern Recognition">cs.CV</span>
+        </div>
+      
+    </div>
+    
+    <p class="title is-5 mathjax">
+      
+        PADriver: Towards Personalized <span class="search-hit mathjax">Autonomous</span> <span class="search-hit mathjax">Driving</span>
+      
+    </p>
+    <p class="authors">
+      <span class="has-text-black-bis has-text-weight-semibold">Authors:</span>
+      
+      <a href="/search/?searchtype=author&amp;query=Kou%2C+G">Genghua Kou</a>, 
+      
+      <a href="/search/?searchtype=author&amp;query=Jia%2C+F">Fan Jia</a>, 
+      
+      <a href="/search/?searchtype=author&amp;query=Mao%2C+W">Weixin Mao</a>, 
+      
+      <a href="/search/?searchtype=author&amp;query=Liu%2C+Y">Yingfei Liu</a>, 
+      
+      <a href="/search/?searchtype=author&amp;query=Zhao%2C+Y">Yucheng Zhao</a>, 
+      
+      <a href="/search/?searchtype=author&amp;query=Zhang%2C+Z">Ziheng Zhang</a>, 
+      
+      <a href="/search/?searchtype=author&amp;query=Yoshie%2C+O">Osamu Yoshie</a>, 
+      
+      <a href="/search/?searchtype=author&amp;query=Wang%2C+T">Tiancai Wang</a>, 
+      
+      <a href="/search/?searchtype=author&amp;query=Li%2C+Y">Ying Li</a>, 
+      
+      <a href="/search/?searchtype=author&amp;query=Zhang%2C+X">Xiangyu Zhang</a>
+      
+    </p>
+    
+    <p class="abstract mathjax">
+      <span class="search-hit">Abstract</span>:
+      <span class="abstract-short has-text-grey-dark mathjax" id="2505.05240v1-abstract-short" style="display: inline;">
+        In this paper, we propose PADriver, a novel closed-loop framework for personalized <span class="search-hit mathjax">autonomous</span>&hellip;
+        <a class="is-size-7" style="white-space: nowrap;" onclick="document.getElementById('2505.05240v1-abstract-full').style.display = 'inline'; document.getElementById('2505.05240v1-abstract-short').style.display = 'none';">&#9661; More</a>
+      </span>
+      <span class="abstract-full has-text-grey-dark mathjax" id="2505.05240v1-abstract-full" style="display: none;">
+        In this paper, we propose PADriver, a novel closed-loop framework for personalized <span class="search-hit mathjax">autonomous</span> <span class="search-hit mathjax">driving</span> (PAD). Built upon Multi-modal Large Language Model (MLLM), PADriver takes streaming frames and personalized textual prompts as inputs. It autoaggressively performs scene <span class="search-hit mathjax">understanding</span>, danger level estimation and action decision. The predicted danger level reflects the risk of the potential action and provides an explicit reference for the final action, which corresponds to the preset personalized prompt. Moreover, we construct a closed-loop benchmark named PAD-Highway based on Highway-Env simulator to comprehensively evaluate the decision performance under <span class="search-hit mathjax">traffic</span> <span class="search-hit mathjax">rules</span>. The dataset contains 250 hours videos with high-quality annotation to facilitate the development of PAD behavior analysis. Experimental results on the constructed benchmark show that PADriver outperforms state-of-the-art approaches on different evaluation metrics, and enables various <span class="search-hit mathjax">driving</span> modes.
+        <a class="is-size-7" style="white-space: nowrap;" onclick="document.getElementById('2505.05240v1-abstract-full').style.display = 'none'; document.getElementById('2505.05240v1-abstract-short').style.display = 'inline';">&#9651; Less</a>
+      </span>
+    </p>
+    
+
+    <p class="is-size-7"><span class="has-text-black-bis has-text-weight-semibold">Submitted</span> 8 May, 2025; 
+      <span class="has-text-black-bis has-text-weight-semibold">originally announced</span> May 2025.
+      
+    </p>
+    
+
+    
+
+    
+  </li>
+
+  <li class="arxiv-result">
+    <div class="is-marginless">
+      <p class="list-title is-inline-block"><a href="https://arxiv.org/abs/2503.18730">arXiv:2503.18730</a>
+        <span>&nbsp;[<a href="https://arxiv.org/pdf/2503.18730">pdf</a>, <a href="https://arxiv.org/format/2503.18730">other</a>]&nbsp;</span>
+      </p>
+      <div class="tags is-inline-block">
+        <span class="tag is-small is-link tooltip is-tooltip-top" data-tooltip="Computation and Language">cs.CL</span>
+        </div>
+      
+    </div>
+    
+    <p class="title is-5 mathjax">
+      
+        Predicting the Road Ahead: A Knowledge Graph based Foundation Model for Scene <span class="search-hit mathjax">Understanding</span> in <span class="search-hit mathjax">Autonomous</span> <span class="search-hit mathjax">Driving</span>
+      
+    </p>
+    <p class="authors">
+      <span class="has-text-black-bis has-text-weight-semibold">Authors:</span>
+      
+      <a href="/search/?searchtype=author&amp;query=Zhou%2C+H">Hongkuan Zhou</a>, 
+      
+      <a href="/search/?searchtype=author&amp;query=Schmid%2C+S">Stefan Schmid</a>, 
+      
+      <a href="/search/?searchtype=author&amp;query=Li%2C+Y">Yicong Li</a>, 
+      
+      <a href="/search/?searchtype=author&amp;query=Halilaj%2C+L">Lavdim Halilaj</a>, 
+      
+      <a href="/search/?searchtype=author&amp;query=Yao%2C+X">Xiangtong Yao</a>, 
+      
+      <a href="/search/?searchtype=author&amp;query=cao%2C+W">Wei cao</a>
+      
+    </p>
+    
+    <p class="abstract mathjax">
+      <span class="search-hit">Abstract</span>:
+      <span class="abstract-short has-text-grey-dark mathjax" id="2503.18730v1-abstract-short" style="display: inline;">
+        The <span class="search-hit mathjax">autonomous</span>&hellip;
+        <a class="is-size-7" style="white-space: nowrap;" onclick="document.getElementById('2503.18730v1-abstract-full').style.display = 'inline'; document.getElementById('2503.18730v1-abstract-short').style.display = 'none';">&#9661; More</a>
+      </span>
+      <span class="abstract-full has-text-grey-dark mathjax" id="2503.18730v1-abstract-full" style="display: none;">
+        The <span class="search-hit mathjax">autonomous</span> <span class="search-hit mathjax">driving</span> field has seen remarkable advancements in various topics, such as object recognition, trajectory prediction, and motion planning. However, current approaches face limitations in effectively comprehending the complex evolutions of <span class="search-hit mathjax">driving</span> scenes over time. This paper proposes FM4SU, a novel methodology for training a symbolic foundation model (FM) for scene <span class="search-hit mathjax">understanding</span> in <span class="search-hit mathjax">autonomous</span> <span class="search-hit mathjax">driving</span>. It leverages knowledge graphs (KGs) to capture sensory observation along with domain knowledge such as road topology, <span class="search-hit mathjax">traffic</span> <span class="search-hit mathjax">rules</span>, or complex interactions between <span class="search-hit mathjax">traffic</span> participants. A bird&#39;s eye view (BEV) symbolic representation is extracted from the KG for each <span class="search-hit mathjax">driving</span> scene, including the spatio-temporal information among the objects across the scenes. The BEV representation is serialized into a sequence of tokens and given to pre-trained language models (PLMs) for learning an inherent <span class="search-hit mathjax">understanding</span> of the co-occurrence among <span class="search-hit mathjax">driving</span> scene elements and generating predictions on the next scenes. We conducted a number of experiments using the nuScenes dataset and KG in various scenarios. The results demonstrate that fine-tuned models achieve significantly higher accuracy in all tasks. The fine-tuned T5 model achieved a next scene prediction accuracy of 86.7%. This paper concludes that FM4SU offers a promising foundation for developing more comprehensive models for scene <span class="search-hit mathjax">understanding</span> in <span class="search-hit mathjax">autonomous</span> <span class="search-hit mathjax">driving</span>.
+        <a class="is-size-7" style="white-space: nowrap;" onclick="document.getElementById('2503.18730v1-abstract-full').style.display = 'none'; document.getElementById('2503.18730v1-abstract-short').style.display = 'inline';">&#9651; Less</a>
+      </span>
+    </p>
+    
+
+    <p class="is-size-7"><span class="has-text-black-bis has-text-weight-semibold">Submitted</span> 24 March, 2025; 
+      <span class="has-text-black-bis has-text-weight-semibold">originally announced</span> March 2025.
+      
+    </p>
+    
+
+    
+
+    
+  </li>
+
+  <li class="arxiv-result">
+    <div class="is-marginless">
+      <p class="list-title is-inline-block"><a href="https://arxiv.org/abs/2502.11352">arXiv:2502.11352</a>
+        <span>&nbsp;[<a href="https://arxiv.org/pdf/2502.11352">pdf</a>, <a href="https://arxiv.org/format/2502.11352">other</a>]&nbsp;</span>
+      </p>
+      <div class="tags is-inline-block">
+        <span class="tag is-small is-link tooltip is-tooltip-top" data-tooltip="Robotics">cs.RO</span>
+        
+          
+            <span class="tag is-small is-grey tooltip is-tooltip-top" data-tooltip="Machine Learning">cs.LG</span>
+          
+        </div>
+      
+    </div>
+    
+    <p class="title is-5 mathjax">
+      
+        A Framework for Learning Scoring <span class="search-hit mathjax">Rules</span> in <span class="search-hit mathjax">Autonomous</span> <span class="search-hit mathjax">Driving</span> Planning Systems
+      
+    </p>
+    <p class="authors">
+      <span class="has-text-black-bis has-text-weight-semibold">Authors:</span>
+      
+      <a href="/search/?searchtype=author&amp;query=Xiong%2C+Z">Zikang Xiong</a>, 
+      
+      <a href="/search/?searchtype=author&amp;query=Eappen%2C+J+K">Joe Kurian Eappen</a>, 
+      
+      <a href="/search/?searchtype=author&amp;query=Jagannathan%2C+S">Suresh Jagannathan</a>
+      
+    </p>
+    
+    <p class="abstract mathjax">
+      <span class="search-hit">Abstract</span>:
+      <span class="abstract-short has-text-grey-dark mathjax" id="2502.11352v1-abstract-short" style="display: inline;">
+        In <span class="search-hit mathjax">autonomous</span>&hellip;
+        <a class="is-size-7" style="white-space: nowrap;" onclick="document.getElementById('2502.11352v1-abstract-full').style.display = 'inline'; document.getElementById('2502.11352v1-abstract-short').style.display = 'none';">&#9661; More</a>
+      </span>
+      <span class="abstract-full has-text-grey-dark mathjax" id="2502.11352v1-abstract-full" style="display: none;">
+        In <span class="search-hit mathjax">autonomous</span> <span class="search-hit mathjax">driving</span> systems, motion planning is commonly implemented as a two-stage process: first, a trajectory proposer generates multiple candidate trajectories, then a scoring mechanism selects the most suitable trajectory for execution. For this critical selection stage, <span class="search-hit mathjax">rule</span>-based scoring mechanisms are particularly appealing as they can explicitly encode <span class="search-hit mathjax">driving</span> preferences, safety constraints, and <span class="search-hit mathjax">traffic</span> regulations in a formalized, human-<span class="search-hit mathjax">understandable</span> format. However, manually crafting these scoring <span class="search-hit mathjax">rules</span> presents significant challenges: the <span class="search-hit mathjax">rules</span> often contain complex interdependencies, require careful parameter tuning, and may not fully capture the nuances present in real-world <span class="search-hit mathjax">driving</span> data. This work introduces FLoRA, a novel framework that bridges this gap by learning interpretable scoring <span class="search-hit mathjax">rules</span> represented in temporal logic. Our method features a learnable logic structure that captures nuanced relationships across diverse <span class="search-hit mathjax">driving</span> scenarios, optimizing both <span class="search-hit mathjax">rules</span> and parameters directly from real-world <span class="search-hit mathjax">driving</span> demonstrations collected in NuPlan. Our approach effectively learns to evaluate <span class="search-hit mathjax">driving</span> behavior even though the training data only contains positive examples (successful <span class="search-hit mathjax">driving</span> demonstrations). Evaluations in closed-loop planning simulations demonstrate that our learned scoring <span class="search-hit mathjax">rules</span> outperform existing techniques, including expert-designed <span class="search-hit mathjax">rules</span> and neural network scoring models, while maintaining interpretability. This work introduces a data-driven approach to enhance the scoring mechanism in <span class="search-hit mathjax">autonomous</span> <span class="search-hit mathjax">driving</span> systems, designed as a plug-in module to seamlessly integrate with various trajectory proposers. Our video and code are available on xiong.zikang.me/FLoRA.
+        <a class="is-size-7" style="white-space: nowrap;" onclick="document.getElementById('2502.11352v1-abstract-full').style.display = 'none'; document.getElementById('2502.11352v1-abstract-short').style.display = 'inline';">&#9651; Less</a>
+      </span>
+    </p>
+    
+
+    <p class="is-size-7"><span class="has-text-black-bis has-text-weight-semibold">Submitted</span> 16 February, 2025; 
+      <span class="has-text-black-bis has-text-weight-semibold">originally announced</span> February 2025.
+      
+    </p>
+    
+    <p class="comments is-size-7">
+      <span class="has-text-black-bis has-text-weight-semibold">Comments:</span>
+      <span class="has-text-grey-dark mathjax">Accepted for publication in IEEE Robotics and Automation Letters (RA-L)</span>
+    </p>
+    
+
+    
+
+    
+  </li>
+
+  <li class="arxiv-result">
+    <div class="is-marginless">
+      <p class="list-title is-inline-block"><a href="https://arxiv.org/abs/2501.11260">arXiv:2501.11260</a>
+        <span>&nbsp;[<a href="https://arxiv.org/pdf/2501.11260">pdf</a>, <a href="https://arxiv.org/ps/2501.11260">ps</a>, <a href="https://arxiv.org/format/2501.11260">other</a>]&nbsp;</span>
+      </p>
+      <div class="tags is-inline-block">
+        <span class="tag is-small is-link tooltip is-tooltip-top" data-tooltip="Robotics">cs.RO</span>
+        
+          
+            <span class="tag is-small is-grey tooltip is-tooltip-top" data-tooltip="Computer Vision and Pattern Recognition">cs.CV</span>
+          
+        </div>
+      
+    </div>
+    
+    <p class="title is-5 mathjax">
+      
+        A Survey of World Models for <span class="search-hit mathjax">Autonomous</span> <span class="search-hit mathjax">Driving</span>
+      
+    </p>
+    <p class="authors">
+      <span class="has-text-black-bis has-text-weight-semibold">Authors:</span>
+      
+      <a href="/search/?searchtype=author&amp;query=Feng%2C+T">Tuo Feng</a>, 
+      
+      <a href="/search/?searchtype=author&amp;query=Wang%2C+W">Wenguan Wang</a>, 
+      
+      <a href="/search/?searchtype=author&amp;query=Yang%2C+Y">Yi Yang</a>
+      
+    </p>
+    
+    <p class="abstract mathjax">
+      <span class="search-hit">Abstract</span>:
+      <span class="abstract-short has-text-grey-dark mathjax" id="2501.11260v4-abstract-short" style="display: inline;">
+        Recent breakthroughs in <span class="search-hit mathjax">autonomous</span>&hellip;
+        <a class="is-size-7" style="white-space: nowrap;" onclick="document.getElementById('2501.11260v4-abstract-full').style.display = 'inline'; document.getElementById('2501.11260v4-abstract-short').style.display = 'none';">&#9661; More</a>
+      </span>
+      <span class="abstract-full has-text-grey-dark mathjax" id="2501.11260v4-abstract-full" style="display: none;">
+        Recent breakthroughs in <span class="search-hit mathjax">autonomous</span> <span class="search-hit mathjax">driving</span> have been propelled by advances in robust world modeling, fundamentally transforming how vehicles interpret dynamic scenes and execute safe decision-making. World models have emerged as a linchpin technology, offering high-fidelity representations of the <span class="search-hit mathjax">driving</span> environment that integrate multi-sensor data, semantic cues, and temporal dynamics. This paper systematically reviews recent advances in world models for <span class="search-hit mathjax">autonomous</span> <span class="search-hit mathjax">driving</span>, proposing a three-tiered taxonomy: (i) Generation of Future Physical World, covering Image-, BEV-, OG-, and PC-based generation methods that enhance scene evolution modeling through diffusion models and 4D occupancy forecasting; (ii) Behavior Planning for Intelligent Agents, combining <span class="search-hit mathjax">rule</span>-driven and learning-based paradigms with cost map optimization and reinforcement learning for trajectory generation in complex <span class="search-hit mathjax">traffic</span> conditions; (ii) Interaction between Prediction and Planning, achieving multi-agent collaborative decision-making through latent space diffusion and memory-augmented architectures. The study further analyzes training paradigms, including self-supervised learning, multimodal pretraining, and generative data augmentation, while evaluating world models&#39; performance in scene <span class="search-hit mathjax">understanding</span> and motion prediction tasks. Future research must address key challenges in self-supervised representation learning, multimodal fusion, and advanced simulation to advance the practical deployment of world models in complex urban environments. Overall, the comprehensive analysis provides a technical roadmap for harnessing the transformative potential of world models in advancing safe and reliable <span class="search-hit mathjax">autonomous</span> <span class="search-hit mathjax">driving</span> solutions.
+        <a class="is-size-7" style="white-space: nowrap;" onclick="document.getElementById('2501.11260v4-abstract-full').style.display = 'none'; document.getElementById('2501.11260v4-abstract-short').style.display = 'inline';">&#9651; Less</a>
+      </span>
+    </p>
+    
+
+    <p class="is-size-7"><span class="has-text-black-bis has-text-weight-semibold">Submitted</span> 10 September, 2025; <span class="has-text-black-bis has-text-weight-semibold">v1</span> submitted 19 January, 2025;
+      <span class="has-text-black-bis has-text-weight-semibold">originally announced</span> January 2025.
+      
+    </p>
+    
+    <p class="comments is-size-7">
+      <span class="has-text-black-bis has-text-weight-semibold">Comments:</span>
+      <span class="has-text-grey-dark mathjax">Ongoing project. Paper list: https://github.com/FengZicai/AwesomeWMAD Benchmark: https://github.com/FengZicai/WMAD-Benchmarks</span>
+    </p>
+    
+
+    
+
+    
+  </li>
+
+  <li class="arxiv-result">
+    <div class="is-marginless">
+      <p class="list-title is-inline-block"><a href="https://arxiv.org/abs/2411.01909">arXiv:2411.01909</a>
+        <span>&nbsp;[<a href="https://arxiv.org/pdf/2411.01909">pdf</a>, <a href="https://arxiv.org/format/2411.01909">other</a>]&nbsp;</span>
+      </p>
+      <div class="tags is-inline-block">
+        <span class="tag is-small is-link tooltip is-tooltip-top" data-tooltip="Robotics">cs.RO</span>
+        
+          
+            <span class="tag is-small is-grey tooltip is-tooltip-top" data-tooltip="Machine Learning">cs.LG</span>
+          
+        </div>
+      
+    </div>
+    
+    <p class="title is-5 mathjax">
+      
+        <span class="search-hit mathjax">Traffic</span> and Safety <span class="search-hit mathjax">Rule</span> Compliance of Humans in Diverse <span class="search-hit mathjax">Driving</span> Situations
+      
+    </p>
+    <p class="authors">
+      <span class="has-text-black-bis has-text-weight-semibold">Authors:</span>
+      
+      <a href="/search/?searchtype=author&amp;query=Kurenkov%2C+M">Michael Kurenkov</a>, 
+      
+      <a href="/search/?searchtype=author&amp;query=Marvi%2C+S">Sajad Marvi</a>, 
+      
+      <a href="/search/?searchtype=author&amp;query=Schmidt%2C+J">Julian Schmidt</a>, 
+      
+      <a href="/search/?searchtype=author&amp;query=Rist%2C+C+B">Christoph B. Rist</a>, 
+      
+      <a href="/search/?searchtype=author&amp;query=Canevaro%2C+A">Alessandro Canevaro</a>, 
+      
+      <a href="/search/?searchtype=author&amp;query=Yu%2C+H">Hang Yu</a>, 
+      
+      <a href="/search/?searchtype=author&amp;query=Jordan%2C+J">Julian Jordan</a>, 
+      
+      <a href="/search/?searchtype=author&amp;query=Schildbach%2C+G">Georg Schildbach</a>, 
+      
+      <a href="/search/?searchtype=author&amp;query=Valada%2C+A">Abhinav Valada</a>
+      
+    </p>
+    
+    <p class="abstract mathjax">
+      <span class="search-hit">Abstract</span>:
+      <span class="abstract-short has-text-grey-dark mathjax" id="2411.01909v1-abstract-short" style="display: inline;">
+        The increasing interest in <span class="search-hit mathjax">autonomous</span>&hellip;
+        <a class="is-size-7" style="white-space: nowrap;" onclick="document.getElementById('2411.01909v1-abstract-full').style.display = 'inline'; document.getElementById('2411.01909v1-abstract-short').style.display = 'none';">&#9661; More</a>
+      </span>
+      <span class="abstract-full has-text-grey-dark mathjax" id="2411.01909v1-abstract-full" style="display: none;">
+        The increasing interest in <span class="search-hit mathjax">autonomous</span> <span class="search-hit mathjax">driving</span> systems has highlighted the need for an in-depth analysis of human <span class="search-hit mathjax">driving</span> behavior in diverse scenarios. Analyzing human data is crucial for developing <span class="search-hit mathjax">autonomous</span> systems that replicate safe <span class="search-hit mathjax">driving</span> practices and ensure seamless integration into human-dominated environments. This paper presents a comparative evaluation of human compliance with <span class="search-hit mathjax">traffic</span> and safety <span class="search-hit mathjax">rules</span> across multiple trajectory prediction datasets, including Argoverse 2, nuPlan, Lyft, and DeepUrban. By defining and leveraging existing safety and behavior-related metrics, such as time to collision, adherence to speed limits, and interactions with other <span class="search-hit mathjax">traffic</span> participants, we aim to provide a comprehensive <span class="search-hit mathjax">understanding</span> of each datasets strengths and limitations. Our analysis focuses on the distribution of data samples, identifying noise, outliers, and undesirable behaviors exhibited by human drivers in both the training and validation sets. The results underscore the need for applying robust filtering techniques to certain datasets due to high levels of noise and the presence of such undesirable behaviors.
+        <a class="is-size-7" style="white-space: nowrap;" onclick="document.getElementById('2411.01909v1-abstract-full').style.display = 'none'; document.getElementById('2411.01909v1-abstract-short').style.display = 'inline';">&#9651; Less</a>
+      </span>
+    </p>
+    
+
+    <p class="is-size-7"><span class="has-text-black-bis has-text-weight-semibold">Submitted</span> 4 November, 2024; 
+      <span class="has-text-black-bis has-text-weight-semibold">originally announced</span> November 2024.
+      
+    </p>
+    
+    <p class="comments is-size-7">
+      <span class="has-text-black-bis has-text-weight-semibold">Comments:</span>
+      <span class="has-text-grey-dark mathjax">8 pages, CoRL 2024 Workshop SAFE-ROL</span>
+    </p>
+    
+
+    
+
+    
+  </li>
+
+  <li class="arxiv-result">
+    <div class="is-marginless">
+      <p class="list-title is-inline-block"><a href="https://arxiv.org/abs/2410.04759">arXiv:2410.04759</a>
+        <span>&nbsp;[<a href="https://arxiv.org/pdf/2410.04759">pdf</a>, <a href="https://arxiv.org/ps/2410.04759">ps</a>, <a href="https://arxiv.org/format/2410.04759">other</a>]&nbsp;</span>
+      </p>
+      <div class="tags is-inline-block">
+        <span class="tag is-small is-link tooltip is-tooltip-top" data-tooltip="Artificial Intelligence">cs.AI</span>
+        </div>
+      
+    </div>
+    
+    <p class="title is-5 mathjax">
+      
+        <span class="search-hit mathjax">Driving</span> with Regulation: Trustworthy and Interpretable Decision-Making for <span class="search-hit mathjax">Autonomous</span> <span class="search-hit mathjax">Driving</span> with Retrieval-Augmented Reasoning
+      
+    </p>
+    <p class="authors">
+      <span class="has-text-black-bis has-text-weight-semibold">Authors:</span>
+      
+      <a href="/search/?searchtype=author&amp;query=Cai%2C+T">Tianhui Cai</a>, 
+      
+      <a href="/search/?searchtype=author&amp;query=Liu%2C+Y">Yifan Liu</a>, 
+      
+      <a href="/search/?searchtype=author&amp;query=Zhou%2C+Z">Zewei Zhou</a>, 
+      
+      <a href="/search/?searchtype=author&amp;query=Ma%2C+H">Haoxuan Ma</a>, 
+      
+      <a href="/search/?searchtype=author&amp;query=Zhao%2C+S+Z">Seth Z. Zhao</a>, 
+      
+      <a href="/search/?searchtype=author&amp;query=Wu%2C+Z">Zhiwen Wu</a>, 
+      
+      <a href="/search/?searchtype=author&amp;query=Han%2C+X">Xu Han</a>, 
+      
+      <a href="/search/?searchtype=author&amp;query=Huang%2C+Z">Zhiyu Huang</a>, 
+      
+      <a href="/search/?searchtype=author&amp;query=Ma%2C+J">Jiaqi Ma</a>
+      
+    </p>
+    
+    <p class="abstract mathjax">
+      <span class="search-hit">Abstract</span>:
+      <span class="abstract-short has-text-grey-dark mathjax" id="2410.04759v3-abstract-short" style="display: inline;">
+        <span class="search-hit mathjax">Understanding</span> and adhering to&hellip;
+        <a class="is-size-7" style="white-space: nowrap;" onclick="document.getElementById('2410.04759v3-abstract-full').style.display = 'inline'; document.getElementById('2410.04759v3-abstract-short').style.display = 'none';">&#9661; More</a>
+      </span>
+      <span class="abstract-full has-text-grey-dark mathjax" id="2410.04759v3-abstract-full" style="display: none;">
+        <span class="search-hit mathjax">Understanding</span> and adhering to <span class="search-hit mathjax">traffic</span> regulations is essential for <span class="search-hit mathjax">autonomous</span> vehicles to ensure safety and trustworthiness. However, <span class="search-hit mathjax">traffic</span> regulations are complex, context-dependent, and differ between regions, posing a major challenge to conventional <span class="search-hit mathjax">rule</span>-based decision-making approaches. We present an interpretable, regulation-aware decision-making framework, DriveReg, which enables <span class="search-hit mathjax">autonomous</span> vehicles to <span class="search-hit mathjax">understand</span> and adhere to region-specific <span class="search-hit mathjax">traffic</span> laws and safety guidelines. The framework integrates a Retrieval-Augmented Generation (RAG)-based <span class="search-hit mathjax">Traffic</span> Regulation Retrieval Agent, which retrieves relevant <span class="search-hit mathjax">rules</span> from regulatory documents based on the current situation, and a Large Language Model (LLM)-powered Reasoning Agent that evaluates actions for legal compliance and safety. Our design emphasizes interpretability to enhance transparency and trustworthiness. To support systematic evaluation, we introduce the DriveReg Scenarios Dataset, a comprehensive dataset of <span class="search-hit mathjax">driving</span> scenarios across Boston, Singapore, and Los Angeles, with both hypothesized text-based cases and real-world <span class="search-hit mathjax">driving</span> data, constructed and annotated to evaluate models&#39; capacity for regulation <span class="search-hit mathjax">understanding</span> and reasoning. We validate our framework on the DriveReg Scenarios Dataset and real-world deployment, demonstrating strong performance and robustness across diverse environments.
+        <a class="is-size-7" style="white-space: nowrap;" onclick="document.getElementById('2410.04759v3-abstract-full').style.display = 'none'; document.getElementById('2410.04759v3-abstract-short').style.display = 'inline';">&#9651; Less</a>
+      </span>
+    </p>
+    
+
+    <p class="is-size-7"><span class="has-text-black-bis has-text-weight-semibold">Submitted</span> 19 November, 2025; <span class="has-text-black-bis has-text-weight-semibold">v1</span> submitted 7 October, 2024;
+      <span class="has-text-black-bis has-text-weight-semibold">originally announced</span> October 2024.
+      
+    </p>
+    
+
+    
+
+    
+  </li>
+
+  <li class="arxiv-result">
+    <div class="is-marginless">
+      <p class="list-title is-inline-block"><a href="https://arxiv.org/abs/2409.14488">arXiv:2409.14488</a>
+        <span>&nbsp;[<a href="https://arxiv.org/pdf/2409.14488">pdf</a>, <a href="https://arxiv.org/format/2409.14488">other</a>]&nbsp;</span>
+      </p>
+      <div class="tags is-inline-block">
+        <span class="tag is-small is-link tooltip is-tooltip-top" data-tooltip="Cryptography and Security">cs.CR</span>
+        
+          
+            <span class="tag is-small is-grey tooltip is-tooltip-top" data-tooltip="Artificial Intelligence">cs.AI</span>
+          
+        </div>
+      
+    </div>
+    
+    <p class="title is-5 mathjax">
+      
+        Enhancing LLM-based <span class="search-hit mathjax">Autonomous</span> <span class="search-hit mathjax">Driving</span> Agents to Mitigate Perception Attacks
+      
+    </p>
+    <p class="authors">
+      <span class="has-text-black-bis has-text-weight-semibold">Authors:</span>
+      
+      <a href="/search/?searchtype=author&amp;query=Song%2C+R">Ruoyu Song</a>, 
+      
+      <a href="/search/?searchtype=author&amp;query=Ozmen%2C+M+O">Muslum Ozgur Ozmen</a>, 
+      
+      <a href="/search/?searchtype=author&amp;query=Kim%2C+H">Hyungsub Kim</a>, 
+      
+      <a href="/search/?searchtype=author&amp;query=Bianchi%2C+A">Antonio Bianchi</a>, 
+      
+      <a href="/search/?searchtype=author&amp;query=Celik%2C+Z+B">Z. Berkay Celik</a>
+      
+    </p>
+    
+    <p class="abstract mathjax">
+      <span class="search-hit">Abstract</span>:
+      <span class="abstract-short has-text-grey-dark mathjax" id="2409.14488v1-abstract-short" style="display: inline;">
+        There is a growing interest in integrating Large Language Models (LLMs) with <span class="search-hit mathjax">autonomous</span>&hellip;
+        <a class="is-size-7" style="white-space: nowrap;" onclick="document.getElementById('2409.14488v1-abstract-full').style.display = 'inline'; document.getElementById('2409.14488v1-abstract-short').style.display = 'none';">&#9661; More</a>
+      </span>
+      <span class="abstract-full has-text-grey-dark mathjax" id="2409.14488v1-abstract-full" style="display: none;">
+        There is a growing interest in integrating Large Language Models (LLMs) with <span class="search-hit mathjax">autonomous</span> <span class="search-hit mathjax">driving</span> (AD) systems. However, AD systems are vulnerable to attacks against their object detection and tracking (ODT) functions. Unfortunately, our evaluation of four recent LLM agents against ODT attacks shows that the attacks are 63.26% successful in causing them to crash or violate <span class="search-hit mathjax">traffic</span> <span class="search-hit mathjax">rules</span> due to (1) misleading memory modules that provide past experiences for decision making, (2) limitations of prompts in identifying inconsistencies, and (3) reliance on ground truth perception data.
+  In this paper, we introduce Hudson, a <span class="search-hit mathjax">driving</span> reasoning agent that extends prior LLM-based <span class="search-hit mathjax">driving</span> systems to enable safer decision making during perception attacks while maintaining effectiveness under benign conditions. Hudson achieves this by first instrumenting the AD software to collect real-time perception results and contextual information from the <span class="search-hit mathjax">driving</span> scene. This data is then formalized into a domain-specific language (DSL). To guide the LLM in detecting and making safe control decisions during ODT attacks, Hudson translates the DSL into natural language, along with a list of custom attack detection instructions. Following query execution, Hudson analyzes the LLM&#39;s control decision to <span class="search-hit mathjax">understand</span> its causal reasoning process.
+  We evaluate the effectiveness of Hudson using a proprietary LLM (GPT-4) and two open-source LLMs (Llama and Gemma) in various adversarial <span class="search-hit mathjax">driving</span> scenarios. GPT-4, Llama, and Gemma achieve, on average, an attack detection accuracy of 83. 3%, 63. 6%, and 73. 6%. Consequently, they make safe control decisions in 86.4%, 73.9%, and 80% of the attacks. Our results, following the growing interest in integrating LLMs into AD systems, highlight the strengths of LLMs and their potential to detect and mitigate ODT attacks.
+        <a class="is-size-7" style="white-space: nowrap;" onclick="document.getElementById('2409.14488v1-abstract-full').style.display = 'none'; document.getElementById('2409.14488v1-abstract-short').style.display = 'inline';">&#9651; Less</a>
+      </span>
+    </p>
+    
+
+    <p class="is-size-7"><span class="has-text-black-bis has-text-weight-semibold">Submitted</span> 22 September, 2024; 
+      <span class="has-text-black-bis has-text-weight-semibold">originally announced</span> September 2024.
+      
+    </p>
+    
+
+    
+
+    
+  </li>
+
+  <li class="arxiv-result">
+    <div class="is-marginless">
+      <p class="list-title is-inline-block"><a href="https://arxiv.org/abs/2409.02914">arXiv:2409.02914</a>
+        <span>&nbsp;[<a href="https://arxiv.org/pdf/2409.02914">pdf</a>, <a href="https://arxiv.org/format/2409.02914">other</a>]&nbsp;</span>
+      </p>
+      <div class="tags is-inline-block">
+        <span class="tag is-small is-link tooltip is-tooltip-top" data-tooltip="Computer Vision and Pattern Recognition">cs.CV</span>
+        </div>
+      
+    </div>
+    
+    <p class="title is-5 mathjax">
+      
+        Can LVLMs Obtain a Driver&#39;s License? A Benchmark Towards Reliable AGI for <span class="search-hit mathjax">Autonomous</span> <span class="search-hit mathjax">Driving</span>
+      
+    </p>
+    <p class="authors">
+      <span class="has-text-black-bis has-text-weight-semibold">Authors:</span>
+      
+      <a href="/search/?searchtype=author&amp;query=Lu%2C+Y">Yuhang Lu</a>, 
+      
+      <a href="/search/?searchtype=author&amp;query=Yao%2C+Y">Yichen Yao</a>, 
+      
+      <a href="/search/?searchtype=author&amp;query=Tu%2C+J">Jiadong Tu</a>, 
+      
+      <a href="/search/?searchtype=author&amp;query=Shao%2C+J">Jiangnan Shao</a>, 
+      
+      <a href="/search/?searchtype=author&amp;query=Ma%2C+Y">Yuexin Ma</a>, 
+      
+      <a href="/search/?searchtype=author&amp;query=Zhu%2C+X">Xinge Zhu</a>
+      
+    </p>
+    
+    <p class="abstract mathjax">
+      <span class="search-hit">Abstract</span>:
+      <span class="abstract-short has-text-grey-dark mathjax" id="2409.02914v1-abstract-short" style="display: inline;">
+        &hellip;Models (LVLMs) have recently garnered significant attention, with many efforts aimed at harnessing their general knowledge to enhance the interpretability and robustness of <span class="search-hit mathjax">autonomous</span>&hellip;
+        <a class="is-size-7" style="white-space: nowrap;" onclick="document.getElementById('2409.02914v1-abstract-full').style.display = 'inline'; document.getElementById('2409.02914v1-abstract-short').style.display = 'none';">&#9661; More</a>
+      </span>
+      <span class="abstract-full has-text-grey-dark mathjax" id="2409.02914v1-abstract-full" style="display: none;">
+        Large Vision-Language Models (LVLMs) have recently garnered significant attention, with many efforts aimed at harnessing their general knowledge to enhance the interpretability and robustness of <span class="search-hit mathjax">autonomous</span> <span class="search-hit mathjax">driving</span> models. However, LVLMs typically rely on large, general-purpose datasets and lack the specialized expertise required for professional and safe <span class="search-hit mathjax">driving</span>. Existing vision-language <span class="search-hit mathjax">driving</span> datasets focus primarily on scene <span class="search-hit mathjax">understanding</span> and decision-making, without providing explicit guidance on <span class="search-hit mathjax">traffic</span> <span class="search-hit mathjax">rules</span> and <span class="search-hit mathjax">driving</span> skills, which are critical aspects directly related to <span class="search-hit mathjax">driving</span> safety. To bridge this gap, we propose IDKB, a large-scale dataset containing over one million data items collected from various countries, including <span class="search-hit mathjax">driving</span> handbooks, theory test data, and simulated road test data. Much like the process of obtaining a driver&#39;s license, IDKB encompasses nearly all the explicit knowledge needed for <span class="search-hit mathjax">driving</span> from theory to practice. In particular, we conducted comprehensive tests on 15 LVLMs using IDKB to assess their reliability in the context of <span class="search-hit mathjax">autonomous</span> <span class="search-hit mathjax">driving</span> and provided extensive analysis. We also fine-tuned popular models, achieving notable performance improvements, which further validate the significance of our dataset. The project page can be found at: \url{https://4dvlab.github.io/project_page/idkb.html}
+        <a class="is-size-7" style="white-space: nowrap;" onclick="document.getElementById('2409.02914v1-abstract-full').style.display = 'none'; document.getElementById('2409.02914v1-abstract-short').style.display = 'inline';">&#9651; Less</a>
+      </span>
+    </p>
+    
+
+    <p class="is-size-7"><span class="has-text-black-bis has-text-weight-semibold">Submitted</span> 4 September, 2024; 
+      <span class="has-text-black-bis has-text-weight-semibold">originally announced</span> September 2024.
+      
+    </p>
+    
+
+    
+
+    
+  </li>
+
+  <li class="arxiv-result">
+    <div class="is-marginless">
+      <p class="list-title is-inline-block"><a href="https://arxiv.org/abs/2312.13156">arXiv:2312.13156</a>
+        <span>&nbsp;[<a href="https://arxiv.org/pdf/2312.13156">pdf</a>, <a href="https://arxiv.org/format/2312.13156">other</a>]&nbsp;</span>
+      </p>
+      <div class="tags is-inline-block">
+        <span class="tag is-small is-link tooltip is-tooltip-top" data-tooltip="Computational Engineering, Finance, and Science">cs.CE</span>
+        
+          
+            <span class="tag is-small is-grey tooltip is-tooltip-top" data-tooltip="Artificial Intelligence">cs.AI</span>
+          
+        </div>
+      
+    </div>
+    
+    <p class="title is-5 mathjax">
+      
+        AccidentGPT: Accident Analysis and Prevention from V2X Environmental Perception with Multi-modal Large Model
+      
+    </p>
+    <p class="authors">
+      <span class="has-text-black-bis has-text-weight-semibold">Authors:</span>
+      
+      <a href="/search/?searchtype=author&amp;query=Wang%2C+L">Lening Wang</a>, 
+      
+      <a href="/search/?searchtype=author&amp;query=Ren%2C+Y">Yilong Ren</a>, 
+      
+      <a href="/search/?searchtype=author&amp;query=Jiang%2C+H">Han Jiang</a>, 
+      
+      <a href="/search/?searchtype=author&amp;query=Cai%2C+P">Pinlong Cai</a>, 
+      
+      <a href="/search/?searchtype=author&amp;query=Fu%2C+D">Daocheng Fu</a>, 
+      
+      <a href="/search/?searchtype=author&amp;query=Wang%2C+T">Tianqi Wang</a>, 
+      
+      <a href="/search/?searchtype=author&amp;query=Cui%2C+Z">Zhiyong Cui</a>, 
+      
+      <a href="/search/?searchtype=author&amp;query=Yu%2C+H">Haiyang Yu</a>, 
+      
+      <a href="/search/?searchtype=author&amp;query=Wang%2C+X">Xuesong Wang</a>, 
+      
+      <a href="/search/?searchtype=author&amp;query=Zhou%2C+H">Hanchu Zhou</a>, 
+      
+      <a href="/search/?searchtype=author&amp;query=Huang%2C+H">Helai Huang</a>, 
+      
+      <a href="/search/?searchtype=author&amp;query=Wang%2C+Y">Yinhai Wang</a>
+      
+    </p>
+    
+    <p class="abstract mathjax">
+      <span class="search-hit">Abstract</span>:
+      <span class="abstract-short has-text-grey-dark mathjax" id="2312.13156v3-abstract-short" style="display: inline;">
+        <span class="search-hit mathjax">Traffic</span> accidents, being a significant contributor to both human casualties and property damage, have long been a focal point of research for many scholars in the field of&hellip;
+        <a class="is-size-7" style="white-space: nowrap;" onclick="document.getElementById('2312.13156v3-abstract-full').style.display = 'inline'; document.getElementById('2312.13156v3-abstract-short').style.display = 'none';">&#9661; More</a>
+      </span>
+      <span class="abstract-full has-text-grey-dark mathjax" id="2312.13156v3-abstract-full" style="display: none;">
+        <span class="search-hit mathjax">Traffic</span> accidents, being a significant contributor to both human casualties and property damage, have long been a focal point of research for many scholars in the field of <span class="search-hit mathjax">traffic</span> safety. However, previous studies, whether focusing on static environmental assessments or dynamic <span class="search-hit mathjax">driving</span> analyses, as well as pre-accident predictions or post-accident <span class="search-hit mathjax">rule</span> analyses, have typically been conducted in isolation. There has been a lack of an effective framework for developing a comprehensive <span class="search-hit mathjax">understanding</span> and application of <span class="search-hit mathjax">traffic</span> safety. To address this gap, this paper introduces AccidentGPT, a comprehensive accident analysis and prevention multi-modal large model. AccidentGPT establishes a multi-modal information interaction framework grounded in multi-sensor perception, thereby enabling a holistic approach to accident analysis and prevention in the field of <span class="search-hit mathjax">traffic</span> safety. Specifically, our capabilities can be categorized as follows: for <span class="search-hit mathjax">autonomous</span> <span class="search-hit mathjax">driving</span> vehicles, we provide comprehensive environmental perception and <span class="search-hit mathjax">understanding</span> to control the vehicle and avoid collisions. For human-driven vehicles, we offer proactive long-range safety warnings and blind-spot alerts while also providing safety <span class="search-hit mathjax">driving</span> recommendations and behavioral norms through human-machine dialogue and interaction. Additionally, for <span class="search-hit mathjax">traffic</span> police and management agencies, our framework supports intelligent and real-time analysis of <span class="search-hit mathjax">traffic</span> safety, encompassing pedestrian, vehicles, roads, and the environment through collaborative perception from multiple vehicles and road testing devices. The system is also capable of providing a thorough analysis of accident causes and liability after vehicle collisions. Our framework stands as the first large model to integrate comprehensive scene <span class="search-hit mathjax">understanding</span> into <span class="search-hit mathjax">traffic</span> safety studies. Project page: https://accidentgpt.github.io
+        <a class="is-size-7" style="white-space: nowrap;" onclick="document.getElementById('2312.13156v3-abstract-full').style.display = 'none'; document.getElementById('2312.13156v3-abstract-short').style.display = 'inline';">&#9651; Less</a>
+      </span>
+    </p>
+    
+
+    <p class="is-size-7"><span class="has-text-black-bis has-text-weight-semibold">Submitted</span> 28 December, 2023; <span class="has-text-black-bis has-text-weight-semibold">v1</span> submitted 20 December, 2023;
+      <span class="has-text-black-bis has-text-weight-semibold">originally announced</span> December 2023.
+      
+    </p>
+    
+    <p class="comments is-size-7">
+      <span class="has-text-black-bis has-text-weight-semibold">Comments:</span>
+      <span class="has-text-grey-dark mathjax">21 pages, 19 figures</span>
+    </p>
+    
+
+    
+
+    
+  </li>
+
+  <li class="arxiv-result">
+    <div class="is-marginless">
+      <p class="list-title is-inline-block"><a href="https://arxiv.org/abs/2311.05332">arXiv:2311.05332</a>
+        <span>&nbsp;[<a href="https://arxiv.org/pdf/2311.05332">pdf</a>, <a href="https://arxiv.org/format/2311.05332">other</a>]&nbsp;</span>
+      </p>
+      <div class="tags is-inline-block">
+        <span class="tag is-small is-link tooltip is-tooltip-top" data-tooltip="Computer Vision and Pattern Recognition">cs.CV</span>
+        
+          
+            <span class="tag is-small is-grey tooltip is-tooltip-top" data-tooltip="Artificial Intelligence">cs.AI</span>
+          
+            <span class="tag is-small is-grey tooltip is-tooltip-top" data-tooltip="Computation and Language">cs.CL</span>
+          
+            <span class="tag is-small is-grey tooltip is-tooltip-top" data-tooltip="Robotics">cs.RO</span>
+          
+        </div>
+      
+    </div>
+    
+    <p class="title is-5 mathjax">
+      
+        On the Road with GPT-4V(ision): Early Explorations of Visual-Language Model on <span class="search-hit mathjax">Autonomous</span> <span class="search-hit mathjax">Driving</span>
+      
+    </p>
+    <p class="authors">
+      <span class="has-text-black-bis has-text-weight-semibold">Authors:</span>
+      
+      <a href="/search/?searchtype=author&amp;query=Wen%2C+L">Licheng Wen</a>, 
+      
+      <a href="/search/?searchtype=author&amp;query=Yang%2C+X">Xuemeng Yang</a>, 
+      
+      <a href="/search/?searchtype=author&amp;query=Fu%2C+D">Daocheng Fu</a>, 
+      
+      <a href="/search/?searchtype=author&amp;query=Wang%2C+X">Xiaofeng Wang</a>, 
+      
+      <a href="/search/?searchtype=author&amp;query=Cai%2C+P">Pinlong Cai</a>, 
+      
+      <a href="/search/?searchtype=author&amp;query=Li%2C+X">Xin Li</a>, 
+      
+      <a href="/search/?searchtype=author&amp;query=Ma%2C+T">Tao Ma</a>, 
+      
+      <a href="/search/?searchtype=author&amp;query=Li%2C+Y">Yingxuan Li</a>, 
+      
+      <a href="/search/?searchtype=author&amp;query=Xu%2C+L">Linran Xu</a>, 
+      
+      <a href="/search/?searchtype=author&amp;query=Shang%2C+D">Dengke Shang</a>, 
+      
+      <a href="/search/?searchtype=author&amp;query=Zhu%2C+Z">Zheng Zhu</a>, 
+      
+      <a href="/search/?searchtype=author&amp;query=Sun%2C+S">Shaoyan Sun</a>, 
+      
+      <a href="/search/?searchtype=author&amp;query=Bai%2C+Y">Yeqi Bai</a>, 
+      
+      <a href="/search/?searchtype=author&amp;query=Cai%2C+X">Xinyu Cai</a>, 
+      
+      <a href="/search/?searchtype=author&amp;query=Dou%2C+M">Min Dou</a>, 
+      
+      <a href="/search/?searchtype=author&amp;query=Hu%2C+S">Shuanglu Hu</a>, 
+      
+      <a href="/search/?searchtype=author&amp;query=Shi%2C+B">Botian Shi</a>, 
+      
+      <a href="/search/?searchtype=author&amp;query=Qiao%2C+Y">Yu Qiao</a>
+      
+    </p>
+    
+    <p class="abstract mathjax">
+      <span class="search-hit">Abstract</span>:
+      <span class="abstract-short has-text-grey-dark mathjax" id="2311.05332v2-abstract-short" style="display: inline;">
+        The pursuit of <span class="search-hit mathjax">autonomous</span>&hellip;
+        <a class="is-size-7" style="white-space: nowrap;" onclick="document.getElementById('2311.05332v2-abstract-full').style.display = 'inline'; document.getElementById('2311.05332v2-abstract-short').style.display = 'none';">&#9661; More</a>
+      </span>
+      <span class="abstract-full has-text-grey-dark mathjax" id="2311.05332v2-abstract-full" style="display: none;">
+        The pursuit of <span class="search-hit mathjax">autonomous</span> <span class="search-hit mathjax">driving</span> technology hinges on the sophisticated integration of perception, decision-making, and control systems. Traditional approaches, both data-driven and <span class="search-hit mathjax">rule</span>-based, have been hindered by their inability to grasp the nuance of complex <span class="search-hit mathjax">driving</span> environments and the intentions of other road users. This has been a significant bottleneck, particularly in the development of common sense reasoning and nuanced scene <span class="search-hit mathjax">understanding</span> necessary for safe and reliable <span class="search-hit mathjax">autonomous</span> <span class="search-hit mathjax">driving</span>. The advent of Visual Language Models (VLM) represents a novel frontier in realizing fully <span class="search-hit mathjax">autonomous</span> vehicle <span class="search-hit mathjax">driving</span>. This report provides an exhaustive evaluation of the latest state-of-the-art VLM, GPT-4V(ision), and its application in <span class="search-hit mathjax">autonomous</span> <span class="search-hit mathjax">driving</span> scenarios. We explore the model&#39;s abilities to <span class="search-hit mathjax">understand</span> and reason about <span class="search-hit mathjax">driving</span> scenes, make decisions, and ultimately act in the capacity of a driver. Our comprehensive tests span from basic scene recognition to complex causal reasoning and real-time decision-making under varying conditions. Our findings reveal that GPT-4V demonstrates superior performance in scene <span class="search-hit mathjax">understanding</span> and causal reasoning compared to existing <span class="search-hit mathjax">autonomous</span> systems. It showcases the potential to handle out-of-distribution scenarios, recognize intentions, and make informed decisions in real <span class="search-hit mathjax">driving</span> contexts. However, challenges remain, particularly in direction discernment, <span class="search-hit mathjax">traffic</span> light recognition, vision grounding, and spatial reasoning tasks. These limitations underscore the need for further research and development. Project is now available on GitHub for interested parties to access and utilize: \url{https://github.com/PJLab-ADG/GPT4V-AD-Exploration}
+        <a class="is-size-7" style="white-space: nowrap;" onclick="document.getElementById('2311.05332v2-abstract-full').style.display = 'none'; document.getElementById('2311.05332v2-abstract-short').style.display = 'inline';">&#9651; Less</a>
+      </span>
+    </p>
+    
+
+    <p class="is-size-7"><span class="has-text-black-bis has-text-weight-semibold">Submitted</span> 28 November, 2023; <span class="has-text-black-bis has-text-weight-semibold">v1</span> submitted 9 November, 2023;
+      <span class="has-text-black-bis has-text-weight-semibold">originally announced</span> November 2023.
+      
+    </p>
+    
+
+    
+
+    
+  </li>
+
+  <li class="arxiv-result">
+    <div class="is-marginless">
+      <p class="list-title is-inline-block"><a href="https://arxiv.org/abs/2301.09194">arXiv:2301.09194</a>
+        <span>&nbsp;[<a href="https://arxiv.org/pdf/2301.09194">pdf</a>]&nbsp;</span>
+      </p>
+      <div class="tags is-inline-block">
+        <span class="tag is-small is-link tooltip is-tooltip-top" data-tooltip="Robotics">cs.RO</span>
+        
+          
+            <span class="tag is-small is-grey tooltip is-tooltip-top" data-tooltip="Artificial Intelligence">cs.AI</span>
+          
+        </div>
+      
+    </div>
+    
+    <p class="title is-5 mathjax">
+      
+        Improving <span class="search-hit mathjax">Autonomous</span> Vehicle Mapping and Navigation in Work Zones Using Crowdsourcing Vehicle Trajectories
+      
+    </p>
+    <p class="authors">
+      <span class="has-text-black-bis has-text-weight-semibold">Authors:</span>
+      
+      <a href="/search/?searchtype=author&amp;query=Chen%2C+H">Hanlin Chen</a>, 
+      
+      <a href="/search/?searchtype=author&amp;query=Luo%2C+R">Renyuan Luo</a>, 
+      
+      <a href="/search/?searchtype=author&amp;query=Feng%2C+Y">Yiheng Feng</a>
+      
+    </p>
+    
+    <p class="abstract mathjax">
+      <span class="search-hit">Abstract</span>:
+      <span class="abstract-short has-text-grey-dark mathjax" id="2301.09194v1-abstract-short" style="display: inline;">
+        Prevalent solutions for Connected and <span class="search-hit mathjax">Autonomous</span> vehicle (CAV) mapping include high definition map (HD map) or real-time Simultaneous Localization and Mapping (SLAM). Both methods only rely on vehicle itself (onboard sensors or embedded maps) and can not adapt well to temporarily changed drivable areas such as work zones. Navigating CAVs in such areas heavil&hellip;
+        <a class="is-size-7" style="white-space: nowrap;" onclick="document.getElementById('2301.09194v1-abstract-full').style.display = 'inline'; document.getElementById('2301.09194v1-abstract-short').style.display = 'none';">&#9661; More</a>
+      </span>
+      <span class="abstract-full has-text-grey-dark mathjax" id="2301.09194v1-abstract-full" style="display: none;">
+        Prevalent solutions for Connected and <span class="search-hit mathjax">Autonomous</span> vehicle (CAV) mapping include high definition map (HD map) or real-time Simultaneous Localization and Mapping (SLAM). Both methods only rely on vehicle itself (onboard sensors or embedded maps) and can not adapt well to temporarily changed drivable areas such as work zones. Navigating CAVs in such areas heavily relies on how the vehicle defines drivable areas based on perception information. Difficulties in improving perception accuracy and ensuring the correct interpretation of perception results are challenging to the vehicle in these situations. This paper presents a prototype that introduces crowdsourcing trajectories information into the mapping process to enhance CAV&#39;s <span class="search-hit mathjax">understanding</span> on the drivable area and <span class="search-hit mathjax">traffic</span> <span class="search-hit mathjax">rules</span>. A Gaussian Mixture Model (GMM) is applied to construct the temporarily changed drivable area and occupancy grid map (OGM) based on crowdsourcing trajectories. The proposed method is compared with SLAM without any human <span class="search-hit mathjax">driving</span> information. Our method has adapted well with the downstream path planning and vehicle control module, and the CAV did not violate <span class="search-hit mathjax">driving</span> <span class="search-hit mathjax">rule</span>, which a pure SLAM method did not achieve.
+        <a class="is-size-7" style="white-space: nowrap;" onclick="document.getElementById('2301.09194v1-abstract-full').style.display = 'none'; document.getElementById('2301.09194v1-abstract-short').style.display = 'inline';">&#9651; Less</a>
+      </span>
+    </p>
+    
+
+    <p class="is-size-7"><span class="has-text-black-bis has-text-weight-semibold">Submitted</span> 22 January, 2023; 
+      <span class="has-text-black-bis has-text-weight-semibold">originally announced</span> January 2023.
+      
+    </p>
+    
+    <p class="comments is-size-7">
+      <span class="has-text-black-bis has-text-weight-semibold">Comments:</span>
+      <span class="has-text-grey-dark mathjax">Presented at TRBAM. Journal version in progress</span>
+    </p>
+    
+
+    
+
+    
+  </li>
+
+  <li class="arxiv-result">
+    <div class="is-marginless">
+      <p class="list-title is-inline-block"><a href="https://arxiv.org/abs/2212.02503">arXiv:2212.02503</a>
+        <span>&nbsp;[<a href="https://arxiv.org/pdf/2212.02503">pdf</a>, <a href="https://arxiv.org/format/2212.02503">other</a>]&nbsp;</span>
+      </p>
+      <div class="tags is-inline-block">
+        <span class="tag is-small is-link tooltip is-tooltip-top" data-tooltip="Artificial Intelligence">cs.AI</span>
+        
+          
+            <span class="tag is-small is-grey tooltip is-tooltip-top" data-tooltip="Computer Vision and Pattern Recognition">cs.CV</span>
+          
+            <span class="tag is-small is-grey tooltip is-tooltip-top" data-tooltip="Machine Learning">cs.LG</span>
+          
+            <span class="tag is-small is-grey tooltip is-tooltip-top" data-tooltip="Robotics">cs.RO</span>
+          
+        </div>
+      
+        
+          <div class="is-inline-block" style="margin-left: 0.5rem">
+            <div class="tags has-addons">
+              <span class="tag is-dark is-size-7">doi</span>
+              <span class="tag is-light is-size-7"><a class="" href="https://doi.org/10.1109/ITSC55140.2022.9922155">10.1109/ITSC55140.2022.9922155 <i class="fa fa-external-link" aria-hidden="true"></i></a></span>
+            </div>
+          </div>
+        
+      
+    </div>
+    
+    <p class="title is-5 mathjax">
+      
+        Relation-based Motion Prediction using <span class="search-hit mathjax">Traffic</span> Scene Graphs
+      
+    </p>
+    <p class="authors">
+      <span class="has-text-black-bis has-text-weight-semibold">Authors:</span>
+      
+      <a href="/search/?searchtype=author&amp;query=Zipfl%2C+M">Maximilian Zipfl</a>, 
+      
+      <a href="/search/?searchtype=author&amp;query=Hertlein%2C+F">Felix Hertlein</a>, 
+      
+      <a href="/search/?searchtype=author&amp;query=Rettinger%2C+A">Achim Rettinger</a>, 
+      
+      <a href="/search/?searchtype=author&amp;query=Thoma%2C+S">Steffen Thoma</a>, 
+      
+      <a href="/search/?searchtype=author&amp;query=Halilaj%2C+L">Lavdim Halilaj</a>, 
+      
+      <a href="/search/?searchtype=author&amp;query=Luettin%2C+J">Juergen Luettin</a>, 
+      
+      <a href="/search/?searchtype=author&amp;query=Schmid%2C+S">Stefan Schmid</a>, 
+      
+      <a href="/search/?searchtype=author&amp;query=Henson%2C+C">Cory Henson</a>
+      
+    </p>
+    
+    <p class="abstract mathjax">
+      <span class="search-hit">Abstract</span>:
+      <span class="abstract-short has-text-grey-dark mathjax" id="2212.02503v1-abstract-short" style="display: inline;">
+        Representing relevant information of a <span class="search-hit mathjax">traffic</span> scene and&hellip;
+        <a class="is-size-7" style="white-space: nowrap;" onclick="document.getElementById('2212.02503v1-abstract-full').style.display = 'inline'; document.getElementById('2212.02503v1-abstract-short').style.display = 'none';">&#9661; More</a>
+      </span>
+      <span class="abstract-full has-text-grey-dark mathjax" id="2212.02503v1-abstract-full" style="display: none;">
+        Representing relevant information of a <span class="search-hit mathjax">traffic</span> scene and <span class="search-hit mathjax">understanding</span> its environment is crucial for the success of <span class="search-hit mathjax">autonomous</span> <span class="search-hit mathjax">driving</span>. Modeling the surrounding of an <span class="search-hit mathjax">autonomous</span> car using semantic relations, i.e., how different <span class="search-hit mathjax">traffic</span> participants relate in the context of <span class="search-hit mathjax">traffic</span> <span class="search-hit mathjax">rule</span> based behaviors, is hardly been considered in previous work. This stems from the fact that these relations are hard to extract from real-world <span class="search-hit mathjax">traffic</span> scenes. In this work, we model <span class="search-hit mathjax">traffic</span> scenes in a form of spatial semantic scene graphs for various different predictions about the <span class="search-hit mathjax">traffic</span> participants, e.g., acceleration and deceleration. Our learning and inference approach uses Graph Neural Networks (GNNs) and shows that incorporating explicit information about the spatial semantic relations between <span class="search-hit mathjax">traffic</span> participants improves the predicdtion results. Specifically, the acceleration prediction of <span class="search-hit mathjax">traffic</span> participants is improved by up to 12% compared to the baselines, which do not exploit this explicit information. Furthermore, by including additional information about previous scenes, we achieve 73% improvements.
+        <a class="is-size-7" style="white-space: nowrap;" onclick="document.getElementById('2212.02503v1-abstract-full').style.display = 'none'; document.getElementById('2212.02503v1-abstract-short').style.display = 'inline';">&#9651; Less</a>
+      </span>
+    </p>
+    
+
+    <p class="is-size-7"><span class="has-text-black-bis has-text-weight-semibold">Submitted</span> 24 November, 2022; 
+      <span class="has-text-black-bis has-text-weight-semibold">originally announced</span> December 2022.
+      
+    </p>
+    
+
+    
+
+    
+  </li>
+
+  <li class="arxiv-result">
+    <div class="is-marginless">
+      <p class="list-title is-inline-block"><a href="https://arxiv.org/abs/2207.12793">arXiv:2207.12793</a>
+        <span>&nbsp;[<a href="https://arxiv.org/pdf/2207.12793">pdf</a>]&nbsp;</span>
+      </p>
+      <div class="tags is-inline-block">
+        <span class="tag is-small is-link tooltip is-tooltip-top" data-tooltip="Systems and Control">eess.SY</span>
+        </div>
+      
+    </div>
+    
+    <p class="title is-5 mathjax">
+      
+        Modeling mandatory and discretionary lane changes using dynamic interaction networks
+      
+    </p>
+    <p class="authors">
+      <span class="has-text-black-bis has-text-weight-semibold">Authors:</span>
+      
+      <a href="/search/?searchtype=author&amp;query=Zhang%2C+Y">Yue Zhang</a>, 
+      
+      <a href="/search/?searchtype=author&amp;query=Zou%2C+Y">Yajie Zou</a>, 
+      
+      <a href="/search/?searchtype=author&amp;query=Xie%2C+Y">Yuanchang Xie</a>, 
+      
+      <a href="/search/?searchtype=author&amp;query=Chen%2C+L">Lei Chen</a>
+      
+    </p>
+    
+    <p class="abstract mathjax">
+      <span class="search-hit">Abstract</span>:
+      <span class="abstract-short has-text-grey-dark mathjax" id="2207.12793v1-abstract-short" style="display: inline;">
+        A quantitative <span class="search-hit mathjax">understanding</span> of dynamic lane-changing (LC) interaction patterns is indispensable for improving the decision-making of&hellip;
+        <a class="is-size-7" style="white-space: nowrap;" onclick="document.getElementById('2207.12793v1-abstract-full').style.display = 'inline'; document.getElementById('2207.12793v1-abstract-short').style.display = 'none';">&#9661; More</a>
+      </span>
+      <span class="abstract-full has-text-grey-dark mathjax" id="2207.12793v1-abstract-full" style="display: none;">
+        A quantitative <span class="search-hit mathjax">understanding</span> of dynamic lane-changing (LC) interaction patterns is indispensable for improving the decision-making of <span class="search-hit mathjax">autonomous</span> vehicles, especially in mixed <span class="search-hit mathjax">traffic</span> with human-driven vehicles. This paper develops a novel framework combining the hidden Markov model and graph structure to identify the difference in dynamic interaction networks between mandatory lane changes (MLC) and discretionary lane changes (DLC). A hidden Markov model is developed to decompose LC interactions into homogenous segments and reveal the temporal properties of these segments. Then, conditional mutual information is used to quantify the interaction intensity, and the graph structure is used to characterize the connectivity between vehicles. Finally, the critical vehicle in each dynamic interaction network is identified. Based on the LC events extracted from the INTERACTION dataset, the proposed analytical framework is applied to modeling MLC and DLC under congested <span class="search-hit mathjax">traffic</span> with levels of service E and F. The results show that there are multiple heterogeneous dynamic interaction network structures in an LC process. A comparison of MLC and DLC demonstrates that MLC are more complex, while DLC are more random. The complexity of MLC is attributed to the intense interaction and frequent transition of the interaction network structure, while the random DLC demonstrate no obvious evolution <span class="search-hit mathjax">rules</span> and dominant vehicles in interaction networks. The findings in this study are useful for <span class="search-hit mathjax">understanding</span> the connectivity structure between vehicles in LC interactions, and for designing appropriate and well-directed <span class="search-hit mathjax">driving</span> decision-making models for <span class="search-hit mathjax">autonomous</span> vehicles and advanced driver-assistance systems.
+        <a class="is-size-7" style="white-space: nowrap;" onclick="document.getElementById('2207.12793v1-abstract-full').style.display = 'none'; document.getElementById('2207.12793v1-abstract-short').style.display = 'inline';">&#9651; Less</a>
+      </span>
+    </p>
+    
+
+    <p class="is-size-7"><span class="has-text-black-bis has-text-weight-semibold">Submitted</span> 26 July, 2022; 
+      <span class="has-text-black-bis has-text-weight-semibold">originally announced</span> July 2022.
+      
+    </p>
+    
+
+    
+
+    
+  </li>
+
+  <li class="arxiv-result">
+    <div class="is-marginless">
+      <p class="list-title is-inline-block"><a href="https://arxiv.org/abs/2204.11411">arXiv:2204.11411</a>
+        <span>&nbsp;[<a href="https://arxiv.org/pdf/2204.11411">pdf</a>, <a href="https://arxiv.org/format/2204.11411">other</a>]&nbsp;</span>
+      </p>
+      <div class="tags is-inline-block">
+        <span class="tag is-small is-link tooltip is-tooltip-top" data-tooltip="Robotics">cs.RO</span>
+        
+          
+            <span class="tag is-small is-grey tooltip is-tooltip-top" data-tooltip="Systems and Control">eess.SY</span>
+          
+        </div>
+      
+        
+          <div class="is-inline-block" style="margin-left: 0.5rem">
+            <div class="tags has-addons">
+              <span class="tag is-dark is-size-7">doi</span>
+              <span class="tag is-light is-size-7"><a class="" href="https://doi.org/10.1109/ITSC55140.2022.9922208">10.1109/ITSC55140.2022.9922208 <i class="fa fa-external-link" aria-hidden="true"></i></a></span>
+            </div>
+          </div>
+        
+      
+    </div>
+    
+    <p class="title is-5 mathjax">
+      
+        Road <span class="search-hit mathjax">Traffic</span> Law Adaptive Decision-making for Self-<span class="search-hit mathjax">Driving</span> Vehicles
+      
+    </p>
+    <p class="authors">
+      <span class="has-text-black-bis has-text-weight-semibold">Authors:</span>
+      
+      <a href="/search/?searchtype=author&amp;query=Liu%2C+J">Jiaxin Liu</a>, 
+      
+      <a href="/search/?searchtype=author&amp;query=Zhou%2C+W">Wenhui Zhou</a>, 
+      
+      <a href="/search/?searchtype=author&amp;query=Wang%2C+H">Hong Wang</a>, 
+      
+      <a href="/search/?searchtype=author&amp;query=Cao%2C+Z">Zhong Cao</a>, 
+      
+      <a href="/search/?searchtype=author&amp;query=Yu%2C+W">Wenhao Yu</a>, 
+      
+      <a href="/search/?searchtype=author&amp;query=Zhao%2C+C">Chengxiang Zhao</a>, 
+      
+      <a href="/search/?searchtype=author&amp;query=Zhao%2C+D">Ding Zhao</a>, 
+      
+      <a href="/search/?searchtype=author&amp;query=Yang%2C+D">Diange Yang</a>, 
+      
+      <a href="/search/?searchtype=author&amp;query=Li%2C+J">Jun Li</a>
+      
+    </p>
+    
+    <p class="abstract mathjax">
+      <span class="search-hit">Abstract</span>:
+      <span class="abstract-short has-text-grey-dark mathjax" id="2204.11411v4-abstract-short" style="display: inline;">
+        Self-<span class="search-hit mathjax">driving</span> vehicles have their own intelligence to&hellip;
+        <a class="is-size-7" style="white-space: nowrap;" onclick="document.getElementById('2204.11411v4-abstract-full').style.display = 'inline'; document.getElementById('2204.11411v4-abstract-short').style.display = 'none';">&#9661; More</a>
+      </span>
+      <span class="abstract-full has-text-grey-dark mathjax" id="2204.11411v4-abstract-full" style="display: none;">
+        Self-<span class="search-hit mathjax">driving</span> vehicles have their own intelligence to <span class="search-hit mathjax">drive</span> on open roads. However, vehicle managers, e.g., government or industrial companies, still need a way to tell these self-<span class="search-hit mathjax">driving</span> vehicles what behaviors are encouraged or forbidden. Unlike human drivers, current self-<span class="search-hit mathjax">driving</span> vehicles cannot <span class="search-hit mathjax">understand</span> the <span class="search-hit mathjax">traffic</span> laws, thus rely on the programmers manually writing the corresponding principles into the <span class="search-hit mathjax">driving</span> systems. It would be less efficient and hard to adapt some temporary <span class="search-hit mathjax">traffic</span> laws, especially when the vehicles use data-driven decision-making algorithms. Besides, current self-<span class="search-hit mathjax">driving</span> vehicle systems rarely take <span class="search-hit mathjax">traffic</span> law modification into consideration. This work aims to design a road <span class="search-hit mathjax">traffic</span> law adaptive decision-making method. The decision-making algorithm is designed based on reinforcement learning, in which the <span class="search-hit mathjax">traffic</span> <span class="search-hit mathjax">rules</span> are usually implicitly coded in deep neural networks. The main idea is to supply the adaptability to <span class="search-hit mathjax">traffic</span> laws of self-<span class="search-hit mathjax">driving</span> vehicles by a law-adaptive backup policy. In this work, the natural language-based <span class="search-hit mathjax">traffic</span> laws are first translated into a logical expression by the Linear Temporal Logic method. Then, the system will try to monitor in advance whether the self-<span class="search-hit mathjax">driving</span> vehicle may break the <span class="search-hit mathjax">traffic</span> laws by designing a long-term RL action space. Finally, a sample-based planning method will re-plan the trajectory when the vehicle may break the <span class="search-hit mathjax">traffic</span> <span class="search-hit mathjax">rules</span>. The method is validated in a Beijing Winter Olympic Lane scenario and an overtaking case, built in CARLA simulator. The results show that by adopting this method, the self-<span class="search-hit mathjax">driving</span> vehicles can comply with new issued or updated <span class="search-hit mathjax">traffic</span> laws effectively. This method helps self-<span class="search-hit mathjax">driving</span> vehicles governed by digital <span class="search-hit mathjax">traffic</span> laws, which is necessary for the wide adoption of <span class="search-hit mathjax">autonomous</span> <span class="search-hit mathjax">driving</span>.
+        <a class="is-size-7" style="white-space: nowrap;" onclick="document.getElementById('2204.11411v4-abstract-full').style.display = 'none'; document.getElementById('2204.11411v4-abstract-short').style.display = 'inline';">&#9651; Less</a>
+      </span>
+    </p>
+    
+
+    <p class="is-size-7"><span class="has-text-black-bis has-text-weight-semibold">Submitted</span> 18 April, 2023; <span class="has-text-black-bis has-text-weight-semibold">v1</span> submitted 24 April, 2022;
+      <span class="has-text-black-bis has-text-weight-semibold">originally announced</span> April 2022.
+      
+    </p>
+    
+
+    
+
+    
+  </li>
+
+  <li class="arxiv-result">
+    <div class="is-marginless">
+      <p class="list-title is-inline-block"><a href="https://arxiv.org/abs/2104.13617">arXiv:2104.13617</a>
+        <span>&nbsp;[<a href="https://arxiv.org/pdf/2104.13617">pdf</a>, <a href="https://arxiv.org/format/2104.13617">other</a>]&nbsp;</span>
+      </p>
+      <div class="tags is-inline-block">
+        <span class="tag is-small is-link tooltip is-tooltip-top" data-tooltip="Robotics">cs.RO</span>
+        
+          
+            <span class="tag is-small is-grey tooltip is-tooltip-top" data-tooltip="Artificial Intelligence">cs.AI</span>
+          
+            <span class="tag is-small is-grey tooltip is-tooltip-top" data-tooltip="Machine Learning">cs.LG</span>
+          
+        </div>
+      
+    </div>
+    
+    <p class="title is-5 mathjax">
+      
+        End-to-End Intersection Handling using Multi-Agent Deep Reinforcement Learning
+      
+    </p>
+    <p class="authors">
+      <span class="has-text-black-bis has-text-weight-semibold">Authors:</span>
+      
+      <a href="/search/?searchtype=author&amp;query=Capasso%2C+A+P">Alessandro Paolo Capasso</a>, 
+      
+      <a href="/search/?searchtype=author&amp;query=Maramotti%2C+P">Paolo Maramotti</a>, 
+      
+      <a href="/search/?searchtype=author&amp;query=Dell%27Eva%2C+A">Anthony Dell&#39;Eva</a>, 
+      
+      <a href="/search/?searchtype=author&amp;query=Broggi%2C+A">Alberto Broggi</a>
+      
+    </p>
+    
+    <p class="abstract mathjax">
+      <span class="search-hit">Abstract</span>:
+      <span class="abstract-short has-text-grey-dark mathjax" id="2104.13617v2-abstract-short" style="display: inline;">
+        Navigating through intersections is one of the main challenging tasks for an <span class="search-hit mathjax">autonomous</span> vehicle. However, for the majority of intersections regulated by&hellip;
+        <a class="is-size-7" style="white-space: nowrap;" onclick="document.getElementById('2104.13617v2-abstract-full').style.display = 'inline'; document.getElementById('2104.13617v2-abstract-short').style.display = 'none';">&#9661; More</a>
+      </span>
+      <span class="abstract-full has-text-grey-dark mathjax" id="2104.13617v2-abstract-full" style="display: none;">
+        Navigating through intersections is one of the main challenging tasks for an <span class="search-hit mathjax">autonomous</span> vehicle. However, for the majority of intersections regulated by <span class="search-hit mathjax">traffic</span> lights, the problem could be solved by a simple <span class="search-hit mathjax">rule</span>-based method in which the <span class="search-hit mathjax">autonomous</span> vehicle behavior is closely related to the <span class="search-hit mathjax">traffic</span> light states. In this work, we focus on the implementation of a system able to navigate through intersections where only <span class="search-hit mathjax">traffic</span> signs are provided. We propose a multi-agent system using a continuous, model-free Deep Reinforcement Learning algorithm used to train a neural network for predicting both the acceleration and the steering angle at each time step. We demonstrate that agents learn both the basic <span class="search-hit mathjax">rules</span> needed to handle intersections by <span class="search-hit mathjax">understanding</span> the priorities of other learners inside the environment, and to <span class="search-hit mathjax">drive</span> safely along their paths. Moreover, a comparison between our system and a <span class="search-hit mathjax">rule</span>-based method proves that our model achieves better results especially with dense <span class="search-hit mathjax">traffic</span> conditions. Finally, we test our system on real world scenarios using real recorded <span class="search-hit mathjax">traffic</span> data, proving that our module is able to generalize both to unseen environments and to different <span class="search-hit mathjax">traffic</span> conditions.
+        <a class="is-size-7" style="white-space: nowrap;" onclick="document.getElementById('2104.13617v2-abstract-full').style.display = 'none'; document.getElementById('2104.13617v2-abstract-short').style.display = 'inline';">&#9651; Less</a>
+      </span>
+    </p>
+    
+
+    <p class="is-size-7"><span class="has-text-black-bis has-text-weight-semibold">Submitted</span> 1 May, 2021; <span class="has-text-black-bis has-text-weight-semibold">v1</span> submitted 28 April, 2021;
+      <span class="has-text-black-bis has-text-weight-semibold">originally announced</span> April 2021.
+      
+    </p>
+    
+    <p class="comments is-size-7">
+      <span class="has-text-black-bis has-text-weight-semibold">Comments:</span>
+      <span class="has-text-grey-dark mathjax">IEEE Intelligent Vehicle 2021 (IV 2021)</span>
+    </p>
+    
+
+    
+
+    
+  </li>
+
+  <li class="arxiv-result">
+    <div class="is-marginless">
+      <p class="list-title is-inline-block"><a href="https://arxiv.org/abs/2011.04816">arXiv:2011.04816</a>
+        <span>&nbsp;[<a href="https://arxiv.org/pdf/2011.04816">pdf</a>, <a href="https://arxiv.org/format/2011.04816">other</a>]&nbsp;</span>
+      </p>
+      <div class="tags is-inline-block">
+        <span class="tag is-small is-link tooltip is-tooltip-top" data-tooltip="Robotics">cs.RO</span>
+        </div>
+      
+    </div>
+    
+    <p class="title is-5 mathjax">
+      
+        StylePredict: Machine Theory of Mind for Human Driver Behavior From Trajectories
+      
+    </p>
+    <p class="authors">
+      <span class="has-text-black-bis has-text-weight-semibold">Authors:</span>
+      
+      <a href="/search/?searchtype=author&amp;query=Chandra%2C+R">Rohan Chandra</a>, 
+      
+      <a href="/search/?searchtype=author&amp;query=Bera%2C+A">Aniket Bera</a>, 
+      
+      <a href="/search/?searchtype=author&amp;query=Manocha%2C+D">Dinesh Manocha</a>
+      
+    </p>
+    
+    <p class="abstract mathjax">
+      <span class="search-hit">Abstract</span>:
+      <span class="abstract-short has-text-grey-dark mathjax" id="2011.04816v2-abstract-short" style="display: inline;">
+        Studies have shown that <span class="search-hit mathjax">autonomous</span> vehicles (AVs) behave conservatively in a&hellip;
+        <a class="is-size-7" style="white-space: nowrap;" onclick="document.getElementById('2011.04816v2-abstract-full').style.display = 'inline'; document.getElementById('2011.04816v2-abstract-short').style.display = 'none';">&#9661; More</a>
+      </span>
+      <span class="abstract-full has-text-grey-dark mathjax" id="2011.04816v2-abstract-full" style="display: none;">
+        Studies have shown that <span class="search-hit mathjax">autonomous</span> vehicles (AVs) behave conservatively in a <span class="search-hit mathjax">traffic</span> environment composed of human drivers and do not adapt to local conditions and socio-cultural norms. It is known that socially aware AVs can be designed if there exist a mechanism to <span class="search-hit mathjax">understand</span> the behaviors of human drivers. We present a notion of Machine Theory of Mind (M-ToM) to infer the behaviors of human drivers by observing the trajectory of their vehicles. Our M-ToM approach, called StylePredict, is based on trajectory analysis of vehicles, which has been investigated in robotics and computer vision. StylePredict mimics human ToM to infer driver behaviors, or styles, using a computational mapping between the extracted trajectory of a vehicle in <span class="search-hit mathjax">traffic</span> and the driver behaviors using graph-theoretic techniques, including spectral analysis and centrality functions. We use StylePredict to analyze driver behavior in different cultures in the USA, China, India, and Singapore, based on <span class="search-hit mathjax">traffic</span> density, heterogeneity, and conformity to <span class="search-hit mathjax">traffic</span> <span class="search-hit mathjax">rules</span> and observe an inverse correlation between longitudinal (overspeeding) and lateral (overtaking, lane-changes) <span class="search-hit mathjax">driving</span> styles.
+        <a class="is-size-7" style="white-space: nowrap;" onclick="document.getElementById('2011.04816v2-abstract-full').style.display = 'none'; document.getElementById('2011.04816v2-abstract-short').style.display = 'inline';">&#9651; Less</a>
+      </span>
+    </p>
+    
+
+    <p class="is-size-7"><span class="has-text-black-bis has-text-weight-semibold">Submitted</span> 10 November, 2020; <span class="has-text-black-bis has-text-weight-semibold">v1</span> submitted 9 November, 2020;
+      <span class="has-text-black-bis has-text-weight-semibold">originally announced</span> November 2020.
+      
+    </p>
+    
+    <p class="comments is-size-7">
+      <span class="has-text-black-bis has-text-weight-semibold">Comments:</span>
+      <span class="has-text-grey-dark mathjax">Removed original journal formatting</span>
+    </p>
+    
+
+    
+
+    
+  </li>
+
+  <li class="arxiv-result">
+    <div class="is-marginless">
+      <p class="list-title is-inline-block"><a href="https://arxiv.org/abs/2009.10033">arXiv:2009.10033</a>
+        <span>&nbsp;[<a href="https://arxiv.org/pdf/2009.10033">pdf</a>, <a href="https://arxiv.org/format/2009.10033">other</a>]&nbsp;</span>
+      </p>
+      <div class="tags is-inline-block">
+        <span class="tag is-small is-link tooltip is-tooltip-top" data-tooltip="Artificial Intelligence">cs.AI</span>
+        
+          
+            <span class="tag is-small is-grey tooltip is-tooltip-top" data-tooltip="Computer Science and Game Theory">cs.GT</span>
+          
+            <span class="tag is-small is-grey tooltip is-tooltip-top" data-tooltip="Multiagent Systems">cs.MA</span>
+          
+            <span class="tag is-small is-grey tooltip is-tooltip-top" data-tooltip="Robotics">cs.RO</span>
+          
+        </div>
+      
+        
+          <div class="is-inline-block" style="margin-left: 0.5rem">
+            <div class="tags has-addons">
+              <span class="tag is-dark is-size-7">doi</span>
+              <span class="tag is-light is-size-7"><a class="" href="https://doi.org/10.1609/aaai.v35i6.16715">10.1609/aaai.v35i6.16715 <i class="fa fa-external-link" aria-hidden="true"></i></a></span>
+            </div>
+          </div>
+        
+      
+    </div>
+    
+    <p class="title is-5 mathjax">
+      
+        Solution Concepts in Hierarchical Games under Bounded Rationality with Applications to <span class="search-hit mathjax">Autonomous</span> <span class="search-hit mathjax">Driving</span>
+      
+    </p>
+    <p class="authors">
+      <span class="has-text-black-bis has-text-weight-semibold">Authors:</span>
+      
+      <a href="/search/?searchtype=author&amp;query=Sarkar%2C+A">Atrisha Sarkar</a>, 
+      
+      <a href="/search/?searchtype=author&amp;query=Czarnecki%2C+K">Krzysztof Czarnecki</a>
+      
+    </p>
+    
+    <p class="abstract mathjax">
+      <span class="search-hit">Abstract</span>:
+      <span class="abstract-short has-text-grey-dark mathjax" id="2009.10033v5-abstract-short" style="display: inline;">
+        With <span class="search-hit mathjax">autonomous</span> vehicles (AV) set to integrate further into regular human&hellip;
+        <a class="is-size-7" style="white-space: nowrap;" onclick="document.getElementById('2009.10033v5-abstract-full').style.display = 'inline'; document.getElementById('2009.10033v5-abstract-short').style.display = 'none';">&#9661; More</a>
+      </span>
+      <span class="abstract-full has-text-grey-dark mathjax" id="2009.10033v5-abstract-full" style="display: none;">
+        With <span class="search-hit mathjax">autonomous</span> vehicles (AV) set to integrate further into regular human <span class="search-hit mathjax">traffic</span>, there is an increasing consensus on treating AV motion planning as a multi-agent problem. However, the traditional game-theoretic assumption of complete rationality is too strong for human <span class="search-hit mathjax">driving</span>, and there is a need for <span class="search-hit mathjax">understanding</span> human <span class="search-hit mathjax">driving</span> as a \emph{bounded rational} activity through a behavioural game-theoretic lens. To that end, we adapt four metamodels of bounded rational behaviour: three based on Quantal level-k and one based on Nash equilibrium with quantal errors. We formalize the different solution concepts that can be applied in the context of hierarchical games, a framework used in multi-agent motion planning, for the purpose of creating game theoretic models of <span class="search-hit mathjax">driving</span> behaviour. Furthermore, based on a contributed dataset of human <span class="search-hit mathjax">driving</span> at a busy urban intersection with a total of approximately 4k agents and 44k decision points, we evaluate the behaviour models on the basis of model fit to naturalistic data, as well as their predictive capacity. Our results suggest that among the behaviour models evaluated, at the level of maneuvers, modeling <span class="search-hit mathjax">driving</span> behaviour as an adaptation of the Quantal level-k model with level-0 behaviour modelled as pure <span class="search-hit mathjax">rule</span>-following provides the best fit to naturalistic <span class="search-hit mathjax">driving</span> behaviour. At the level of trajectories, bounds sampling of actions and a maxmax non-strategic models is the most accurate within the set of models in comparison. We also find a significant impact of situational factors on the performance of behaviour models.
+        <a class="is-size-7" style="white-space: nowrap;" onclick="document.getElementById('2009.10033v5-abstract-full').style.display = 'none'; document.getElementById('2009.10033v5-abstract-short').style.display = 'inline';">&#9651; Less</a>
+      </span>
+    </p>
+    
+
+    <p class="is-size-7"><span class="has-text-black-bis has-text-weight-semibold">Submitted</span> 5 June, 2024; <span class="has-text-black-bis has-text-weight-semibold">v1</span> submitted 21 September, 2020;
+      <span class="has-text-black-bis has-text-weight-semibold">originally announced</span> September 2020.
+      
+    </p>
+    
+    <p class="comments is-size-7">
+      <span class="has-text-black-bis has-text-weight-semibold">Comments:</span>
+      <span class="has-text-grey-dark mathjax">Behavioral Game Theory, Motion and Path Planning, Simulating Humans</span>
+    </p>
+    
+
+    
+      <p class="comments is-size-7">
+        
+
+        
+
+        
+          <span class="has-text-black-bis has-text-weight-semibold">ACM Class:</span>
+          I.2.0; I.2.9
+        
+      </p>
+    
+
+    
+      <p class="comments is-size-7">
+        <span class="has-text-black-bis has-text-weight-semibold">Journal ref:</span>
+        Proceedings of the AAAI Conference on Artificial Intelligence, 35(6), 5698-5708 (2021)
+      </p>
+    
+  </li>
+
+  <li class="arxiv-result">
+    <div class="is-marginless">
+      <p class="list-title is-inline-block"><a href="https://arxiv.org/abs/2002.11477">arXiv:2002.11477</a>
+        <span>&nbsp;[<a href="https://arxiv.org/pdf/2002.11477">pdf</a>, <a href="https://arxiv.org/format/2002.11477">other</a>]&nbsp;</span>
+      </p>
+      <div class="tags is-inline-block">
+        <span class="tag is-small is-link tooltip is-tooltip-top" data-tooltip="Computer Vision and Pattern Recognition">cs.CV</span>
+        
+          
+            <span class="tag is-small is-grey tooltip is-tooltip-top" data-tooltip="Machine Learning">cs.LG</span>
+          
+            <span class="tag is-small is-grey tooltip is-tooltip-top" data-tooltip="Machine Learning">stat.ML</span>
+          
+        </div>
+      
+    </div>
+    
+    <p class="title is-5 mathjax">
+      
+        Learning a Directional Soft Lane Affordance Model for Road Scenes Using Self-Supervision
+      
+    </p>
+    <p class="authors">
+      <span class="has-text-black-bis has-text-weight-semibold">Authors:</span>
+      
+      <a href="/search/?searchtype=author&amp;query=Karlsson%2C+R">Robin Karlsson</a>, 
+      
+      <a href="/search/?searchtype=author&amp;query=Sjoberg%2C+E">Erik Sjoberg</a>
+      
+    </p>
+    
+    <p class="abstract mathjax">
+      <span class="search-hit">Abstract</span>:
+      <span class="abstract-short has-text-grey-dark mathjax" id="2002.11477v2-abstract-short" style="display: inline;">
+        Humans navigate complex environments in an organized yet flexible manner, adapting to the context and implicit social <span class="search-hit mathjax">rules</span>.&hellip;
+        <a class="is-size-7" style="white-space: nowrap;" onclick="document.getElementById('2002.11477v2-abstract-full').style.display = 'inline'; document.getElementById('2002.11477v2-abstract-short').style.display = 'none';">&#9661; More</a>
+      </span>
+      <span class="abstract-full has-text-grey-dark mathjax" id="2002.11477v2-abstract-full" style="display: none;">
+        Humans navigate complex environments in an organized yet flexible manner, adapting to the context and implicit social <span class="search-hit mathjax">rules</span>. <span class="search-hit mathjax">Understanding</span> these naturally learned patterns of behavior is essential for applications such as <span class="search-hit mathjax">autonomous</span> vehicles. However, algorithmically defining these implicit <span class="search-hit mathjax">rules</span> of human behavior remains difficult. This work proposes a novel self-supervised method for training a probabilistic network model to estimate the regions humans are most likely to <span class="search-hit mathjax">drive</span> in as well as a multimodal representation of the inferred direction of travel at each point. The model is trained on individual human trajectories conditioned on a representation of the <span class="search-hit mathjax">driving</span> environment. The model is shown to successfully generalize to new road scenes, demonstrating potential for real-world application as a prior for socially acceptable <span class="search-hit mathjax">driving</span> behavior in challenging or ambiguous scenarios which are poorly handled by explicit <span class="search-hit mathjax">traffic</span> <span class="search-hit mathjax">rules</span>.
+        <a class="is-size-7" style="white-space: nowrap;" onclick="document.getElementById('2002.11477v2-abstract-full').style.display = 'none'; document.getElementById('2002.11477v2-abstract-short').style.display = 'inline';">&#9651; Less</a>
+      </span>
+    </p>
+    
+
+    <p class="is-size-7"><span class="has-text-black-bis has-text-weight-semibold">Submitted</span> 15 April, 2020; <span class="has-text-black-bis has-text-weight-semibold">v1</span> submitted 16 February, 2020;
+      <span class="has-text-black-bis has-text-weight-semibold">originally announced</span> February 2020.
+      
+    </p>
+    
+    <p class="comments is-size-7">
+      <span class="has-text-black-bis has-text-weight-semibold">Comments:</span>
+      <span class="has-text-grey-dark mathjax">Accepted for IEEE IV 2020</span>
+    </p>
+    
+
+    
+      <p class="comments is-size-7">
+        
+
+        
+
+        
+          <span class="has-text-black-bis has-text-weight-semibold">ACM Class:</span>
+          I.2.10; I.2.9
+        
+      </p>
+    
+
+    
+  </li>
+
+  <li class="arxiv-result">
+    <div class="is-marginless">
+      <p class="list-title is-inline-block"><a href="https://arxiv.org/abs/1811.10200">arXiv:1811.10200</a>
+        <span>&nbsp;[<a href="https://arxiv.org/pdf/1811.10200">pdf</a>, <a href="https://arxiv.org/format/1811.10200">other</a>]&nbsp;</span>
+      </p>
+      <div class="tags is-inline-block">
+        <span class="tag is-small is-link tooltip is-tooltip-top" data-tooltip="Computer Vision and Pattern Recognition">cs.CV</span>
+        
+          
+            <span class="tag is-small is-grey tooltip is-tooltip-top" data-tooltip="Robotics">cs.RO</span>
+          
+        </div>
+      
+    </div>
+    
+    <p class="title is-5 mathjax">
+      
+        IDD: A Dataset for Exploring Problems of <span class="search-hit mathjax">Autonomous</span> Navigation in Unconstrained Environments
+      
+    </p>
+    <p class="authors">
+      <span class="has-text-black-bis has-text-weight-semibold">Authors:</span>
+      
+      <a href="/search/?searchtype=author&amp;query=Varma%2C+G">Girish Varma</a>, 
+      
+      <a href="/search/?searchtype=author&amp;query=Subramanian%2C+A">Anbumani Subramanian</a>, 
+      
+      <a href="/search/?searchtype=author&amp;query=Namboodiri%2C+A">Anoop Namboodiri</a>, 
+      
+      <a href="/search/?searchtype=author&amp;query=Chandraker%2C+M">Manmohan Chandraker</a>, 
+      
+      <a href="/search/?searchtype=author&amp;query=Jawahar%2C+C+V">C V Jawahar</a>
+      
+    </p>
+    
+    <p class="abstract mathjax">
+      <span class="search-hit">Abstract</span>:
+      <span class="abstract-short has-text-grey-dark mathjax" id="1811.10200v1-abstract-short" style="display: inline;">
+        While several datasets for <span class="search-hit mathjax">autonomous</span> navigation have become available in recent years, they tend to focus on structured&hellip;
+        <a class="is-size-7" style="white-space: nowrap;" onclick="document.getElementById('1811.10200v1-abstract-full').style.display = 'inline'; document.getElementById('1811.10200v1-abstract-short').style.display = 'none';">&#9661; More</a>
+      </span>
+      <span class="abstract-full has-text-grey-dark mathjax" id="1811.10200v1-abstract-full" style="display: none;">
+        While several datasets for <span class="search-hit mathjax">autonomous</span> navigation have become available in recent years, they tend to focus on structured <span class="search-hit mathjax">driving</span> environments. This usually corresponds to well-delineated infrastructure such as lanes, a small number of well-defined categories for <span class="search-hit mathjax">traffic</span> participants, low variation in object or background appearance and strict adherence to <span class="search-hit mathjax">traffic</span> <span class="search-hit mathjax">rules</span>. We propose IDD, a novel dataset for road scene <span class="search-hit mathjax">understanding</span> in unstructured environments where the above assumptions are largely not satisfied. It consists of 10,004 images, finely annotated with 34 classes collected from 182 <span class="search-hit mathjax">drive</span> sequences on Indian roads. The label set is expanded in comparison to popular benchmarks such as Cityscapes, to account for new classes. It also reflects label distributions of road scenes significantly different from existing datasets, with most classes displaying greater within-class diversity. Consistent with real <span class="search-hit mathjax">driving</span> behaviours, it also identifies new classes such as drivable areas besides the road. We propose a new four-level label hierarchy, which allows varying degrees of complexity and opens up possibilities for new training methods. Our empirical study provides an in-depth analysis of the label characteristics. State-of-the-art methods for semantic segmentation achieve much lower accuracies on our dataset, demonstrating its distinction compared to Cityscapes. Finally, we propose that our dataset is an ideal opportunity for new problems such as domain adaptation, few-shot learning and behaviour prediction in road scenes.
+        <a class="is-size-7" style="white-space: nowrap;" onclick="document.getElementById('1811.10200v1-abstract-full').style.display = 'none'; document.getElementById('1811.10200v1-abstract-short').style.display = 'inline';">&#9651; Less</a>
+      </span>
+    </p>
+    
+
+    <p class="is-size-7"><span class="has-text-black-bis has-text-weight-semibold">Submitted</span> 26 November, 2018; 
+      <span class="has-text-black-bis has-text-weight-semibold">originally announced</span> November 2018.
+      
+    </p>
+    
+    <p class="comments is-size-7">
+      <span class="has-text-black-bis has-text-weight-semibold">Comments:</span>
+      <span class="has-text-grey-dark mathjax">WACV&#39;19</span>
+    </p>
+    
+
+    
+
+    
+  </li>
+
+</ol>
+
+
+  
+
+
+      <div class="is-hidden-tablet">
+        <!-- feedback for mobile only -->
+        <span class="help" style="display: inline-block;"><a href="https://github.com/arXiv/arxiv-search/releases">Search v0.5.6 released 2020-02-24</a>&nbsp;&nbsp;</span>
+      </div>
+    </div>
+
+  </main>
+  <footer>
+    
+<footer class="ds-site-footer">
+  <div class="ds-site-footer-grid">
+    <div class="ds-site-footer-main">
+      <div class="ds-site-footer-ack">
+        We gratefully acknowledge support from
+        our <strong>major funders</strong>,
+        <a href="https://info.arxiv.org/about/ourmembers.html"><strong>member institutions</strong></a><span class="ack-member-inline" hidden>, <strong></strong></span>,
+        and all contributors.
+      </div>
+      <nav class="ds-site-footer-links" aria-label="Site navigation">
+        <a href="https://info.arxiv.org/about">About</a>
+        <span class="ds-site-footer-sep" aria-hidden="true">&middot;</span>
+        <a href="https://info.arxiv.org/help">Help</a>
+        <span class="ds-site-footer-sep" aria-hidden="true">&middot;</span>
+        <a href="https://info.arxiv.org/help/contact.html">Contact</a>
+        <span class="ds-site-footer-sep" aria-hidden="true">&middot;</span>
+        <a href="https://info.arxiv.org/help/subscribe">Subscribe</a>
+        <span class="ds-site-footer-sep" aria-hidden="true">&middot;</span>
+        <a href="https://info.arxiv.org/help/license/index.html">Copyright</a>
+        <span class="ds-site-footer-sep" aria-hidden="true">&middot;</span>
+        <a href="https://info.arxiv.org/help/policies/privacy_policy.html">Privacy</a>
+        <span class="ds-site-footer-sep" aria-hidden="true">&middot;</span>
+        <a href="https://info.arxiv.org/help/web_accessibility.html">Accessibility</a>
+        <span class="ds-site-footer-sep" aria-hidden="true">&middot;</span>
+        <a href="https://status.arxiv.org" target="_blank" rel="noopener noreferrer">Operational Status<span class="is-sr-only"> (opens in new tab)</span></a>
+      </nav>
+    </div>
+    <div class="ds-site-footer-funders" aria-label="Major funders">
+      <div class="ds-site-footer-funders-label">Major funding support from</div>
+      <div class="ds-site-footer-funders-logos">
+        <a class="ds-funder-link" href="https://www.simonsfoundation.org/" target="_blank" rel="noopener noreferrer">
+          <img class="ds-funder-logo" src="https://static.arxiv.org/static/base/1.0.1/images/funders/simons-foundation.png" alt="Simons Foundation"></a>
+        <a class="ds-funder-link" href="https://www.sfi.org.bm/" target="_blank" rel="noopener noreferrer">
+          <img class="ds-funder-logo" src="https://static.arxiv.org/static/base/1.0.1/images/funders/simons-foundation-international.png" alt="Simons Foundation International"></a>
+        <a class="ds-funder-link" href="https://www.schmidtsciences.org/" target="_blank" rel="noopener noreferrer">
+          <img class="ds-funder-logo" src="https://static.arxiv.org/static/base/1.0.1/images/funders/schmidt-sciences.png" alt="Schmidt Sciences"></a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+  </footer>
+  <script src="https://static.arxiv.org/static/base/1.0.0a5/js/member_acknowledgement.js"></script>
+  </body>
+</html>

@@ -1,0 +1,14 @@
+新增2篇自动驾驶最新论文（最近7天内首次提交，已检查）
+
+1. RoadWeaver: Large-Scale Lane-Level HD Map Generation from Scratch for Autonomous Driving Simulation
+- 日期：2026-08-12
+- arXiv：https://arxiv.org/abs/2608.11580
+- 一句话摘要：提出从零生成大规模车道级 HD 地图的 RoadWeaver，为自动驾驶仿真提供更快、更完整、拓扑一致的地图环境。
+
+2. Do Not Forget the Obvious - RISC: A Risk-Informed Slice-Coverage Protocol for Safe Autonomous Driving
+- 日期：2026-08-12
+- arXiv：https://arxiv.org/abs/2608.12051
+- 一句话摘要：提出面向自动驾驶安全评估的 RISC 协议，用风险切片覆盖而非单纯平均指标来更高效地发现高风险失败案例。
+
+Git push：待执行
+微信发送：Hermes cron 自动投递本条消息到微信；直接调用 iLink sendmessage 返回 session timeout（errcode=-14）。
