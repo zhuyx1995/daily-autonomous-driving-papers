@@ -1,0 +1,14 @@
+新增2篇自动驾驶最新论文（最近7天内首次提交，已检查）
+
+1. Not All History Helps: Velocity-Aware Selective Memory for Long-Horizon End-to-End Autonomous Driving
+- 日期：2026-08-16
+- arXiv：https://arxiv.org/abs/2608.15573
+- 一句话摘要：StableDrive 用选择性历史记忆和运动阶段监督，提升端到端自动驾驶长时域规划的稳定性。
+
+2. MM-BEV: Enhancing Timeliness by Computing Where and When it Matters
+- 日期：2026-08-15
+- arXiv：https://arxiv.org/abs/2608.15437
+- 一句话摘要：MM-BEV 把危险度感知、ROI 稀疏计算和异步调度结合起来，以更低时延完成自动驾驶多模态 BEV 感知。
+
+Git push：成功（首次 push 因 GitHub 443 SSL_ERROR_SYSCALL 网络错误失败，第二次重试已成功，最新提交 559dcaf 已推送到 origin/main）
+微信发送：失败（直接调用 Weixin iLink sendmessage 返回 errcode=-14, errmsg=session timeout）
